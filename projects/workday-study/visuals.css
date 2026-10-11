@@ -24,7 +24,20 @@
 .vmail .vh{padding:8px 10px;border-bottom:1px solid var(--line);color:var(--muted)}.vmail .vh b{color:var(--ink)}.vmail .vb{padding:10px}
 .vcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
 .vcols>div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:11px}
-.vcols h4{margin:0 0 5px;font-size:12px}.vcols p{margin:3px 0 0;font-size:10px;color:var(--muted)}
+.vcols h3{margin:0 0 5px;font-size:12px}.vcols p{margin:3px 0 0;font-size:10px;color:var(--muted)}
 .vgate{display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:stretch}
 .vgate .g{writing-mode:horizontal-tb;display:grid;place-items:center;text-align:center;font-size:9px;font-weight:850;border-radius:10px;padding:6px;background:var(--amber);color:#6a4b00;min-width:76px}
 :root[data-theme="dark"] .vtag.a,:root[data-theme="dark"] .vgate .g{color:#ffd978}:root[data-theme="dark"] .vtag.r{color:#ff9d9d}:root[data-theme="dark"] .vn.warn,:root[data-theme="dark"] .vn.bad,:root[data-theme="dark"] .vn.ok{color:var(--ink)}:root[data-theme="dark"] .vform .vh,:root[data-theme="dark"] .vtable th{background:#06101b}
+/* contrast + layout fixes from final scan */
+.vis{--vmuted:#4a5c71}
+.vis .vcap,.vis .vcols p,.vis .decision>span{color:var(--vmuted)}
+.vn.dim{opacity:1;border-style:dashed}
+.vcols h3{font-weight:800;line-height:1.3}
+nav button{color:#56677c}
+.dim>small{color:#56677c}
+.filters select{max-width:100%;min-width:0}
+:root[data-theme="dark"] .vis{--vmuted:#a9b8ca}
+:root[data-theme="dark"] nav button,:root[data-theme="dark"] .dim>small{color:#a9b8ca}
+.vn small,.vn.ok>small,.vn.warn>small,.decision>span,.decision span{color:#4a5c71!important}
+:root[data-theme="dark"] .vn small,:root[data-theme="dark"] .decision>span,:root[data-theme="dark"] .decision span{color:#a9b8ca!important}
+:root[data-theme="dark"] .vn small{color:#e6edf5!important}
