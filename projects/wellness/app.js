@@ -28,6 +28,25 @@ const ACTIVITY = [
   ['intense', 'Intense · 6–7×/wk', 1968], ['very', 'Very intense · daily', 2190]];
 const MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
 
+// Start/finish photos from free-exercise-db (public domain, github.com/yuhonas/free-exercise-db), stored in img/.
+const FORM = {
+  'Hack Squat': { img: 'Hack_Squat', cues: ['Back and shoulders flat against the pads, feet shoulder-width', 'Lower until thighs are just below parallel', 'Drive up through your heels without locking your knees'] },
+  'Chest Press': { img: 'Leverage_Chest_Press', cues: ['Set the seat so handles line up with mid-chest', 'Chest up, shoulder blades pinched back', 'Press forward, pause, return slowly without resting the stack'] },
+  'Neutral Grip Lat Pulldown': { img: 'V-Bar_Pulldown', cues: ['Palms facing each other, thighs locked under the pad', 'Lean back slightly, chest up', 'Pull elbows down until the handle nearly touches your chest, return slowly'] },
+  'Chest Supported Row': { img: 'Lying_T-Bar_Row', cues: ['Upper chest at the top of the pad', 'Pull elbows back close to your sides', 'Squeeze your shoulder blades, lower under control — chest stays on the pad'] },
+  'Leg Extension': { img: 'Leg_Extensions', cues: ['Pad sits just above your ankles, knees in line with the machine pivot', 'Straighten your legs fully and pause a second', 'Lower slowly back to about 90°'] },
+  'Leg Press': { img: 'Leg_Press', cues: ['Feet shoulder-width in the middle of the platform', 'Lower until knees reach about 90° — lower back stays on the pad', 'Push through your heels, don\'t lock your knees at the top'] },
+  'Shoulder Press': { img: 'Leverage_Shoulder_Press', cues: ['Handles start at shoulder height, chest up', 'Press straight up without arching your lower back', 'Lower back to shoulder height under control'] },
+  'Cable Row': { img: 'Seated_Cable_Rows', cues: ['Knees slightly bent, sit tall with chest up', 'Pull the handle to your belly, elbows close to your body', 'Squeeze your back for a second, let your arms extend slowly'] },
+  'Pec Fly': { img: 'Butterfly', cues: ['Back flat on the pad, arms roughly parallel to the floor', 'Bring the handles together in a hugging arc', 'Squeeze your chest, then open slowly until you feel a stretch'] },
+  'Preacher Curl': { img: 'Machine_Preacher_Curls', cues: ['Backs of your upper arms flat on the pad', 'Curl up — only your forearms move', 'Lower slowly all the way down'] },
+  'Forward Smith Machine Lunge': { img: 'Barbell_Lunge', cues: ['Bar across your upper back, stand tall (shown with a free barbell — same movement in the Smith)', 'Step forward and lower until both knees are about 90°', 'Push through the front heel to stand back up'] },
+  'Incline Chest Press': { img: 'Leverage_Incline_Chest_Press', cues: ['Handles start near your upper chest', 'Chest up, shoulder blades pinched back', 'Press up and forward, return slowly'] },
+  'Lat Pulldown': { img: 'Wide-Grip_Lat_Pulldown', cues: ['Grip a little wider than shoulders, thighs under the pad', 'Lean back slightly, pull the bar to your upper chest', 'Drive your elbows down and back, return slowly to a full stretch'] },
+  'Leg Curl': { img: 'Seated_Leg_Curl', cues: ['Pad just above your heels, thigh pad snug above your knees', 'Curl your heels down and back as far as you can', 'Pause, then return slowly'] }
+};
+const nippard = name => `https://www.youtube.com/results?search_query=${encodeURIComponent('Jeff Nippard how to ' + name.replace('Forward Smith Machine ', 'Smith machine '))}`;
+
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const pad = n => String(n).padStart(2, '0');
@@ -137,6 +156,23 @@ function weightChart(days, mini = false) {
 }
 function signed(v, u) { if (v == null) return '—'; const s = r1(v); return `<span class="${s > 0 ? 'up' : s < 0 ? 'down' : ''}">${s > 0 ? '+' : ''}${s}</span><small> ${u}</small>`; }
 
+function formThumb(name, small) {
+  const f = FORM[name]; if (!f) return '';
+  return small ? `<img class="thumb sm" src="img/${f.img}_1.jpg" alt="" loading="lazy">`
+    : `<button class="thumb-btn" data-act="form" data-name="${esc(name)}" aria-label="How to do ${esc(name)}"><img class="thumb" src="img/${f.img}_1.jpg" alt="" loading="lazy"><span>Form</span></button>`;
+}
+function openForm(name) {
+  const f = FORM[name]; if (!f) return;
+  $('#demo-body').innerHTML = `
+    <div class="sheet-head"><h2>${esc(name)}</h2><button type="button" class="icon-btn" data-act="closedemo" aria-label="Close">✕</button></div>
+    <div class="demo-anim" aria-label="${esc(name)} movement, start to finish"><img src="img/${f.img}_0.jpg" alt="${esc(name)} start position"><img class="end" src="img/${f.img}_1.jpg" alt="${esc(name)} finish position"><span class="demo-tag"><i>Start</i><i>Finish</i></span></div>
+    <div class="demo-frames"><figure><img src="img/${f.img}_0.jpg" alt=""><figcaption>1 · Start</figcaption></figure><figure><img src="img/${f.img}_1.jpg" alt=""><figcaption>2 · Finish</figcaption></figure></div>
+    <ol class="cues">${f.cues.map(c => `<li>${esc(c)}</li>`).join('')}</ol>
+    <a class="btn block ghost" href="${nippard(name)}" target="_blank" rel="noopener">▶ Watch Jeff Nippard on YouTube</a>
+    <p class="hint" style="text-align:center;margin-top:10px">Photos: free-exercise-db (public domain)</p>`;
+  $('#demo').showModal();
+}
+
 /* ---------- views ---------- */
 const VIEWS = {};
 
@@ -230,7 +266,7 @@ VIEWS.train = () => {
   <h2 class="section-title">Program</h2>
   ${PROGRAM.map(p => `<section class="card">
     <div class="card-head"><h2>Day ${p.day} <span class="muted">· ${p.focus}</span></h2><button class="btn small ghost" data-act="start" data-day="${p.day}">Start</button></div>
-    <ul class="ex-list">${p.exercises.map(e => `<li>${esc(e.name)}<span>${e.warm}W + ${e.n} × ${e.reps[0]}–${e.reps[1]}</span></li>`).join('')}</ul>
+    <ul class="ex-list">${p.exercises.map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name">${esc(e.name)}</span></button><span>${e.warm}W + ${e.n} × ${e.reps[0]}–${e.reps[1]}</span></li>`).join('')}</ul>
     <p class="hint" style="margin:10px 0 0">5 min warm-up cardio · working sets at 2–3 RIR · rest 60–90 s · 20 min cardio after</p>
   </section>`).join('')}
   <h2 class="section-title">History</h2>
@@ -359,7 +395,7 @@ function renderSession() {
     <section class="card"><label class="check"><input type="checkbox" data-field="warmup" ${a.warmup ? 'checked' : ''}> 5 min warm-up cardio</label>
       <p class="hint" style="margin:6px 0 0 32px">97–135 bpm · jog, elliptical, row, or incline walk at 10–15%</p></section>
     ${a.exercises.map((ex, i) => `<section class="card">
-      <div class="ex-head"><h3>${esc(ex.name)}</h3><span class="pill">${ex.n} × ${ex.reps[0]}–${ex.reps[1]} · RIR 2–3</span></div>
+      <div class="ex-head">${formThumb(ex.name)}<div class="ex-title"><h3>${esc(ex.name)}</h3><span class="pill">${ex.n} × ${ex.reps[0]}–${ex.reps[1]} · RIR 2–3</span></div></div>
       ${ex.lastText ? `<p class="last">${esc(ex.lastText)}</p>` : ''}
       <p class="suggest ${ex.up ? 'up' : ''}">${ex.up ? '↑ ' : ''}${esc(ex.suggest)}</p>
       <div class="set-grid"><span>Set</span><span>${unit()}</span><span>Reps</span><span>RIR</span><span></span></div>
@@ -452,6 +488,8 @@ const ACT = {
   },
   addfood: b => openFoodSheet(b.dataset.meal),
   closesheet: () => $('#sheet').close(),
+  form: b => openForm(b.dataset.name),
+  closedemo: () => $('#demo').close(),
   fillfood: b => {
     const x = S.foods.find(f => f.id === b.dataset.id), f = $('#sheet form'); if (!x) return;
     f.name.value = x.name; f.kcal.value = x.kcal; f.p.value = x.p; f.f.value = x.f; f.c.value = x.c; f.servings.value = 1;
@@ -483,7 +521,7 @@ document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]');
   if (b && ACT[b.dataset.act]) { e.preventDefault(); ACT[b.dataset.act](b, e); }
 });
-$('#sheet').addEventListener('click', e => { if (e.target === $('#sheet')) $('#sheet').close(); });
+['#sheet', '#demo'].forEach(id => $(id).addEventListener('click', e => { if (e.target === $(id)) $(id).close(); }));
 
 document.addEventListener('submit', e => {
   const f = e.target, kind = f.dataset.form; if (!kind) return;
