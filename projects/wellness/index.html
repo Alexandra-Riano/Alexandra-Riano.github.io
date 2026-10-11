@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Wellness">
+<title>Wellness — Alex</title>
+<meta name="description" content="Alex's wellness tracker: food, macros, weight trend, and a 3-day full-body lifting program.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main id="view" class="view"></main>
+
+<button id="resume" class="resume-pill" data-act="resume" hidden><span class="pulse"></span>Workout in progress · <b>Resume</b></button>
+
+<nav class="tabbar" aria-label="Sections">
+  <a href="#today" data-tab="today"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>Today</a>
+  <a href="#food" data-tab="food"><svg viewBox="0 0 24 24"><path d="M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 21V3c-2 1-3 4-3 7h3"/></svg>Food</a>
+  <a href="#train" data-tab="train"><svg viewBox="0 0 24 24"><path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/></svg>Train</a>
+  <a href="#weight" data-tab="weight"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 3 8-8M15 7h5v5"/></svg>Weight</a>
+  <a href="#more" data-tab="more"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Plan</a>
+</nav>
+
+<section id="session" class="session" hidden aria-label="Active workout"></section>
+
+<div id="rest" class="rest" hidden>
+  <div class="rest-bar"><i id="rest-bar"></i></div>
+  <div class="rest-row">
+    <div><span id="rest-label">Rest</span><b id="rest-time">1:30</b></div>
+    <div class="rest-btns"><button data-act="rest" data-d="-15">−15</button><button data-act="rest" data-d="15">+15</button><button data-act="rest" data-d="skip">Skip</button></div>
+  </div>
+</div>
+
+<dialog id="sheet" class="sheet">
+  <form data-form="food" class="sheet-body" autocomplete="off">
+    <div class="sheet-head"><h2>Add food</h2><button type="button" class="icon-btn" data-act="closesheet" aria-label="Close">✕</button></div>
+    <div id="chips" class="chips"></div>
+    <label class="field"><span>Food</span><input name="name" placeholder="e.g. Greek yogurt" required></label>
+    <div class="grid2">
+      <label class="field"><span>Meal</span><select name="meal"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snacks</option></select></label>
+      <label class="field"><span>Servings</span><input name="servings" type="number" step="0.25" min="0.25" value="1" inputmode="decimal"></label>
+    </div>
+    <div class="grid4">
+      <label class="field"><span>Calories</span><input name="kcal" type="number" step="any" min="0" inputmode="decimal" placeholder="auto"></label>
+      <label class="field pro"><span>Protein g</span><input name="p" type="number" step="any" min="0" inputmode="decimal" placeholder="0"></label>
+      <label class="field fat"><span>Fat g</span><input name="f" type="number" step="any" min="0" inputmode="decimal" placeholder="0"></label>
+      <label class="field carb"><span>Carbs g</span><input name="c" type="number" step="any" min="0" inputmode="decimal" placeholder="0"></label>
+    </div>
+    <p class="hint">Leave calories blank and they're worked out from the macros (4/4/9 kcal per g). Values are per serving.</p>
+    <label class="check"><input type="checkbox" name="save" checked> Save to My Foods for one-tap logging</label>
+    <button class="btn block" type="submit">Log food</button>
+  </form>
+</dialog>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
