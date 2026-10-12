@@ -262,7 +262,31 @@ dialog::backdrop{background:#0a1d3166}
 .day-actions .day-start{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .day-actions .day-done.complete-day{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
 
+.listen-card{margin-top:12px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);padding:16px;display:grid;gap:12px}
+.listen-card h2{font-size:var(--fs-lg);margin:0 0 4px}
+.listen-card p{font-size:var(--fs-sm);color:var(--text-2);margin:0}
+.listen-go{width:100%;min-height:56px;justify-content:flex-start;text-align:left;padding:10px 16px;line-height:1.3}
+.listen-go .ph{font-size:24px;flex:none}
+.day-listen{width:100%;min-height:52px;margin-top:20px;border:1px solid var(--accent);border-radius:var(--r-sm);background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:var(--fs-md);display:flex;align-items:center;justify-content:center;gap:8px}
+.day-listen .ph{font-size:22px}
+#pod{position:fixed;z-index:29;left:50%;transform:translateX(-50%);bottom:calc(72px + env(safe-area-inset-bottom));width:min(100%,640px);padding:10px 16px 8px;background:var(--strong);color:var(--on-strong);border-radius:var(--r-lg) var(--r-lg) 0 0;box-shadow:var(--shadow);display:grid;gap:4px}
+#pod[hidden]{display:none}
+.pod-info{display:flex;flex-direction:column;min-width:0}
+.pod-info small{font-size:var(--fs-xs);color:var(--on-strong-2)}
+.pod-info b{font-size:var(--fs-md);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#podSeek{width:100%;accent-color:var(--ring-fill);margin:4px 0 0;height:24px}
+.pod-time{display:flex;justify-content:space-between;font-size:var(--fs-xs);color:var(--on-strong-2);font-variant-numeric:tabular-nums}
+.pod-controls{display:grid;grid-template-columns:repeat(5,1fr);align-items:center;justify-items:center}
+.pod-controls button{border:0;background:transparent;color:var(--on-strong);width:56px;height:56px;border-radius:50%;display:grid;place-items:center;position:relative}
+.pod-controls button .ph{font-size:28px}
+.pod-controls button span{position:absolute;font-size:10px;font-weight:700;top:50%;left:50%;transform:translate(-50%,-40%)}
+.pod-controls .pod-play{width:64px;height:64px;background:var(--on-strong);color:var(--strong)}
+.pod-controls .pod-play .ph{font-size:32px}
+.pod-controls .pod-rate{font-size:var(--fs-sm);font-weight:700;font-variant-numeric:tabular-nums}
+body.has-pod .page{padding-bottom:300px}
+
 @media (hover:hover){
+  .pod-controls button:not(.pod-play):hover{background:#ffffff1f}
   .icon:hover,.close:hover,.day-top button:hover,.quiz-top button:hover,.confidence button:hover:not(.selected),.ratings button:hover,.day-actions button:not(.day-start):hover{background:var(--surface-2)}
   .domain-card:hover,.continue:hover,.plan-preview:hover,.options button:hover:not(:disabled),.source-links a:hover{border-color:var(--accent)}
   .objective:hover,.term:hover,.practice-domain:hover,.result:hover,.session:hover,.week summary:hover{background:var(--surface-2)}
