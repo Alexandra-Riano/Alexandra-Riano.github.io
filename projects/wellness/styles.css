@@ -342,9 +342,9 @@ details.hist .sets b{color:var(--ink);font-weight:600}
 /* gym / tonal */
 .place-seg{display:flex;margin:2px 0 14px}
 .place-seg button{flex:1}
-.program-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:26px 0 10px}
-.program-head .section-title{margin:0 4px}
-.program-head .place-seg{margin:0;flex:none;width:170px}
+.program-head{margin:26px 0 10px}
+.program-head .section-title{margin:0 4px 10px}
+.program-head .place-seg{margin:0}
 .program-note{margin:-2px 4px 12px}
 .place-tag{display:inline-block;margin-left:8px;font-size:11px;font-weight:700;color:var(--ink);background:var(--card2);border-radius:var(--r-pill);padding:2px 8px;vertical-align:1px}
 .setup{font-size:12px;color:var(--muted)}
