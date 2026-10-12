@@ -156,6 +156,10 @@ function weightChart(days, mini = false) {
 }
 function signed(v, u) { if (v == null) return '—'; const s = r1(v); return `<span class="${s > 0 ? 'up' : s < 0 ? 'down' : ''}">${s > 0 ? '+' : ''}${s}</span><small> ${u}</small>`; }
 
+// Dumbbell-shaped button that opens a day's workout. With a label it's full width; without, a compact icon.
+function dumbbell(day, label) {
+  return `<button class="db ${label ? '' : 'mini'}" data-act="start" data-day="${day}" aria-label="Open Day ${day} workout"><i class="pl"></i><i class="pl s"></i><span class="bar">${label ? esc(label) : ''}</span><i class="pl s"></i><i class="pl"></i></button>`;
+}
 function formThumb(name, small) {
   const f = FORM[name]; if (!f) return '';
   return small ? `<img class="thumb sm" src="img/${f.img}_1.jpg" alt="" loading="lazy">`
@@ -198,7 +202,7 @@ VIEWS.today = () => {
     <div class="week-dots">${dots}</div>
     <p class="big">Day ${nd} <span>· ${p.focus}</span></p>
     <p class="muted small" style="margin-top:4px">${p.exercises.map(e => esc(e.name)).join(' · ')}</p>
-    <button class="btn block" data-act="${S.active ? 'resume' : 'start'}" data-day="${nd}">${S.active ? 'Resume workout' : `Start Day ${nd}`}</button>
+    ${S.active ? '<button class="btn block" data-act="resume">Resume workout</button>' : dumbbell(nd, `Day ${nd}`)}
   </section>
   <section class="card">
     <div class="card-head"><h2>Weight trend</h2><a class="chev" href="#weight" aria-label="Open weight">›</a></div>
@@ -252,7 +256,7 @@ VIEWS.train = () => {
   <section class="card">
     <div class="card-head"><h2>${S.active ? 'In progress' : 'Up next'}</h2><span class="muted small">${weekW}/3 this week</span></div>
     <p class="big">Day ${S.active ? S.active.day : nd} <span>· ${PROGRAM[(S.active ? S.active.day : nd) - 1].focus}</span></p>
-    <button class="btn block" data-act="${S.active ? 'resume' : 'start'}" data-day="${nd}">${S.active ? 'Resume workout' : `Start Day ${nd}`}</button>
+    ${S.active ? '<button class="btn block" data-act="resume">Resume workout</button>' : dumbbell(nd, `Day ${nd}`)}
   </section>
   <section class="card">
     <div class="card-head"><h2>Cardio</h2><span class="muted small">${weekCardio()} / ${s.cardioGoal} min this week</span></div>
@@ -265,7 +269,7 @@ VIEWS.train = () => {
   </section>
   <h2 class="section-title">Program</h2>
   ${PROGRAM.map(p => `<section class="card">
-    <div class="card-head"><h2>Day ${p.day} <span class="muted">· ${p.focus}</span></h2><button class="btn small ghost" data-act="start" data-day="${p.day}">Start</button></div>
+    <div class="card-head"><h2>Day ${p.day} <span class="muted">· ${p.focus}</span></h2>${dumbbell(p.day)}</div>
     <ul class="ex-list">${p.exercises.map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name">${esc(e.name)}</span></button><span>${e.warm}W + ${e.n} × ${e.reps[0]}–${e.reps[1]}</span></li>`).join('')}</ul>
     <p class="hint" style="margin:10px 0 0">5 min warm-up cardio · working sets at 2–3 RIR · rest 60–90 s · 20 min cardio after</p>
   </section>`).join('')}
