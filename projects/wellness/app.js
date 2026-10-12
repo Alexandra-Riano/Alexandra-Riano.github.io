@@ -214,6 +214,46 @@ function pick(e) {
   return { ...spec, slot: e.name, options: e.alts ? [e.name, ...e.alts] : null };
 }
 const dayExercises = p => p.exercises.map(pick);
+/* ---------- stretches ---------- */
+// Dynamic moves before lifting, static holds after (static stretching right before lifting can sap a little strength).
+// Built from the muscles the day's exercises actually train, so every place and swap gets matching stretches.
+const LOWER = ['quads', 'glutes', 'hams', 'adductors', 'calves'];
+const WARMUP_MOVES = [
+  { name: 'Leg Swings', part: 'Hips, hamstrings', how: '10 front-to-back and 10 side-to-side swings per leg', when: m => m.some(k => LOWER.includes(k)) },
+  { name: 'Bodyweight Squats', part: 'Quads, glutes', how: '10 slow reps to full depth', when: m => m.some(k => LOWER.includes(k)) },
+  { name: 'Arm Circles', part: 'Shoulders', how: '10 small to big circles each direction', when: m => m.some(k => !LOWER.includes(k)) },
+  { name: 'Cat-Cow', part: 'Spine, back, abs', how: '8 slow rounds on hands and knees', when: () => true }
+];
+const STRETCHES = {
+  quads: { name: 'Standing Quad Stretch', part: 'Quads', how: 'Pull one heel to your glute, knees together. 30 s each leg' },
+  glutes: { name: 'Figure-4 Stretch', part: 'Glutes', how: 'Lying down, ankle over the opposite knee, pull that thigh in. 30 s each side' },
+  hams: { name: 'Hamstring Stretch', part: 'Hamstrings', how: 'Heel on a low step, hinge forward with a flat back. 30 s each leg' },
+  adductors: { name: 'Butterfly Stretch', part: 'Inner thighs', how: 'Seated, soles together, let your knees drop. 30 s' },
+  chest: { name: 'Doorway Chest Stretch', part: 'Chest, front delts', how: 'Forearm on a door frame, step through gently. 30 s each side' },
+  fdelt: { name: 'Doorway Chest Stretch', part: 'Chest, front delts', how: 'Forearm on a door frame, step through gently. 30 s each side' },
+  lats: { name: 'Child\'s Pose Reach', part: 'Lats', how: 'Kneel, sit back on your heels, walk your hands forward and to each side. 30 s' },
+  upperback: { name: 'Thread the Needle', part: 'Upper back', how: 'On hands and knees, slide one arm under your body and rotate. 30 s each side' },
+  sdelt: { name: 'Cross-Body Shoulder Stretch', part: 'Shoulders', how: 'Pull one arm across your chest with the other. 30 s each side' },
+  rdelt: { name: 'Cross-Body Shoulder Stretch', part: 'Shoulders', how: 'Pull one arm across your chest with the other. 30 s each side' },
+  triceps: { name: 'Overhead Triceps Stretch', part: 'Triceps', how: 'Reach one hand down your back, press the elbow gently. 30 s each arm' },
+  biceps: { name: 'Wall Biceps Stretch', part: 'Biceps', how: 'Palm on a wall behind you at shoulder height, turn away. 30 s each arm' },
+  lowerback: { name: 'Knees-to-Chest', part: 'Lower back', how: 'Lying on your back, hug both knees in. 30 s' },
+  abs: { name: 'Cobra Stretch', part: 'Abs', how: 'Lying face down, press your chest up with hips down. 30 s' },
+  calves: { name: 'Wall Calf Stretch', part: 'Calves', how: 'Hands on a wall, back leg straight, heel down. 30 s each leg' }
+};
+function stretchPlan(names) {
+  const main = [...new Set(names.flatMap(n => musclesFor(n)[0]))];
+  const seen = new Set(), cool = [];
+  Object.keys(STRETCHES).forEach(k => { const st = STRETCHES[k]; if (main.includes(k) && !seen.has(st.name)) { seen.add(st.name); cool.push(st); } });
+  return { warm: WARMUP_MOVES.filter(w => w.when(main)), cool };
+}
+const stretchItem = (x, check) => `<li>${check ? `<label class="check stretch-check"><input type="checkbox" data-stretch="${esc(x.name)}" ${check.done ? 'checked' : ''}><span>` : '<span>'}<b>${esc(x.name)}</b><span class="part">${esc(x.part)}</span><small>${esc(x.how)}</small></span>${check ? '</label>' : ''}</li>`;
+function stretchBlock(p) {
+  const sp = stretchPlan(dayExercises(p).map(e => e.name));
+  return `<details class="stretches"><summary><span>${icon('stretching')}Warm-up and stretches</span><span class="muted small">${sp.warm.length + sp.cool.length}</span></summary>
+    <p class="st-title">Before you lift</p><ul class="st-list">${sp.warm.map(x => stretchItem(x)).join('')}</ul>
+    <p class="st-title">After you lift, hold each 30 s</p><ul class="st-list">${sp.cool.map(x => stretchItem(x)).join('')}</ul></details>`;
+}
 function dayMap(p) {
   const main = [...new Set(dayExercises(p).flatMap(e => musclesFor(e.name)[0]))];
   const also = [...new Set(dayExercises(p).flatMap(e => musclesFor(e.name)[1]))].filter(k => !main.includes(k));
@@ -497,6 +537,7 @@ VIEWS.train = () => {
     <div class="card-head"><h2>Day ${p.day}<span class="muted">${p.focus}</span></h2>${dumbbell(p.day)}</div>
     ${dayMap(p)}
     <ul class="ex-list">${dayExercises(p).map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name"><span class="ex-label">${esc(e.name)}</span>${FORM[e.name]?.setup && S.settings.place !== 'gym' ? `<small class="alt-note">${esc(FORM[e.name].setup)}</small>` : ''}${e.options ? `<small class="alt-note">Swap options: ${e.options.filter(o => o !== e.name).map(esc).join(', ')}</small>` : ''}</span></button><span>${e.warm}W + ${e.n} × ${e.reps[0]}-${e.reps[1]}</span></li>`).join('')}</ul>
+    ${stretchBlock(p)}
     <p class="hint" style="margin:10px 0 0">Warm up 5 min. Working sets at 2-3 RIR, 60-90 s rest. ${S.settings.place !== 'gym' ? '20 min brisk walk after if you can.' : '20 min cardio after.'}</p>
   </section>`).join('')}
   <a class="card" href="#history">
@@ -707,7 +748,8 @@ function renderSession() {
       <div style="text-align:center"><h2>Day ${a.day}</h2><p class="kicker" style="margin:0">${PLACES[a.place || 'gym'].label}, ${p.focus}</p></div>
       <button class="btn small" data-act="finish">Finish</button></header>
     <section class="card"><label class="check"><input type="checkbox" data-field="warmup" ${a.warmup ? 'checked' : ''}> 5 min warm-up cardio</label>
-      <p class="hint" style="margin:6px 0 0 32px">${a.place === 'dumbbells' ? '97-135 bpm. Brisk walk or jumping jacks, then a light set of each lift' : tonal ? '97-135 bpm. Brisk walk, jumping jacks or a Tonal warm-up' : '97-135 bpm. Jog, elliptical, row or incline walk (10-15%)'}</p></section>
+      <p class="hint" style="margin:6px 0 0 32px">${a.place === 'dumbbells' ? '97-135 bpm. Brisk walk or jumping jacks, then a light set of each lift' : tonal ? '97-135 bpm. Brisk walk, jumping jacks or a Tonal warm-up' : '97-135 bpm. Jog, elliptical, row or incline walk (10-15%)'}</p>
+      <p class="st-title">Then these moves</p><ul class="st-list">${stretchPlan(a.exercises.map(e => e.name)).warm.map(x => stretchItem(x, { done: a.stretched?.[x.name] })).join('')}</ul></section>
     ${a.exercises.map((ex, i) => `<section class="card">
       <div class="ex-head">${formThumb(ex.name)}<div class="ex-title"><h3>${esc(ex.name)}</h3><span class="pill">${ex.n} × ${ex.reps[0]}-${ex.reps[1]} @ RIR 2-3</span><span class="muscles">${musclesFor(ex.name)[0].map(k => MUSCLE_NAMES[k]).join(', ')}</span>${a.place !== 'gym' && a.place && FORM[ex.name]?.setup ? `<span class="setup">${esc(FORM[ex.name].setup)}</span>` : ''}</div></div>
       ${ex.options ? `<label class="swap">Swap <select data-swap="${i}">${ex.options.map(o => `<option ${o === ex.name ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select></label>` : ''}
@@ -717,6 +759,11 @@ function renderSession() {
       ${ex.sets.map((_, j) => setRow(i, j)).join('')}
       <button class="link" data-act="addset" data-ex="${i}">Add set</button>
     </section>`).join('')}
+    <section class="card">
+      <h3 class="st-head">Cool-down stretches</h3>
+      <p class="hint" style="margin:2px 0 6px">Hold each for 30 seconds. Easy pressure, no bouncing.</p>
+      <ul class="st-list">${stretchPlan(a.exercises.map(e => e.name)).cool.map(x => stretchItem(x, { done: a.stretched?.[x.name] })).join('')}</ul>
+    </section>
     <section class="card">
       <label class="field"><span>Post-lift cardio (minutes)</span><input type="number" inputmode="numeric" data-field="cardio" value="${esc(a.cardio)}" placeholder="20"></label>
       <p class="hint" style="margin:0">Moderate intensity, like an incline treadmill walk. Counts toward your weekly cardio goal.</p>
@@ -900,6 +947,8 @@ document.addEventListener('input', e => {
         if (r && !r.contains(document.activeElement)) r.outerHTML = setRow(+row.dataset.ex, j);
       });
     }
+  } else if (t.dataset.stretch) {
+    S.active.stretched = { ...S.active.stretched, [t.dataset.stretch]: t.checked };
   } else if (t.dataset.field) {
     S.active[t.dataset.field] = t.type === 'checkbox' ? t.checked : t.value;
   }
