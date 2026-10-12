@@ -305,3 +305,8 @@ details.hist .sets b{color:var(--ink);font-weight:600}
 .ask-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
 .ask-btns .btn{height:46px}
 .btn.danger{background:var(--bad-ink);color:#fdfdfd}
+
+/* theme toggle, top right of every tab */
+.view{position:relative}
+.theme-btn{position:absolute;top:calc(env(safe-area-inset-top) + 14px);right:16px;z-index:3;width:44px;height:44px;border-radius:50%;border:0;background:var(--card);color:var(--ink);display:grid;place-items:center;font-size:20px}
+.page-head{padding-right:52px}

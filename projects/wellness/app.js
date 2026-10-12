@@ -145,14 +145,15 @@ function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e
 let S = load(), foodDate = today(), foodOnToday = true, sessionOpen = false, restEnd = 0, restTotal = 90, weightRange = 30;
 
 const unit = () => S.settings.units;
+const isDark = () => S.settings.theme === 'dark' || (S.settings.theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
 function applyTheme() {
   const t = S.settings.theme || 'auto', root = document.documentElement;
   if (t === 'auto') root.removeAttribute('data-theme'); else root.dataset.theme = t;
-  const dark = t === 'dark' || (t === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
+  const dark = isDark();
   $$('meta[name=theme-color]').forEach(m => { m.removeAttribute('media'); m.content = dark ? '#0c0c0e' : '#f2f2f6'; });
 }
 applyTheme();
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { applyTheme(); if (typeof route === 'function' && !sessionOpen) route(true); });
 const kgToU = kg => unit() === 'lb' ? kg * 2.20462 : kg;
 const uToKg = v => unit() === 'lb' ? v / 2.20462 : v;
 const step = () => unit() === 'lb' ? 5 : 2.5;
@@ -392,10 +393,6 @@ VIEWS.more = () => {
   return `
   <header class="page-head"><h1>Plan</h1></header>
   <section class="card">
-    <div class="card-head"><h2>Appearance</h2></div>
-    <div class="setting-row"><label>Theme<small>Auto follows your phone</small></label><div class="seg">${[['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark']].map(([v, l]) => `<button class="${(s.theme || 'auto') === v ? 'on' : ''}" data-act="theme" data-t="${v}">${l}</button>`).join('')}</div></div>
-  </section>
-  <section class="card">
     <div class="card-head"><h2>Daily targets</h2></div>
     <div class="setting-row"><label for="s-act">Activity level<small>Sets calories from your plan</small></label><select id="s-act" data-setting="activity">${ACTIVITY.map(([k, l, kc]) => `<option value="${k}" ${s.activity === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
     <div class="setting-row"><label for="s-kcal">Calories<small>~250 kcal surplus for muscle gain</small></label><input id="s-kcal" type="number" data-setting="kcal" value="${s.kcal}" inputmode="numeric"></div>
@@ -431,7 +428,7 @@ function route(keepScroll) {
   const y = window.scrollY;
   if (foodOnToday) foodDate = today(); // app left open past midnight
   $$('.tabbar a').forEach(a => a.classList.toggle('on', a.dataset.tab === tab));
-  $('#view').innerHTML = VIEWS[tab]();
+  $('#view').innerHTML = `<button class="theme-btn" data-act="theme" aria-label="${isDark() ? 'Switch to light mode' : 'Switch to dark mode'}">${icon(isDark() ? 'sun' : 'moon')}</button>` + VIEWS[tab]();
   window.scrollTo(0, keepScroll ? y : 0);
   $('#resume').hidden = !S.active || sessionOpen;
   document.body.classList.toggle('has-resume', !$('#resume').hidden);
@@ -614,7 +611,7 @@ const ACT = {
   wrange: b => { weightRange = +b.dataset.d; route(true); },
   delweight: b => { S.weights = S.weights.filter(w => w.date !== b.dataset.date); save(); route(true); },
   delsaved: b => { S.foods = S.foods.filter(f => f.id !== b.dataset.id); save(); route(true); },
-  theme: b => { S.settings.theme = b.dataset.t; save(); applyTheme(); route(true); },
+  theme: () => { S.settings.theme = isDark() ? 'light' : 'dark'; save(); applyTheme(); route(true); },
   units: b => {
     const to = b.dataset.u; if (to === S.settings.units) return;
     // Lift weights are stored in the unit they were entered in, so convert them along with the label.
