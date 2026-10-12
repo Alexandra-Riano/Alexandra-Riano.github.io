@@ -149,6 +149,15 @@ const kgToU = kg => unit() === 'lb' ? kg * 2.20462 : kg;
 const uToKg = v => unit() === 'lb' ? v / 2.20462 : v;
 const step = () => unit() === 'lb' ? 5 : 2.5;
 
+// In-app confirm. The browser's own confirm pop-up is silently blocked in some in-app browsers and installed web apps.
+function ask(message, okLabel = 'OK', danger = false) {
+  return new Promise(resolve => {
+    const d = $('#ask'); $('#ask-msg').textContent = message;
+    const ok = $('#ask-ok'); ok.textContent = okLabel; ok.classList.toggle('danger', danger);
+    const onClose = () => { d.removeEventListener('close', onClose); resolve(d.returnValue === 'ok'); };
+    d.returnValue = ''; d.addEventListener('close', onClose); d.showModal(); ok.focus();
+  });
+}
 function toast(msg) {
   const t = $('#toast'); t.textContent = msg; t.classList.add('show');
   clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2200);
@@ -419,8 +428,8 @@ window.addEventListener('hashchange', () => route());
 document.addEventListener('visibilitychange', () => { if (!document.hidden && !sessionOpen) route(true); });
 
 /* ---------- workout session ---------- */
-function startWorkout(day) {
-  if (S.active && !confirm('You already have a workout in progress. Replace it?')) return;
+async function startWorkout(day) {
+  if (S.active && !(await ask('You already have a workout in progress. Replace it?', 'Replace', true))) return;
   const p = PROGRAM[day - 1];
   S.active = {
     id: uid(), day, start: Date.now(), warmup: false, cardio: '', notes: '',
@@ -437,9 +446,9 @@ function buildExercise(e) {
       .concat([...Array(e.n)].map((_, i) => ({ kind: 's', weight: sg.weight, reps: '', rir: '', done: false, ph: last?.sets[i]?.reps || '' })))
   };
 }
-function swapExercise(i, name) {
+async function swapExercise(i, name) {
   const ex = S.active.exercises[i];
-  if (ex.sets.some(s => s.done) && !confirm('Swap this exercise? Sets you checked off for it will be cleared.')) return renderSession();
+  if (ex.sets.some(s => s.done) && !(await ask('Swap this exercise? Sets you checked off for it will be cleared.', 'Swap'))) return renderSession();
   const slot = PROGRAM[S.active.day - 1].exercises.find(e => e.name === ex.slot);
   S.swaps = { ...S.swaps, [slot.name]: name === slot.name ? undefined : name };
   S.active.exercises[i] = buildExercise(pick(slot));
@@ -473,7 +482,7 @@ function renderSession() {
   const a = S.active, p = PROGRAM[a.day - 1], sc = $('#session').scrollTop;
   $('#session').innerHTML = `<div class="session-inner">
     <header class="session-head"><button class="icon-btn" data-act="minimize" aria-label="Minimize">${icon('chevron-down')}</button>
-      <div style="text-align:center"><p class="kicker" style="margin:0">Day ${a.day}: ${p.focus}</p><h2 id="elapsed">0:00</h2></div>
+      <div style="text-align:center"><h2>Day ${a.day}</h2><p class="kicker" style="margin:0">${p.focus}</p></div>
       <button class="btn small" data-act="finish">Finish</button></header>
     <section class="card"><label class="check"><input type="checkbox" data-field="warmup" ${a.warmup ? 'checked' : ''}> 5 min warm-up cardio</label>
       <p class="hint" style="margin:6px 0 0 32px">97-135 bpm. Jog, elliptical, row or incline walk (10-15%)</p></section>
@@ -495,26 +504,25 @@ function renderSession() {
     <div style="text-align:center"><button class="link danger" data-act="discard">Discard workout</button></div>
   </div>`;
   $('#session').scrollTop = sc;
-  tickElapsed();
 }
-function tickElapsed() {
-  if (!sessionOpen || !S.active) return;
-  const s = Math.floor((Date.now() - S.active.start) / 1000), el = $('#elapsed');
-  if (el) el.textContent = s >= 3600 ? `${Math.floor(s / 3600)}:${pad(Math.floor(s % 3600 / 60))}:${pad(s % 60)}` : mmss(s);
-}
-function finishWorkout() {
+let finishing = false;
+async function finishWorkout() {
   const a = S.active;
-  if (!a) return;
-  if (!a.exercises.some(e => e.sets.some(s => s.done)) && !confirm('No sets are checked off. Finish anyway?')) return;
-  const w = {
-    id: a.id, day: a.day, date: iso(a.start), start: a.start, end: Date.now(), warmup: a.warmup, cardio: +a.cardio || 0, notes: a.notes,
-    exercises: a.exercises.map(e => ({ name: e.name, reps: e.reps, sets: e.sets.filter(s => s.done).map(({ kind, weight, reps, rir }) => ({ kind, weight, reps, rir })) }))
-  };
-  S.workouts.push(w);
-  if (w.cardio > 0) S.cardio.push({ id: uid(), date: w.date, minutes: w.cardio, type: 'Post-lift cardio', workout: w.id });
-  S.active = null; save(); stopRest();
-  location.hash = '#train'; closeSession();
-  toast(`Day ${w.day} logged. ${fmt(volume(w))} ${unit()} total volume`);
+  if (!a || finishing) return;
+  finishing = true;
+  try {
+    if (!a.exercises.some(e => e.sets.some(s => s.done)) && !(await ask('No sets are checked off. Finish anyway?', 'Finish'))) return;
+    if (S.active !== a) return;
+    const w = {
+      id: a.id, day: a.day, date: iso(a.start), start: a.start, end: Date.now(), warmup: a.warmup, cardio: +a.cardio || 0, notes: a.notes,
+      exercises: a.exercises.map(e => ({ name: e.name, reps: e.reps, sets: e.sets.filter(s => s.done).map(({ kind, weight, reps, rir }) => ({ kind, weight, reps, rir })) }))
+    };
+    S.workouts.push(w);
+    if (w.cardio > 0) S.cardio.push({ id: uid(), date: w.date, minutes: w.cardio, type: 'Post-lift cardio', workout: w.id });
+    S.active = null; save(); stopRest();
+    location.hash = '#train'; closeSession();
+    toast(`Day ${w.day} logged. ${fmt(volume(w))} ${unit()} total volume`);
+  } finally { finishing = false; }
 }
 
 /* ---------- rest timer ---------- */
@@ -528,7 +536,7 @@ function updateRest() {
   $('#rest-label').textContent = left ? 'Rest' : 'Rest done. Next set';
   if (!left) { restEnd = 0; navigator.vibrate?.([200, 100, 200]); setTimeout(() => { if (!restEnd) $('#rest').hidden = true; }, 4000); }
 }
-setInterval(() => { updateRest(); tickElapsed(); }, 250);
+setInterval(updateRest, 250);
 
 /* ---------- food sheet ---------- */
 function openFoodSheet(meal) {
@@ -547,7 +555,7 @@ const ACT = {
   resume: () => openSession(),
   minimize: () => closeSession(),
   finish: () => finishWorkout(),
-  discard: () => { if (confirm('Discard this workout? Nothing will be saved.')) { S.active = null; save(); stopRest(); closeSession(); } },
+  discard: async () => { if (await ask('Discard this workout? Nothing will be saved.', 'Discard', true)) { S.active = null; save(); stopRest(); closeSession(); } },
   tick: b => {
     const row = b.closest('.set-row'), i = +row.dataset.ex, j = +row.dataset.set, s = S.active.exercises[i].sets[j];
     if (!s.done) {
@@ -586,8 +594,8 @@ const ACT = {
     save(); route(true); toast('Copied from the day before');
   },
   fdate: b => { const d = addDays(foodDate, +b.dataset.d); if (d <= today()) { foodDate = d; foodOnToday = d === today(); route(); } },
-  delworkout: b => {
-    if (!confirm('Delete this workout from your history?')) return;
+  delworkout: async b => {
+    if (!(await ask('Delete this workout from your history?', 'Delete', true))) return;
     S.workouts = S.workouts.filter(w => w.id !== b.dataset.id);
     S.cardio = S.cardio.filter(c => c.workout !== b.dataset.id); save(); route(true);
   },
@@ -608,7 +616,7 @@ const ACT = {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `wellness-backup-${today()}.json`;
     a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   },
-  reset: () => { if (confirm('Erase all food, weight and workout data on this device?') && confirm('Really erase everything? Export a backup first if unsure.')) { S = defaults(); save(); route(); toast('All data reset'); } }
+  reset: async () => { if (await ask('Erase all food, weight and workout data on this device?', 'Erase', true) && await ask('Really erase everything? Export a backup first if unsure.', 'Erase everything', true)) { S = defaults(); save(); route(); toast('All data reset'); } }
 };
 
 document.addEventListener('click', e => {

@@ -291,3 +291,12 @@ details.hist .sets b{color:var(--ink);font-weight:600}
 }
 .has-resume .fab{bottom:calc(var(--tab) + env(safe-area-inset-bottom) + 72px)}
 .has-resume .view{padding-bottom:calc(var(--tab) + env(safe-area-inset-bottom) + 150px)}
+
+/* in-app confirm */
+.ask{border:0;padding:0;width:min(340px,calc(100% - 32px));border-radius:var(--r-card);background:var(--card);color:var(--ink);box-shadow:0 20px 50px var(--shadow)}
+.ask::backdrop{background:rgba(12,12,14,.45)}
+.ask form{padding:20px}
+.ask p{font-size:16px;font-weight:600;line-height:1.4}
+.ask-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
+.ask-btns .btn{height:46px}
+.btn.danger{background:var(--bad-ink);color:#fdfdfd}
