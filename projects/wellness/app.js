@@ -331,11 +331,7 @@ VIEWS.food = () => {
 
 VIEWS.train = () => {
   const nd = nextDay(), ws = weekStart(), weekW = S.workouts.filter(w => w.date >= ws).length, s = S.settings;
-  const hist = sortedWorkouts().slice(0, 30).map(w => `
-    <details class="hist"><summary><div><b>Day ${w.day}: ${PROGRAM[w.day - 1].focus}</b><span class="muted small">${shortDate(w.date)}, ${Math.max(1, Math.round((w.end - w.start) / 60000))} min${w.cardio ? `, ${w.cardio} min cardio` : ''}</span></div><span class="pill">${fmt(volume(w))} ${unit()}</span></summary>
-      <div class="sets">${w.exercises.filter(e => e.sets.length).map(e => `<p><b>${esc(e.name)}</b>: ${e.sets.filter(x => x.kind === 's').map(x => `${x.weight || 0}×${x.reps || 0}${x.rir !== '' ? ` @${x.rir}` : ''}`).join(', ')}</p>`).join('')}
-      ${w.notes ? `<p>${icon('notes')} ${esc(w.notes)}</p>` : ''}<button class="link danger" data-act="delworkout" data-id="${w.id}">Delete workout</button></div>
-    </details>`).join('');
+  const last = sortedWorkouts()[0];
   return `
   <header class="page-head"><h1>Training</h1></header>
   <section class="card">
@@ -359,8 +355,75 @@ VIEWS.train = () => {
     <ul class="ex-list">${dayExercises(p).map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name">${esc(e.name)}${e.options ? `<small class="alt-note">Swap options: ${e.options.filter(o => o !== e.name).map(esc).join(', ')}</small>` : ''}</span></button><span>${e.warm}W + ${e.n} × ${e.reps[0]}-${e.reps[1]}</span></li>`).join('')}</ul>
     <p class="hint" style="margin:10px 0 0">Warm up 5 min. Working sets at 2-3 RIR, 60-90 s rest. 20 min cardio after.</p>
   </section>`).join('')}
-  <h2 class="section-title">History</h2>
-  <section class="card">${hist || '<p class="empty">Finished workouts show up here.</p>'}</section>`;
+  <a class="card" href="#history">
+    <div class="card-head" style="margin:0"><div><h2>History</h2><p class="muted small">${last ? `Last: Day ${last.day}, ${shortDate(last.date)}` : 'Finished workouts show up here'}</p></div><span class="chev">${icon('chevron-right')}</span></div>
+  </a>`;
+};
+
+/* ---------- history ---------- */
+let historyMode = 'workouts';
+// Per exercise, the heaviest working-set weight seen before each workout (chronological), for PR badges.
+function prMap() {
+  const best = {}, prs = new Set();
+  [...S.workouts].sort((a, b) => a.end - b.end).forEach(w => w.exercises.forEach(e => {
+    const top = Math.max(0, ...e.sets.filter(x => x.kind === 's').map(x => +x.weight || 0));
+    if (top > 0 && best[e.name] !== undefined && top > best[e.name]) prs.add(w.id + '|' + e.name);
+    if (top > 0) best[e.name] = Math.max(best[e.name] || 0, top);
+  }));
+  return prs;
+}
+const setChip = x => `<span class="chip-set ${x.kind === 'w' ? 'warm' : ''}">${x.kind === 'w' ? '<i>W</i>' : ''}<b>${esc(x.weight || 0)}</b> × ${esc(x.reps || 0)}${x.kind === 's' && x.rir !== '' && x.rir != null ? `<small>RIR ${esc(x.rir)}</small>` : ''}</span>`;
+function workoutCard(w, prs) {
+  const done = w.exercises.filter(e => e.sets.length);
+  const sets = done.reduce((a, e) => a + e.sets.filter(x => x.kind === 's').length, 0);
+  const mins = Math.max(1, Math.round((w.end - w.start) / 60000));
+  return `<article class="card hcard">
+    <div class="card-head"><div><h2>${prettyDate(w.date, { weekday: 'short', month: 'short', day: 'numeric' })}</h2><p class="muted small">Day ${w.day}: ${PROGRAM[w.day - 1]?.focus || ''}</p></div><span class="muted small">${mins} min</span></div>
+    <div class="hstats"><div><b>${fmt(volume(w))}</b><span>${unit()} volume</span></div><div><b>${sets}</b><span>working sets</span></div><div><b>${w.cardio || 0}</b><span>min cardio</span></div></div>
+    ${done.length ? done.map(e => `<div class="hex">
+      <div class="hex-name">${formThumb(e.name, true)}<b>${esc(e.name)}</b>${prs.has(w.id + '|' + e.name) ? `<span class="pr">${icon('trophy')}PR</span>` : ''}</div>
+      <div class="chip-row">${e.sets.map(setChip).join('')}</div></div>`).join('') : '<p class="empty">No sets logged in this workout.</p>'}
+    ${w.notes ? `<p class="hnote">${icon('notes')}<span>${esc(w.notes)}</span></p>` : ''}
+    <button class="link danger" data-act="delworkout" data-id="${w.id}">Delete workout</button>
+  </article>`;
+}
+function exerciseSummaries() {
+  const by = {};
+  [...S.workouts].sort((a, b) => a.end - b.end).forEach(w => w.exercises.forEach(e => {
+    const work = e.sets.filter(x => x.kind === 's'); if (!work.length) return;
+    (by[e.name] ??= []).push({ date: w.date, end: w.end, sets: work, top: Math.max(0, ...work.map(x => +x.weight || 0)) });
+  }));
+  return Object.entries(by).map(([name, sessions]) => {
+    const bestSet = sessions.flatMap(s => s.sets).reduce((b, x) => (+x.weight || 0) > (+b.weight || 0) || ((+x.weight || 0) === (+b.weight || 0) && +x.reps > +b.reps) ? x : b);
+    return { name, sessions, bestSet, lastEnd: sessions.at(-1).end };
+  }).sort((a, b) => b.lastEnd - a.lastEnd);
+}
+// Change in top working weight from the first logged session to the latest.
+function progress(sessions) {
+  if (sessions.length < 2) return `<div class="prog"><span class="muted small">Progress</span><b class="muted">First session</b></div>`;
+  const d = r1(sessions.at(-1).top - sessions[0].top);
+  return `<div class="prog"><span class="muted small">Since ${shortDate(sessions[0].date)}</span><b class="${d > 0 ? 'up' : d < 0 ? 'down' : 'muted'}">${d > 0 ? '+' : ''}${d === 0 ? 'Same weight' : `${d} ${unit()}`}</b></div>`;
+}
+VIEWS.history = () => {
+  const seg = `<div class="seg hist-seg">${[['workouts', 'Workouts'], ['exercises', 'Exercises']].map(([k, l]) => `<button class="${historyMode === k ? 'on' : ''}" data-act="hmode" data-m="${k}">${l}</button>`).join('')}</div>`;
+  if (!S.workouts.length) return `<header class="page-head"><h1>History</h1></header>${seg}
+    <section class="card"><p class="empty" style="margin:0">No workouts yet. Finish a workout and every exercise, set and weight shows up here.</p></section>`;
+  let body;
+  if (historyMode === 'exercises') {
+    body = exerciseSummaries().map(x => `<article class="card hcard">
+      <div class="hex-name">${formThumb(x.name, true)}<b>${esc(x.name)}</b></div>
+      <div class="ex-sum"><div><span class="muted small">Best set</span><b>${esc(x.bestSet.weight || 0)} ${unit()} × ${esc(x.bestSet.reps || 0)}</b></div>${progress(x.sessions)}</div>
+      ${[...x.sessions].reverse().slice(0, 6).map(s => `<div class="sess"><span class="muted small">${shortDate(s.date)}</span><div class="chip-row">${s.sets.map(setChip).join('')}</div></div>`).join('')}
+    </article>`).join('') || '<section class="card"><p class="empty" style="margin:0">No working sets logged yet.</p></section>';
+  } else {
+    const prs = prMap(); let month = '';
+    body = sortedWorkouts().map(w => {
+      const m = prettyDate(w.date, { month: 'long', year: 'numeric' });
+      const headr = m !== month ? `<h2 class="section-title">${m}</h2>` : ''; month = m;
+      return headr + workoutCard(w, prs);
+    }).join('');
+  }
+  return `<header class="page-head"><h1>History</h1></header>${seg}${body}`;
 };
 
 VIEWS.weight = () => {
@@ -423,7 +486,7 @@ VIEWS.more = () => {
 };
 
 /* ---------- routing ---------- */
-const TABS = ['today', 'food', 'train', 'weight', 'more'];
+const TABS = ['today', 'food', 'train', 'history', 'weight', 'more'];
 function route(keepScroll) {
   const h = location.hash.slice(1), tab = TABS.includes(h) ? h : 'today';
   const y = window.scrollY;
@@ -613,6 +676,7 @@ const ACT = {
   delweight: b => { S.weights = S.weights.filter(w => w.date !== b.dataset.date); save(); route(true); },
   delsaved: b => { S.foods = S.foods.filter(f => f.id !== b.dataset.id); save(); route(true); },
   theme: () => { S.settings.theme = isDark() ? 'light' : 'dark'; save(); applyTheme(); route(true); },
+  hmode: b => { historyMode = b.dataset.m; route(true); },
   units: b => {
     const to = b.dataset.u; if (to === S.settings.units) return;
     // Lift weights are stored in the unit they were entered in, so convert them along with the label.

@@ -310,3 +310,31 @@ details.hist .sets b{color:var(--ink);font-weight:600}
 .view{position:relative}
 .theme-btn{position:absolute;top:calc(env(safe-area-inset-top) + 14px);right:16px;z-index:3;width:44px;height:44px;border-radius:50%;border:0;background:var(--card);color:var(--ink);display:grid;place-items:center;font-size:20px}
 .page-head{padding-right:52px}
+
+/* history */
+.hist-seg{display:flex;margin:0 0 14px}
+.hist-seg button{flex:1}
+.hcard .card-head{align-items:flex-start}
+.hstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
+.hstats>div{background:var(--card2);border-radius:var(--r-ctl);padding:10px}
+.hstats b{display:block;font-size:18px;font-weight:800;letter-spacing:-.02em}
+.hstats span{font-size:11px;color:var(--muted)}
+.hex{padding:12px 0;border-top:1px solid var(--line)}
+.hstats+.hex{border-top:0}
+.hex-name{display:flex;align-items:center;gap:10px;font-size:15px}
+.hex-name b{flex:1;min-width:0;font-weight:700}
+.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip-set{display:inline-flex;align-items:baseline;gap:4px;background:var(--card2);border-radius:var(--r-pill);padding:6px 10px;font-size:13px}
+.chip-set b{font-weight:700}
+.chip-set small{color:var(--muted);font-size:11px;margin-left:2px}
+.chip-set.warm{color:var(--muted)}
+.chip-set.warm b{font-weight:600}
+.chip-set i{font-style:normal;font-weight:700;font-size:11px;color:var(--fat-ink)}
+.pr{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--card));border-radius:var(--r-pill);padding:3px 8px}
+.hnote{display:flex;gap:6px;align-items:flex-start;font-size:13px;color:var(--muted);padding-top:10px;border-top:1px solid var(--line)}
+.ex-sum{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 4px}
+.ex-sum b{display:block;font-size:18px;font-weight:800;letter-spacing:-.02em}
+.prog{text-align:right}
+.sess{padding:10px 0;border-top:1px solid var(--line)}
+.sess .chip-row{margin-top:6px}
+.tabbar a{max-width:96px}
