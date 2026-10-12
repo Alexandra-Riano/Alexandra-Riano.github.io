@@ -1,6 +1,6 @@
 'use strict';
 const KEY = 'alex-wellness-v1';
-const APP_VERSION = 28; // keep in step with ?v= in index.html and CACHE in service-worker.js
+const APP_VERSION = 29; // keep in step with ?v= in index.html and CACHE in service-worker.js
 
 // From "Alexandra Riano Wellness Plan" (Alex Alvarez, ATC), 1st microcycle, 3 full-body days.
 // warm = warm-up sets, n = working sets, reps = target range. All working sets at 2-3 RIR, 60-90 s rest.
@@ -58,6 +58,7 @@ const TONAL = [
     { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] }
 ];
 // Free weights only: dumbbells plus an adjustable bench. Same day numbers as the other programs.
+// No incline bench or chest-support pad needed, just a flat bench.
 // All A or S tier on Nippard's lists except Goblet Squat (B): no non-lunge dumbbell quad move is ranked A/S,
 // so Bulgarian Split Squat (S) is offered as its swap for when lunges are on the menu. Log the weight of ONE dumbbell.
 const DUMBBELL = [
@@ -71,13 +72,13 @@ const DUMBBELL = [
   { day: 2, focus: 'Full body B', exercises: [
     { name: 'Dumbbell Romanian Deadlift', warm: 0, n: 3, reps: [8, 10] },
     { name: 'Seated Dumbbell Shoulder Press', warm: 0, n: 3, reps: [8, 10] },
-    { name: 'Chest-Supported Dumbbell Row', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'One-Arm Dumbbell Row', warm: 0, n: 3, reps: [10, 12], alts: ['Kroc Row'] },
     { name: 'Dumbbell Fly', warm: 0, n: 3, reps: [10, 12] },
-    { name: 'Dumbbell Preacher Curl', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'Standing Dumbbell Curl', warm: 0, n: 3, reps: [10, 12], alts: ['Lying Dumbbell Curl'] },
     { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] },
   { day: 3, focus: 'Full body C', exercises: [
     { name: 'Goblet Squat', warm: 0, n: 3, reps: [8, 12], alts: ['Bulgarian Split Squat'] },
-    { name: 'Incline Dumbbell Press', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Deficit Push-Up', warm: 0, n: 3, reps: [8, 12], bw: true, alts: ['Flat Dumbbell Press'] },
     { name: 'Dumbbell Pullover', warm: 0, n: 3, reps: [10, 12] },
     { name: 'Single-Leg Dumbbell Hip Thrust', warm: 0, n: 3, reps: [10, 12] },
     { name: 'Hammer Curl', warm: 0, n: 3, reps: [10, 12] },
@@ -91,7 +92,10 @@ const planOf = w => daysFor(w.place)[w.day - 1];
 const ALTS = {
   '45° Back Extension': { warm: 0, n: 3, reps: [10, 15] },
   'Machine Hip Thrust': { warm: 0, n: 3, reps: [8, 12] },
-  'Bulgarian Split Squat': { warm: 0, n: 3, reps: [8, 10] }
+  'Bulgarian Split Squat': { warm: 0, n: 3, reps: [8, 10] },
+  'Kroc Row': { warm: 0, n: 2, reps: [12, 20] },
+  'Lying Dumbbell Curl': { warm: 0, n: 3, reps: [10, 12] },
+  'Flat Dumbbell Press': { warm: 0, n: 3, reps: [8, 10] }
 };
 const MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
 
@@ -115,14 +119,15 @@ const FORM = {
   'Lean-In Lateral Raise': { img: 'One-Arm_Side_Laterals', setup: 'One dumbbell, hold the bench or a post with your free hand', cues: ['Lean your body away from the post so your working arm hangs free', 'Raise the dumbbell out to the side, leading with the elbow, to shoulder height', 'Lower slowly. Do all reps, then switch arms'] },
   'Dumbbell Skullcrusher': { img: 'Lying_Dumbbell_Tricep_Extension', setup: 'Two dumbbells, flat bench', cues: ['Lie back with arms straight over your shoulders, palms facing each other', 'Bend only at the elbows to lower the dumbbells beside your head', 'Straighten your arms without moving your upper arms'] },
   'Dumbbell Romanian Deadlift': { img: 'Stiff-Legged_Dumbbell_Deadlift', setup: 'Two dumbbells', cues: ['Soft knees, push your hips straight back', 'Slide the dumbbells down your thighs until you feel a big hamstring stretch', 'Squeeze your glutes to stand tall. Keep your back flat'] },
-  'Seated Dumbbell Shoulder Press': { img: 'Dumbbell_Shoulder_Press', setup: 'Two dumbbells, bench upright', cues: ['Sit tall with back supported, dumbbells at shoulder height', 'Press overhead until your arms are almost straight', 'Lower slowly back to shoulder height'] },
-  'Chest-Supported Dumbbell Row': { img: 'Dumbbell_Incline_Row', setup: 'Two dumbbells, bench at about 30°, lie face down', cues: ['Chest on the pad, arms hanging straight down', 'Row the dumbbells toward your hips, squeezing your shoulder blades', 'Lower to a full stretch without lifting your chest off the pad'] },
+  'Seated Dumbbell Shoulder Press': { img: 'Dumbbell_Shoulder_Press', setup: 'Two dumbbells, sit on the end of a flat bench or a sturdy chair', cues: ['Sit tall with your core braced, dumbbells at shoulder height', 'Press overhead until your arms are almost straight', 'Lower slowly back to shoulder height'] },
   'Dumbbell Fly': { img: 'Dumbbell_Flyes', setup: 'Two dumbbells, flat bench', cues: ['Arms over your chest with a slight bend in the elbows', 'Open wide in an arc until you feel a deep chest stretch', 'Hug the dumbbells back together over your chest'] },
-  'Dumbbell Preacher Curl': { img: 'Two-Arm_Dumbbell_Preacher_Curl', setup: 'Dumbbells, bench back set high, arm over the top', cues: ['Rest the back of your upper arm on the bench pad', 'Curl up, only your forearm moves', 'Lower slowly all the way to a full stretch'] },
-  'Incline Dumbbell Press': { img: 'Incline_Dumbbell_Press', setup: 'Two dumbbells, bench at about 30°', cues: ['Shoulder blades pinched, dumbbells beside your upper chest', 'Press up over your shoulders', 'Lower slowly to a deep stretch'] },
   'Dumbbell Pullover': { img: 'Bent-Arm_Dumbbell_Pullover', setup: 'One dumbbell, lie across or along the bench', cues: ['Hold one dumbbell with both hands over your chest, elbows slightly bent', 'Lower it back behind your head until your lats and chest stretch', 'Pull it back over your chest using your lats'] },
   'Single-Leg Dumbbell Hip Thrust': { img: 'Single_Leg_Glute_Bridge', setup: 'One dumbbell on your hip, upper back on the bench', cues: ['Upper back on the bench, one foot planted, dumbbell resting on that hip (photo shows the floor version)', 'Drive the hip up until your body is straight from shoulder to knee', 'Squeeze for a second, lower slowly. Then switch legs'] },
   'Hammer Curl': { img: 'Hammer_Curls', setup: 'Two dumbbells, palms facing in', cues: ['Stand tall, palms facing your body', 'Curl up without swinging, elbows by your sides', 'Lower slowly to straight arms'] },
+  'Kroc Row': { img: 'One-Arm_Dumbbell_Row', setup: 'One heavy dumbbell, free hand on the bench or your knee', cues: ['Set up like a one-arm row but stagger your feet and use a heavier dumbbell (photo shows the strict version)', 'Row hard toward your hip for high reps; a little body movement is fine late in the set', 'Lower to a full stretch. Do all reps, then switch arms'] },
+  'Standing Dumbbell Curl': { img: 'Dumbbell_Bicep_Curl', setup: 'Two dumbbells, standing', cues: ['Stand tall, palms facing forward, elbows by your sides', 'Curl both dumbbells up without swinging', 'Lower slowly to straight arms'] },
+  'Lying Dumbbell Curl': { img: 'Lying_Supine_Dumbbell_Curl', setup: 'Two dumbbells, lie on a flat bench, arms hanging down', cues: ['Lie on your back on the bench and let your arms hang straight down past it', 'Curl up while keeping your upper arms pointing at the floor', 'Lower slowly into a deep biceps stretch'] },
+  'Deficit Push-Up': { img: 'Pushups', setup: 'Two dumbbells on the floor as handles', cues: ['Grip two dumbbells on the floor as handles so your chest can sink below your hands (photo shows a regular push-up)', 'Lower until your chest is between the dumbbells, body in a straight line', 'Push up. Too hard? Do them from your knees'] },
   'Machine Hip Abduction': { img: 'Thigh_Abductor', cues: ['Sit tall with the pads on the outside of your knees', 'Push your knees out as wide as you can and pause a second', 'Return slowly. Lean your torso slightly forward to hit more of your glutes'] },
   '45° Back Extension': { img: 'Hyperextensions_Back_Extensions', cues: ['Set the pad so it sits just below your hip crease', 'Hinge at the hips and lower your chest toward the floor', 'Squeeze your glutes to come up to a straight line. Don\'t arch past it'] },
   'Cable Squat': { setup: 'Both handles, arms low, handles held at your shoulders', cues: ['Face Tonal, hold a handle at each shoulder with elbows tucked', 'Sit down between your heels until thighs reach parallel, chest tall', 'Drive up through mid-foot. No photo yet: it looks like a goblet squat with a handle in each hand'] },
@@ -164,13 +169,14 @@ const MUSCLES = {
   'Dumbbell Skullcrusher': [['triceps'], []],
   'Dumbbell Romanian Deadlift': [['hams', 'glutes'], ['lowerback']],
   'Seated Dumbbell Shoulder Press': [['fdelt'], ['sdelt', 'triceps']],
-  'Chest-Supported Dumbbell Row': [['upperback'], ['lats', 'rdelt', 'biceps']],
   'Dumbbell Fly': [['chest'], ['fdelt']],
-  'Dumbbell Preacher Curl': [['biceps'], ['forearms']],
-  'Incline Dumbbell Press': [['chest'], ['fdelt', 'triceps']],
   'Dumbbell Pullover': [['lats'], ['chest', 'triceps']],
   'Single-Leg Dumbbell Hip Thrust': [['glutes'], ['hams']],
   'Hammer Curl': [['biceps'], ['forearms']],
+  'Kroc Row': [['lats', 'upperback'], ['rdelt', 'biceps', 'forearms']],
+  'Standing Dumbbell Curl': [['biceps'], ['forearms']],
+  'Lying Dumbbell Curl': [['biceps'], ['forearms']],
+  'Deficit Push-Up': [['chest'], ['fdelt', 'triceps', 'abs']],
   'Machine Hip Abduction': [['glutes'], []],
   'Dragon Fly': [['abs'], ['obliques']],
   '45° Back Extension': [['glutes', 'hams'], ['lowerback']],
@@ -212,7 +218,7 @@ function bodyMap(main, also, compact) {
 // The exercise actually used for a program slot (respects a saved swap).
 function pick(e) {
   const chosen = S.swaps?.[e.name];
-  const spec = chosen && ALTS[chosen] ? { ...ALTS[chosen], name: chosen } : e;
+  const spec = chosen && ALTS[chosen] && e.alts?.includes(chosen) ? { ...ALTS[chosen], name: chosen } : e;
   return { ...spec, slot: e.name, options: e.alts ? [e.name, ...e.alts] : null };
 }
 const extraKey = (place, day) => `${place || 'gym'}-${day}`;
@@ -630,7 +636,7 @@ VIEWS.train = () => {
     </form>
   </section>
   <div class="program-head"><h2 class="section-title">${PLACES[S.settings.place].label} program</h2>${placePicker()}</div>
-  ${S.settings.place === 'tonal' ? '<p class="hint program-note">Same day numbers as the gym, so you can mix: Day 1 at the gym, Day 2 on Tonal. Moves not in the Tonal library can be done in Free Lift.</p>' : S.settings.place === 'dumbbells' ? '<p class="hint program-note">Dumbbells plus an adjustable bench. Same day numbers as the other programs, so you can mix. Log the weight of one dumbbell.</p>' : ''}
+  ${S.settings.place === 'tonal' ? '<p class="hint program-note">Same day numbers as the gym, so you can mix: Day 1 at the gym, Day 2 on Tonal. Moves not in the Tonal library can be done in Free Lift.</p>' : S.settings.place === 'dumbbells' ? '<p class="hint program-note">Dumbbells plus a flat bench. Same day numbers as the other programs, so you can mix. Log the weight of one dumbbell.</p>' : ''}
   ${daysFor(S.settings.place).map(p => `<section class="card">
     <div class="card-head"><h2>Day ${p.day}<span class="muted">${p.focus}</span></h2>${dumbbell(p.day)}</div>
     ${dayMap(p)}
