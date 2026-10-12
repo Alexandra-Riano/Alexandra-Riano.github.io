@@ -369,3 +369,8 @@ details.stretches summary>span:first-child{display:flex;align-items:center;gap:8
 .st-list small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
 .stretch-check{align-items:flex-start;min-height:0}
 .stretch-check input{margin-top:2px}
+.st-item{display:flex;align-items:center;gap:10px}
+.st-box{width:22px;height:22px;flex:none;accent-color:var(--good)}
+.st-thumb{flex:none;border:0;padding:0;background:none;border-radius:var(--r-ctl);width:44px;height:44px;display:grid;place-items:center}
+.st-thumb .thumb.sm{width:44px;height:44px}
+.st-text{flex:1;min-width:0;border:0;background:none;padding:0;text-align:left;font-size:14px;min-height:44px}

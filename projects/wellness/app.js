@@ -219,35 +219,50 @@ const dayExercises = p => p.exercises.map(pick);
 // Built from the muscles the day's exercises actually train, so every place and swap gets matching stretches.
 const LOWER = ['quads', 'glutes', 'hams', 'adductors', 'calves'];
 const WARMUP_MOVES = [
-  { name: 'Leg Swings', part: 'Hips, hamstrings', how: '10 front-to-back and 10 side-to-side swings per leg', when: m => m.some(k => LOWER.includes(k)) },
-  { name: 'Bodyweight Squats', part: 'Quads, glutes', how: '10 slow reps to full depth', when: m => m.some(k => LOWER.includes(k)) },
-  { name: 'Arm Circles', part: 'Shoulders', how: '10 small to big circles each direction', when: m => m.some(k => !LOWER.includes(k)) },
-  { name: 'Cat-Cow', part: 'Spine, back, abs', how: '8 slow rounds on hands and knees', when: () => true }
+  { name: 'Leg Swings', img: 'Front_Leg_Raises', part: 'Hips, hamstrings', keys: ['hams', 'glutes'], how: '10 swings each way, each leg', cues: ['Hold a wall or chair for balance, stand tall', 'Swing one straight leg forward and back, a little higher each time', 'Do 10, then 10 side to side, then switch legs'], when: m => m.some(k => LOWER.includes(k)) },
+  { name: 'Bodyweight Squats', img: 'Bodyweight_Squat', part: 'Quads, glutes', keys: ['quads', 'glutes'], how: '10 slow reps to full depth', cues: ['Feet shoulder-width, hands behind your head or in front', 'Sit down slowly as deep as is comfortable, chest tall', 'Stand back up. 10 slow reps'], when: m => m.some(k => LOWER.includes(k)) },
+  { name: 'Arm Circles', img: 'Arm_Circles', part: 'Shoulders', keys: ['sdelt', 'fdelt', 'rdelt'], how: '10 small to big circles each way', cues: ['Arms straight out to the sides at shoulder height', 'Make small circles, getting bigger each time', '10 forward, then 10 backward'], when: m => m.some(k => !LOWER.includes(k)) },
+  { name: 'Cat-Cow', img: 'Cat_Stretch', part: 'Spine, back, abs', keys: ['upperback', 'lowerback', 'abs'], how: '8 slow rounds on hands and knees', cues: ['Hands under shoulders, knees under hips', 'Round your back up toward the ceiling and tuck your chin', 'Then let your belly drop and look up. 8 slow rounds'], when: () => true }
 ];
-const STRETCHES = {
-  quads: { name: 'Standing Quad Stretch', part: 'Quads', how: 'Pull one heel to your glute, knees together. 30 s each leg' },
-  glutes: { name: 'Figure-4 Stretch', part: 'Glutes', how: 'Lying down, ankle over the opposite knee, pull that thigh in. 30 s each side' },
-  hams: { name: 'Hamstring Stretch', part: 'Hamstrings', how: 'Heel on a low step, hinge forward with a flat back. 30 s each leg' },
-  adductors: { name: 'Butterfly Stretch', part: 'Inner thighs', how: 'Seated, soles together, let your knees drop. 30 s' },
-  chest: { name: 'Doorway Chest Stretch', part: 'Chest, front delts', how: 'Forearm on a door frame, step through gently. 30 s each side' },
-  fdelt: { name: 'Doorway Chest Stretch', part: 'Chest, front delts', how: 'Forearm on a door frame, step through gently. 30 s each side' },
-  lats: { name: 'Child\'s Pose Reach', part: 'Lats', how: 'Kneel, sit back on your heels, walk your hands forward and to each side. 30 s' },
-  upperback: { name: 'Thread the Needle', part: 'Upper back', how: 'On hands and knees, slide one arm under your body and rotate. 30 s each side' },
-  sdelt: { name: 'Cross-Body Shoulder Stretch', part: 'Shoulders', how: 'Pull one arm across your chest with the other. 30 s each side' },
-  rdelt: { name: 'Cross-Body Shoulder Stretch', part: 'Shoulders', how: 'Pull one arm across your chest with the other. 30 s each side' },
-  triceps: { name: 'Overhead Triceps Stretch', part: 'Triceps', how: 'Reach one hand down your back, press the elbow gently. 30 s each arm' },
-  biceps: { name: 'Wall Biceps Stretch', part: 'Biceps', how: 'Palm on a wall behind you at shoulder height, turn away. 30 s each arm' },
-  lowerback: { name: 'Knees-to-Chest', part: 'Lower back', how: 'Lying on your back, hug both knees in. 30 s' },
-  abs: { name: 'Cobra Stretch', part: 'Abs', how: 'Lying face down, press your chest up with hips down. 30 s' },
-  calves: { name: 'Wall Calf Stretch', part: 'Calves', how: 'Hands on a wall, back leg straight, heel down. 30 s each leg' }
+const STRETCH_INFO = {
+  quads: { name: 'Lying Quad Stretch', img: 'Quad_Stretch', part: 'Quads', how: 'Pull your heel to your glute. 30 s each leg', cues: ['Lie on your side or back', 'Grab the top foot and pull your heel toward your glute, knees together', 'Hold 30 s, then switch legs'] },
+  glutes: { name: 'Figure-4 Stretch', img: 'Ankle_On_The_Knee', part: 'Glutes', how: 'Ankle over the opposite knee, pull in. 30 s each side', cues: ['Lie on your back with knees bent', 'Cross one ankle over the opposite knee', 'Pull the bottom thigh toward your chest until you feel it in the glute. 30 s each side'] },
+  hams: { name: 'Lying Hamstring Stretch', img: 'Hamstring_Stretch', part: 'Hamstrings', how: 'Straight leg up, pull it toward you. 30 s each leg', cues: ['Lie on your back and raise one straight leg', 'Hold behind the thigh or calf, or loop a towel around your foot', 'Pull gently until you feel the back of the leg. 30 s each leg'] },
+  adductors: { name: 'Butterfly Stretch', img: 'Groin_and_Back_Stretch', part: 'Inner thighs', how: 'Soles together, knees drop. 30 s', cues: ['Sit with the soles of your feet together', 'Hold your feet and let your knees fall toward the floor', 'Lean forward slightly with a long back. Hold 30 s'] },
+  chest: { name: 'Wall Chest Stretch', img: 'One_Arm_Against_Wall', part: 'Chest, front delts', how: 'Arm on the wall, turn away. 30 s each side', cues: ['Place one forearm or palm on a wall at shoulder height', 'Slowly turn your body away from that arm', 'Stop when you feel the chest and front shoulder stretch. 30 s each side'] },
+  lats: { name: 'Child\'s Pose Reach', img: 'Childs_Pose', part: 'Lats', how: 'Sit back on your heels, reach forward. 30 s', cues: ['Kneel and sit back toward your heels', 'Walk your hands far forward and let your chest sink', 'Walk both hands to one side, then the other, to stretch each lat. 30 s'] },
+  upperback: { name: 'Upper Back Stretch', img: 'Upper_Back_Stretch', part: 'Upper back', how: 'Clasp hands in front, push away. 30 s', cues: ['Stand tall and clasp your hands in front of you', 'Push your hands away and round your upper back', 'Let your shoulder blades spread apart. Hold 30 s'] },
+  sdelt: { name: 'Cross-Body Shoulder Stretch', img: 'Shoulder_Stretch', part: 'Shoulders', how: 'Pull one arm across your chest. 30 s each side', cues: ['Bring one straight arm across your chest', 'Use the other hand to pull it in just above the elbow', 'Keep the shoulder down. 30 s each side'] },
+  triceps: { name: 'Overhead Triceps Stretch', img: 'Triceps_Stretch', part: 'Triceps', how: 'Hand down your back, press the elbow. 30 s each arm', cues: ['Reach one arm overhead and bend it so your hand drops behind your head', 'Use the other hand to press the elbow gently back', 'Hold 30 s, then switch arms'] },
+  biceps: { name: 'Standing Biceps Stretch', img: 'Standing_Biceps_Stretch', part: 'Biceps', how: 'Clasp hands behind you, straighten. 30 s', cues: ['Clasp your hands behind your back', 'Straighten your arms and turn your palms down', 'Lift your hands slightly until you feel the front of your arms. 30 s'] },
+  lowerback: { name: 'Knees-to-Chest', img: 'Hug_Knees_To_Chest', part: 'Lower back', how: 'Hug both knees in. 30 s', cues: ['Lie on your back', 'Pull both knees toward your chest', 'Let your lower back relax into the floor. 30 s'] },
+  abs: { name: 'Overhead Reach', img: 'Upward_Stretch', part: 'Abs', how: 'Reach tall overhead, lean back slightly. 30 s', cues: ['Stand tall and interlace your fingers overhead, palms up', 'Reach as high as you can', 'Lean back slightly to stretch your abs. Hold 30 s'] },
+  calves: { name: 'Wall Calf Stretch', img: 'Calf_Stretch_Hands_Against_Wall', part: 'Calves', how: 'Back leg straight, heel down. 30 s each leg', cues: ['Hands on a wall, one foot back', 'Keep the back leg straight and its heel on the floor', 'Lean in until you feel the calf. 30 s each leg'] }
 };
+// Which stretch covers each trained muscle (several muscles share one stretch).
+const STRETCH_FOR = { quads: 'quads', glutes: 'glutes', hams: 'hams', adductors: 'adductors', chest: 'chest', fdelt: 'chest', lats: 'lats', upperback: 'upperback', sdelt: 'sdelt', rdelt: 'sdelt', triceps: 'triceps', biceps: 'biceps', lowerback: 'lowerback', abs: 'abs', calves: 'calves' };
+const STRETCHES = Object.fromEntries(Object.entries(STRETCH_FOR).map(([m, k]) => [m, { ...STRETCH_INFO[k], keys: Object.keys(STRETCH_FOR).filter(x => STRETCH_FOR[x] === k) }]));
+const stretchByName = n => [...WARMUP_MOVES, ...Object.values(STRETCHES)].find(x => x.name === n);
+function openStretch(name) {
+  const x = stretchByName(name); if (!x) return;
+  $('#demo-body').innerHTML = `
+    <div class="sheet-head"><h2 id="demo-title">${esc(x.name)}</h2><button type="button" class="icon-btn" data-act="closedemo" aria-label="Close">${icon('x')}</button></div>
+    <div class="demo-anim" aria-label="${esc(x.name)}, start to finish"><img src="img/${x.img}_0.jpg" alt="${esc(x.name)} start"><img class="end" src="img/${x.img}_1.jpg" alt="${esc(x.name)} finish"></div>
+    <div class="demo-frames"><figure><img src="img/${x.img}_0.jpg" alt=""><figcaption>Start</figcaption></figure><figure><img src="img/${x.img}_1.jpg" alt=""><figcaption>${x.when ? 'Move' : 'Hold'}</figcaption></figure></div>
+    <div class="map-block">${bodyMap(x.keys, [])}<p class="map-legend"><span><i class="p"></i>${esc(x.part)}</span></p></div>
+    <ol class="cues">${x.cues.map(c => `<li>${esc(c)}</li>`).join('')}</ol>
+    <p class="hint" style="margin-top:6px">${x.when ? 'Do this before lifting to warm up.' : 'Do this after lifting. Ease in, no bouncing, and stop short of pain.'}</p>
+    <a class="btn block ghost" href="https://www.youtube.com/results?search_query=${encodeURIComponent('how to ' + x.name)}" target="_blank" rel="noopener">${icon('brand-youtube')}Watch a demo on YouTube</a>
+    <p class="hint" style="text-align:center;margin-top:10px">Photos: free-exercise-db (public domain)</p>`;
+  $('#demo').showModal();
+}
 function stretchPlan(names) {
   const main = [...new Set(names.flatMap(n => musclesFor(n)[0]))];
   const seen = new Set(), cool = [];
   Object.keys(STRETCHES).forEach(k => { const st = STRETCHES[k]; if (main.includes(k) && !seen.has(st.name)) { seen.add(st.name); cool.push(st); } });
   return { warm: WARMUP_MOVES.filter(w => w.when(main)), cool };
 }
-const stretchItem = (x, check) => `<li>${check ? `<label class="check stretch-check"><input type="checkbox" data-stretch="${esc(x.name)}" ${check.done ? 'checked' : ''}><span>` : '<span>'}<b>${esc(x.name)}</b><span class="part">${esc(x.part)}</span><small>${esc(x.how)}</small></span>${check ? '</label>' : ''}</li>`;
+const stretchItem = (x, check) => `<li class="st-item">${check ? `<input type="checkbox" class="st-box" aria-label="Done: ${esc(x.name)}" data-stretch="${esc(x.name)}" ${check.done ? 'checked' : ''}>` : ''}<button class="st-thumb" data-act="stretchform" data-name="${esc(x.name)}" aria-label="How to do ${esc(x.name)}"><img class="thumb sm" src="img/${x.img}_1.jpg" alt="" loading="lazy"></button><button class="st-text" data-act="stretchform" data-name="${esc(x.name)}"><b>${esc(x.name)}</b><span class="part">${esc(x.part)}</span><small>${esc(x.how)}</small></button></li>`;
 function stretchBlock(p) {
   const sp = stretchPlan(dayExercises(p).map(e => e.name));
   return `<details class="stretches"><summary><span>${icon('stretching')}Warm-up and stretches</span><span class="muted small">${sp.warm.length + sp.cool.length}</span></summary>
@@ -853,6 +868,7 @@ const ACT = {
   addfood: b => openFoodSheet(b.dataset.meal),
   closesheet: () => $('#sheet').close(),
   form: b => openForm(b.dataset.name),
+  stretchform: b => openStretch(b.dataset.name),
   closedemo: () => $('#demo').close(),
   fillfood: b => {
     const x = S.foods.find(f => f.id === b.dataset.id), f = $('#sheet form'); if (!x) return;
