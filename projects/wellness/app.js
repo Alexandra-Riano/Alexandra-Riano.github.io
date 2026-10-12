@@ -17,7 +17,7 @@ const PROGRAM = [
     { name: 'Pec Fly', warm: 1, n: 3, reps: [8, 12] },
     { name: 'Preacher Curl', warm: 1, n: 3, reps: [8, 12] }] },
   { day: 3, focus: 'Full body C', exercises: [
-    { name: 'Forward Smith Machine Lunge', warm: 2, n: 4, reps: [8, 10] },
+    { name: 'Machine Hip Abduction', warm: 1, n: 3, reps: [12, 15], alts: ['45° Back Extension', 'Machine Hip Thrust'] },
     { name: 'Incline Chest Press', warm: 2, n: 3, reps: [10, 12] },
     { name: 'Lat Pulldown', warm: 2, n: 3, reps: [8, 10] },
     { name: 'Seated Leg Curl', warm: 2, n: 3, reps: [10, 12] }] }
@@ -26,6 +26,11 @@ const PROGRAM = [
 const ACTIVITY = [
   ['sedentary', 'Sedentary', 1524], ['light', 'Light · 1–3×/wk', 1746], ['moderate', 'Moderate · 3–5×/wk', 1860],
   ['intense', 'Intense · 6–7×/wk', 1968], ['very', 'Very intense · daily', 2190]];
+// Swap-in options for exercises that have alts. Picking one in a workout makes it the default next time.
+const ALTS = {
+  '45° Back Extension': { warm: 1, n: 3, reps: [10, 15] },
+  'Machine Hip Thrust': { warm: 2, n: 3, reps: [8, 12] }
+};
 const MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
 
 // Start/finish photos from free-exercise-db (public domain, github.com/yuhonas/free-exercise-db), stored in img/.
@@ -40,7 +45,9 @@ const FORM = {
   'Cable Row': { img: 'Seated_Cable_Rows', cues: ['Knees slightly bent, sit tall with chest up', 'Pull the handle to your belly, elbows close to your body', 'Squeeze your back for a second, let your arms extend slowly'] },
   'Pec Fly': { img: 'Butterfly', cues: ['Back flat on the pad, arms roughly parallel to the floor', 'Bring the handles together in a hugging arc', 'Squeeze your chest, then open slowly until you feel a stretch'] },
   'Preacher Curl': { img: 'Machine_Preacher_Curls', cues: ['Backs of your upper arms flat on the pad', 'Curl up — only your forearms move', 'Lower slowly all the way down'] },
-  'Forward Smith Machine Lunge': { img: 'Barbell_Lunge', cues: ['Bar across your upper back, stand tall (shown with a free barbell — same movement in the Smith)', 'Step forward and lower until both knees are about 90°', 'Push through the front heel to stand back up'] },
+  'Machine Hip Abduction': { img: 'Thigh_Abductor', cues: ['Sit tall with the pads on the outside of your knees', 'Push your knees out as wide as you can and pause a second', 'Return slowly — lean your torso slightly forward to hit more of your glutes'] },
+  '45° Back Extension': { img: 'Hyperextensions_Back_Extensions', cues: ['Set the pad so it sits just below your hip crease', 'Hinge at the hips and lower your chest toward the floor', 'Squeeze your glutes to come up to a straight line — don\'t arch past it'] },
+  'Machine Hip Thrust': { img: 'Barbell_Hip_Thrust', cues: ['Upper back on the pad, feet flat about shoulder-width (photo shows the barbell version — same movement)', 'Drive your hips up until your body is straight from shoulders to knees', 'Squeeze your glutes for a second at the top, lower slowly'] },
   'Incline Chest Press': { img: 'Leverage_Incline_Chest_Press', cues: ['Handles start near your upper chest', 'Chest up, shoulder blades pinched back', 'Press up and forward, return slowly'] },
   'Lat Pulldown': { img: 'Wide-Grip_Lat_Pulldown', cues: ['Grip a little wider than shoulders, thighs under the pad', 'Lean back slightly, pull the bar to your upper chest', 'Drive your elbows down and back, return slowly to a full stretch'] },
   'Seated Leg Curl': { img: 'Seated_Leg_Curl', cues: ['Pad just above your heels, thigh pad snug above your knees', 'Curl your heels down and back as far as you can', 'Pause, then return slowly'] }
@@ -57,12 +64,14 @@ const MUSCLES = {
   'Cable Row': [['lats', 'upperback'], ['rdelt', 'biceps']],
   'Pec Fly': [['chest'], ['fdelt']],
   'Preacher Curl': [['biceps'], ['forearms']],
-  'Forward Smith Machine Lunge': [['glutes', 'quads'], ['adductors', 'hams']],
+  'Machine Hip Abduction': [['glutes'], []],
+  '45° Back Extension': [['glutes', 'hams'], ['lowerback']],
+  'Machine Hip Thrust': [['glutes'], ['hams', 'quads']],
   'Incline Chest Press': [['chest'], ['fdelt', 'triceps']],
   'Lat Pulldown': [['lats'], ['upperback', 'biceps']],
   'Seated Leg Curl': [['hams'], ['calves']]
 };
-const MUSCLE_NAMES = { quads: 'quads', glutes: 'glutes', adductors: 'inner thighs', chest: 'chest', fdelt: 'front delts', sdelt: 'side delts', rdelt: 'rear delts', triceps: 'triceps', biceps: 'biceps', forearms: 'forearms', lats: 'lats', upperback: 'upper back', traps: 'traps', hams: 'hamstrings', calves: 'calves' };
+const MUSCLE_NAMES = { quads: 'quads', glutes: 'glutes', adductors: 'inner thighs', chest: 'chest', fdelt: 'front delts', sdelt: 'side delts', rdelt: 'rear delts', triceps: 'triceps', biceps: 'biceps', forearms: 'forearms', lats: 'lats', upperback: 'upper back', traps: 'traps', lowerback: 'lower back', hams: 'hamstrings', calves: 'calves' };
 const BODY = 'M80 62 Q60 64 50 90 L42 196 L56 198 L66 134 L68 182 Q65 190 67 198 L64 292 L67 302 L66 382 L70 398 L90 398 L92 302 L97 212 L103 212 L108 302 L110 398 L130 398 L134 382 L133 302 L136 292 L133 198 Q135 190 132 182 L134 134 L144 198 L158 196 L150 90 Q140 64 120 62 Z';
 const ARM_FORE = 'M48 144 Q42 170 44 194 L55 194 Q60 168 62 144 Z', ARM_UP = 'M54 100 Q46 120 50 140 L62 140 Q67 120 65 102 Z', SDELT = 'M62 68 Q48 74 48 96 L54 96 Q55 80 66 71 Z';
 const FRONT_MAP = { sdelt: SDELT, fdelt: 'M76 70 Q62 72 56 96 L66 98 Q70 82 82 75 Z', chest: 'M98 74 L82 74 Q68 84 68 102 Q78 113 98 109 Z', biceps: ARM_UP, forearms: ARM_FORE,
@@ -78,13 +87,20 @@ function bodyMap(main, also, compact) {
   }).join('')}</g>`;
   return `<svg class="body-map ${compact ? 'compact' : ''}" viewBox="0 0 400 ${compact ? 404 : 424}" role="img" aria-label="Muscles worked: ${main.map(k => MUSCLE_NAMES[k]).join(', ')}">${fig(FRONT_MAP, 0)}${fig(BACK_MAP, 200)}${compact ? '' : '<text x="100" y="420">Front</text><text x="300" y="420">Back</text>'}</svg>`;
 }
+// The exercise actually used for a program slot (respects a saved swap).
+function pick(e) {
+  const chosen = S.swaps?.[e.name];
+  const spec = chosen && ALTS[chosen] ? { ...ALTS[chosen], name: chosen } : e;
+  return { ...spec, slot: e.name, options: e.alts ? [e.name, ...e.alts] : null };
+}
+const dayExercises = p => p.exercises.map(pick);
 function dayMap(p) {
-  const main = [...new Set(p.exercises.flatMap(e => musclesFor(e.name)[0]))];
-  const also = [...new Set(p.exercises.flatMap(e => musclesFor(e.name)[1]))].filter(k => !main.includes(k));
+  const main = [...new Set(dayExercises(p).flatMap(e => musclesFor(e.name)[0]))];
+  const also = [...new Set(dayExercises(p).flatMap(e => musclesFor(e.name)[1]))].filter(k => !main.includes(k));
   return `<div class="day-map">${bodyMap(main, also, true)}<p class="map-legend"><span><i class="p"></i>${main.map(k => MUSCLE_NAMES[k]).join(', ')}</span>${also.length ? `<span><i class="s"></i>${also.map(k => MUSCLE_NAMES[k]).join(', ')}</span>` : ''}</p></div>`;
 }
 function musclesFor(name) { return MUSCLES[name] || [[], []]; }
-const nippard = name => `https://www.youtube.com/results?search_query=${encodeURIComponent('Jeff Nippard how to ' + name.replace('Forward Smith Machine ', 'Smith machine '))}`;
+const nippard = name => `https://www.youtube.com/results?search_query=${encodeURIComponent('Jeff Nippard how to ' + name.replace('45° ', ''))}`;
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -104,7 +120,7 @@ const mmss = s => `${Math.floor(s / 60)}:${pad(s % 60)}`;
 function defaults() {
   return {
     settings: { units: 'lb', activity: 'moderate', kcal: 1860, protein: 110, fat: 52, carbs: 238, cardioGoal: 150, rest: 90 },
-    food: {}, foods: [], weights: [], workouts: [], cardio: [], active: null
+    food: {}, foods: [], weights: [], workouts: [], cardio: [], active: null, swaps: {}
   };
 }
 // Old exercise names → current, so history and last-time suggestions carry over.
@@ -247,7 +263,7 @@ VIEWS.today = () => {
     <div class="card-head"><h2>${S.active ? 'Workout in progress' : 'Next workout'}</h2><span class="muted small">${weekW}/3 this week</span></div>
     <div class="week-dots">${dots}</div>
     <p class="big">Day ${nd} <span>· ${p.focus}</span></p>
-    <p class="muted small" style="margin-top:4px">${p.exercises.map(e => esc(e.name)).join(' · ')}</p>
+    <p class="muted small" style="margin-top:4px">${dayExercises(p).map(e => esc(e.name)).join(' · ')}</p>
     ${S.active ? '<button class="btn block" data-act="resume">Resume workout</button>' : dumbbell(nd, `Day ${nd}`)}
   </section>
   <section class="card">
@@ -317,7 +333,7 @@ VIEWS.train = () => {
   ${PROGRAM.map(p => `<section class="card">
     <div class="card-head"><h2>Day ${p.day} <span class="muted">· ${p.focus}</span></h2>${dumbbell(p.day)}</div>
     ${dayMap(p)}
-    <ul class="ex-list">${p.exercises.map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name">${esc(e.name)}</span></button><span>${e.warm}W + ${e.n} × ${e.reps[0]}–${e.reps[1]}</span></li>`).join('')}</ul>
+    <ul class="ex-list">${dayExercises(p).map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name">${esc(e.name)}${e.options ? `<small class="alt-note">Swap options: ${e.options.filter(o => o !== e.name).map(esc).join(' · ')}</small>` : ''}</span></button><span>${e.warm}W + ${e.n} × ${e.reps[0]}–${e.reps[1]}</span></li>`).join('')}</ul>
     <p class="hint" style="margin:10px 0 0">5 min warm-up cardio · working sets at 2–3 RIR · rest 60–90 s · 20 min cardio after</p>
   </section>`).join('')}
   <h2 class="section-title">History</h2>
@@ -401,17 +417,26 @@ function startWorkout(day) {
   const p = PROGRAM[day - 1];
   S.active = {
     id: uid(), day, start: Date.now(), warmup: false, cardio: '', notes: '',
-    exercises: p.exercises.map(e => {
-      const sg = suggestion(e), last = lastFor(e.name);
-      return {
-        name: e.name, n: e.n, reps: e.reps, suggest: sg.text, up: !!sg.up,
-        lastText: last ? `Last time (${shortDate(last.date)}): ${last.sets.map(s => `${s.weight || 0}×${s.reps || 0}`).join(', ')}` : '',
-        sets: [...Array(e.warm)].map(() => ({ kind: 'w', weight: '', reps: '', rir: '', done: false }))
-          .concat([...Array(e.n)].map((_, i) => ({ kind: 's', weight: sg.weight, reps: '', rir: '', done: false, ph: last?.sets[i]?.reps || '' })))
-      };
-    })
+    exercises: dayExercises(p).map(buildExercise)
   };
   save(); openSession();
+}
+function buildExercise(e) {
+  const sg = suggestion(e), last = lastFor(e.name);
+  return {
+    name: e.name, slot: e.slot, options: e.options, n: e.n, reps: e.reps, suggest: sg.text, up: !!sg.up,
+    lastText: last ? `Last time (${shortDate(last.date)}): ${last.sets.map(s => `${s.weight || 0}×${s.reps || 0}`).join(', ')}` : '',
+    sets: [...Array(e.warm)].map(() => ({ kind: 'w', weight: '', reps: '', rir: '', done: false }))
+      .concat([...Array(e.n)].map((_, i) => ({ kind: 's', weight: sg.weight, reps: '', rir: '', done: false, ph: last?.sets[i]?.reps || '' })))
+  };
+}
+function swapExercise(i, name) {
+  const ex = S.active.exercises[i];
+  if (ex.sets.some(s => s.done) && !confirm('Swap this exercise? Sets you checked off for it will be cleared.')) return renderSession();
+  const slot = PROGRAM[S.active.day - 1].exercises.find(e => e.name === ex.slot);
+  S.swaps = { ...S.swaps, [slot.name]: name === slot.name ? undefined : name };
+  S.active.exercises[i] = buildExercise(pick(slot));
+  save(); renderSession(); toast(`Swapped to ${name}`);
 }
 function openSession() { sessionOpen = true; renderSession(); $('#session').hidden = false; document.body.classList.add('locked'); $('#resume').hidden = true; }
 function closeSession() { sessionOpen = false; $('#session').hidden = true; document.body.classList.remove('locked'); route(true); }
@@ -447,6 +472,7 @@ function renderSession() {
       <p class="hint" style="margin:6px 0 0 32px">97–135 bpm · jog, elliptical, row, or incline walk at 10–15%</p></section>
     ${a.exercises.map((ex, i) => `<section class="card">
       <div class="ex-head">${formThumb(ex.name)}<div class="ex-title"><h3>${esc(ex.name)}</h3><span class="pill">${ex.n} × ${ex.reps[0]}–${ex.reps[1]} · RIR 2–3</span><span class="muscles">${musclesFor(ex.name)[0].map(k => MUSCLE_NAMES[k]).join(' · ')}</span></div></div>
+      ${ex.options ? `<label class="swap">Swap <select data-swap="${i}">${ex.options.map(o => `<option ${o === ex.name ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select></label>` : ''}
       ${ex.lastText ? `<p class="last">${esc(ex.lastText)}</p>` : ''}
       <p class="suggest ${ex.up ? 'up' : ''}">${ex.up ? '↑ ' : ''}${esc(ex.suggest)}</p>
       <div class="set-grid"><span>Set</span><span>${unit()}</span><span>Reps</span><span>RIR</span><span></span></div>
@@ -628,6 +654,7 @@ document.addEventListener('input', e => {
 
 document.addEventListener('change', e => {
   const t = e.target;
+  if (t.dataset.swap !== undefined && S.active) return swapExercise(+t.dataset.swap, t.value);
   if (t.dataset.setting) {
     const k = t.dataset.setting, v = k === 'activity' ? t.value : Math.max(0, +t.value || 0);
     S.settings[k] = v;

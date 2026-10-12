@@ -270,3 +270,7 @@ details.hist .sets b{color:var(--ink);font-weight:600}
 .map-legend i.p{background:var(--pro)}.map-legend i.s{background:color-mix(in srgb,var(--pro) 50%,var(--card))}
 .day-map{margin:0 0 12px}
 .muscles{font-size:12px;color:var(--pro);font-weight:600}
+
+.alt-note{display:block;font-size:11px;color:var(--muted);text-decoration:none;margin-top:2px}
+.swap{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;font-weight:600;color:var(--muted)}
+.swap select{flex:1;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card2);padding:0 10px;font-size:14px;font-weight:600;color:var(--ink)}
