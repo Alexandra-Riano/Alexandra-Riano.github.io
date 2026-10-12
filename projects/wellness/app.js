@@ -142,7 +142,7 @@ function load() {
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { toast('Could not save. Storage is full or blocked.'); } }
 
-let S = load(), foodDate = today(), sessionOpen = false, restEnd = 0, restTotal = 90, weightRange = 30;
+let S = load(), foodDate = today(), foodOnToday = true, sessionOpen = false, restEnd = 0, restTotal = 90, weightRange = 30;
 
 const unit = () => S.settings.units;
 const kgToU = kg => unit() === 'lb' ? kg * 2.20462 : kg;
@@ -233,7 +233,7 @@ function formThumb(name, small) {
 function openForm(name) {
   const f = FORM[name]; if (!f) return;
   $('#demo-body').innerHTML = `
-    <div class="sheet-head"><h2>${esc(name)}</h2><button type="button" class="icon-btn" data-act="closedemo" aria-label="Close">${icon('x')}</button></div>
+    <div class="sheet-head"><h2 id="demo-title">${esc(name)}</h2><button type="button" class="icon-btn" data-act="closedemo" aria-label="Close">${icon('x')}</button></div>
     <div class="demo-anim" aria-label="${esc(name)} movement, start to finish"><img src="img/${f.img}_0.jpg" alt="${esc(name)} start position"><img class="end" src="img/${f.img}_1.jpg" alt="${esc(name)} finish position"></div>
     <div class="demo-frames"><figure><img src="img/${f.img}_0.jpg" alt=""><figcaption>Start</figcaption></figure><figure><img src="img/${f.img}_1.jpg" alt=""><figcaption>Finish</figcaption></figure></div>
     <div class="map-block">${bodyMap(...musclesFor(name))}<p class="map-legend"><span><i class="p"></i>Main: ${musclesFor(name)[0].map(k => MUSCLE_NAMES[k]).join(', ')}</span>${musclesFor(name)[1].length ? `<span><i class="s"></i>Also: ${musclesFor(name)[1].map(k => MUSCLE_NAMES[k]).join(', ')}</span>` : ''}</p></div>
@@ -275,7 +275,7 @@ VIEWS.today = () => {
     ${last ? `<div class="trend-big"><b>${r1(kgToU(last.trend))}</b><span class="muted">${unit()}</span><span>${signed(wk, unit() + ' this week')}</span></div>` : ''}
     ${weightChart(30, true)}
     <form data-form="weight" class="inline" style="margin-top:14px">
-      <label class="field"><span>Today's weight (${unit()})</span><input name="w" type="number" step="0.1" inputmode="decimal" value="${S.weights.find(w => w.date === today()) ? r1(kgToU(S.weights.find(w => w.date === today()).kg)) : ''}"></label>
+      <label class="field"><span>Today's weight (${unit()})</span><input name="w" type="number" step="0.1" min="30" max="700" inputmode="decimal" value="${S.weights.find(w => w.date === today()) ? r1(kgToU(S.weights.find(w => w.date === today()).kg)) : ''}"></label>
       <button class="btn small" type="submit">Log</button>
     </form>
   </section>
@@ -362,7 +362,7 @@ VIEWS.weight = () => {
   </section>
   <section class="card">
     <form data-form="weight">
-      <div class="grid2"><label class="field"><span>Weight (${unit()})</span><input name="w" type="number" step="0.1" inputmode="decimal" required value="${todayW ? r1(kgToU(todayW.kg)) : ''}"></label>
+      <div class="grid2"><label class="field"><span>Weight (${unit()})</span><input name="w" type="number" step="0.1" min="30" max="700" inputmode="decimal" required value="${todayW ? r1(kgToU(todayW.kg)) : ''}"></label>
       <label class="field"><span>Date</span><input name="date" type="date" value="${today()}" max="${today()}"></label></div>
       <button class="btn block" type="submit" style="margin-top:4px">Save weigh-in</button>
     </form>
@@ -408,6 +408,7 @@ const TABS = ['today', 'food', 'train', 'weight', 'more'];
 function route(keepScroll) {
   const h = location.hash.slice(1), tab = TABS.includes(h) ? h : 'today';
   const y = window.scrollY;
+  if (foodOnToday) foodDate = today(); // app left open past midnight
   $$('.tabbar a').forEach(a => a.classList.toggle('on', a.dataset.tab === tab));
   $('#view').innerHTML = VIEWS[tab]();
   window.scrollTo(0, keepScroll ? y : 0);
@@ -415,6 +416,7 @@ function route(keepScroll) {
   document.body.classList.toggle('has-resume', !$('#resume').hidden);
 }
 window.addEventListener('hashchange', () => route());
+document.addEventListener('visibilitychange', () => { if (!document.hidden && !sessionOpen) route(true); });
 
 /* ---------- workout session ---------- */
 function startWorkout(day) {
@@ -502,6 +504,7 @@ function tickElapsed() {
 }
 function finishWorkout() {
   const a = S.active;
+  if (!a) return;
   if (!a.exercises.some(e => e.sets.some(s => s.done)) && !confirm('No sets are checked off. Finish anyway?')) return;
   const w = {
     id: a.id, day: a.day, date: iso(a.start), start: a.start, end: Date.now(), warmup: a.warmup, cardio: +a.cardio || 0, notes: a.notes,
@@ -551,6 +554,7 @@ const ACT = {
       const phW = $('[data-k=weight]', row).placeholder, phR = $('[data-k=reps]', row).placeholder;
       if (s.weight === '' && /^[\d.]+$/.test(phW)) s.weight = phW;
       if (s.reps === '' && /^\d+$/.test(phR)) s.reps = phR;
+      if (s.kind === 's' && !(+s.reps > 0)) { $('[data-k=reps]', row).focus(); return toast('Enter your reps first'); }
     }
     s.done = !s.done; save();
     row.outerHTML = setRow(i, j);
@@ -581,7 +585,7 @@ const ACT = {
     S.food[foodDate] = (S.food[addDays(foodDate, -1)] || []).map(f => ({ ...f, id: uid() }));
     save(); route(true); toast('Copied from the day before');
   },
-  fdate: b => { const d = addDays(foodDate, +b.dataset.d); if (d <= today()) { foodDate = d; route(); } },
+  fdate: b => { const d = addDays(foodDate, +b.dataset.d); if (d <= today()) { foodDate = d; foodOnToday = d === today(); route(); } },
   delworkout: b => {
     if (!confirm('Delete this workout from your history?')) return;
     S.workouts = S.workouts.filter(w => w.id !== b.dataset.id);
@@ -590,7 +594,15 @@ const ACT = {
   wrange: b => { weightRange = +b.dataset.d; route(true); },
   delweight: b => { S.weights = S.weights.filter(w => w.date !== b.dataset.date); save(); route(true); },
   delsaved: b => { S.foods = S.foods.filter(f => f.id !== b.dataset.id); save(); route(true); },
-  units: b => { S.settings.units = b.dataset.u; save(); route(true); },
+  units: b => {
+    const to = b.dataset.u; if (to === S.settings.units) return;
+    // Lift weights are stored in the unit they were entered in, so convert them along with the label.
+    const k = to === 'kg' ? 1 / 2.20462 : 2.20462, conv = w => w === '' || isNaN(+w) ? w : String(to === 'kg' ? Math.round(+w * k * 2) / 2 : Math.round(+w * k));
+    [...S.workouts, ...(S.active ? [S.active] : [])].forEach(w => w.exercises.forEach(e => e.sets.forEach(x => { x.weight = conv(x.weight); })));
+    S.settings.units = to;
+    if (S.active) S.active.exercises.forEach(e => { const f = buildExercise({ ...e, warm: 0 }); Object.assign(e, { suggest: f.suggest, up: f.up, lastText: f.lastText }); });
+    save(); route(true); toast(`Switched to ${to}`);
+  },
   export: () => {
     const blob = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `wellness-backup-${today()}.json`;
@@ -621,7 +633,8 @@ document.addEventListener('submit', e => {
     }
     save(); $('#sheet').close(); route(true); toast(`${d.name.trim()} logged`);
   } else if (kind === 'weight') {
-    const v = parseFloat(f.w.value); if (!v) return;
+    const v = parseFloat(f.w.value);
+    if (!(v >= 30 && v <= 700)) return toast(`Enter a weight between 30 and 700 ${unit()}`);
     const date = f.date?.value || today(), kg = uToKg(v), i = S.weights.findIndex(x => x.date === date);
     if (i >= 0) S.weights[i].kg = kg; else S.weights.push({ date, kg });
     save(); route(true); toast('Weigh-in saved');
@@ -661,7 +674,9 @@ document.addEventListener('change', e => {
   const t = e.target;
   if (t.dataset.swap !== undefined && S.active) return swapExercise(+t.dataset.swap, t.value);
   if (t.dataset.setting) {
-    const k = t.dataset.setting, v = k === 'activity' ? t.value : Math.max(0, +t.value || 0);
+    const k = t.dataset.setting, v = k === 'activity' ? t.value : +t.value;
+    const min = ['fat', 'carbs'].includes(k) ? 0 : 1;
+    if (k !== 'activity' && (t.value.trim() === '' || !(v >= min))) { t.value = S.settings[k]; return toast('Enter a number'); }
     S.settings[k] = v;
     if (k === 'activity') S.settings.kcal = ACTIVITY.find(a => a[0] === v)[2];
     if (['activity', 'kcal', 'protein', 'fat'].includes(k)) balanceCarbs();
