@@ -1,0 +1,49 @@
+:root{--v-warn-bg:#fff4d6;--v-warn-fg:#6a4b00}
+:root[data-theme="dark"]{--v-warn-bg:#3a2f12;--v-warn-fg:#ffd978}
+.vis{background:var(--surface-2);border-radius:var(--r-md);padding:14px;margin-top:12px;display:grid;gap:12px;overflow:hidden}
+.vis .vcap{margin:0;font-size:var(--fs-xs);color:var(--text-2);line-height:1.4}
+.vis .vlabel{margin:0 0 6px;font-size:var(--fs-xs);font-weight:700;color:var(--text-2)}
+.vn{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 10px;font-size:var(--fs-sm);line-height:1.35;min-width:0;color:var(--text)}
+.vn b{display:block}
+.vn small{display:block;color:var(--text-2);font-size:var(--fs-xs);margin-top:2px}
+.vn.hl{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.vn.ok{background:var(--ok-soft);border-color:transparent}
+.vn.warn{background:var(--v-warn-bg);border-color:transparent}
+.vn.bad{background:var(--bad-soft);border-color:transparent}
+.vn.dim{border-style:dashed;background:transparent}
+.vt,.vt ul{list-style:none;margin:0;padding:0}
+.vt ul{margin-left:12px;padding-left:12px;border-left:2px solid var(--line)}
+.vt li{margin-top:8px;position:relative}
+.vt ul>li::before{content:"";position:absolute;left:-12px;top:18px;width:10px;border-top:2px solid var(--line)}
+.vf{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px}
+.vf>i{align-self:center;font-style:normal;color:var(--accent);font-weight:700}
+.vf .vn{flex:1 1 100px}
+.vstack{display:grid;gap:8px}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;align-items:start}
+.vgrid>.vform{grid-column:1/-1}
+@media (min-width:760px){.vgrid>.vform{grid-column:auto}}
+.vform{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden;font-size:var(--fs-sm)}
+.vform .vh,.vmail .vh{background:var(--strong);color:var(--on-strong);padding:8px 10px;font-weight:700}
+.vform .vr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:8px;padding:7px 10px;border-top:1px solid var(--line);align-items:center}
+.vform .vr span{color:var(--text-2)}
+.vform .vr em{font-style:normal;border:1px solid var(--line);border-radius:6px;padding:4px 6px;background:var(--bg);color:var(--text);min-width:0;overflow-wrap:anywhere}
+.vform .req::after{content:" *";color:var(--bad);font-weight:700}
+.vform .vr.hl em{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.vtable{width:100%;border-collapse:collapse;font-size:var(--fs-xs);background:var(--surface);border-radius:var(--r-sm);overflow:hidden;color:var(--text)}
+.vtable th,.vtable td{padding:7px 8px;border-top:1px solid var(--line);text-align:left;vertical-align:top}
+.vtable th{background:var(--strong);color:var(--on-strong);border-top:0}
+.vtag{display:inline-block;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:700;background:var(--accent-soft);color:var(--accent)}
+.vtag.g{background:var(--ok-soft);color:var(--ok)}
+.vtag.a{background:var(--v-warn-bg);color:var(--v-warn-fg)}
+.vtag.r{background:var(--bad-soft);color:var(--bad)}
+.vmail{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--fs-sm);overflow:hidden}
+.vmail .vh{background:transparent;color:var(--text-2);font-weight:400;border-bottom:1px solid var(--line)}
+.vmail .vh b{color:var(--text)}
+.vmail .vb{padding:10px}
+.vcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.vcols>div{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px;font-size:var(--fs-sm)}
+.vcols h3{margin:0 0 4px;font-size:var(--fs-sm)}
+.vcols p{margin:3px 0 0;font-size:var(--fs-xs);color:var(--text-2)}
+.vgate{display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:stretch}
+.vgate .g{display:grid;place-items:center;text-align:center;font-size:var(--fs-xs);font-weight:700;border-radius:var(--r-sm);padding:6px;background:var(--v-warn-bg);color:var(--v-warn-fg);min-width:76px}
+@media (max-width:420px){.vgate{grid-template-columns:1fr}.vform .vr{grid-template-columns:1fr}}
