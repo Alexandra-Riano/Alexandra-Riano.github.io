@@ -1,8 +1,8 @@
 'use strict';
 const KEY = 'alex-wellness-v1';
 
-// From "Alexandra Riano Wellness Plan" (Alex Alvarez, ATC) — 1st microcycle, 3 full-body days.
-// warm = warm-up sets, n = working sets, reps = target range. All working sets at 2–3 RIR, 60–90 s rest.
+// From "Alexandra Riano Wellness Plan" (Alex Alvarez, ATC), 1st microcycle, 3 full-body days.
+// warm = warm-up sets, n = working sets, reps = target range. All working sets at 2-3 RIR, 60-90 s rest.
 const PROGRAM = [
   { day: 1, focus: 'Full body A', exercises: [
     { name: 'Hack Squat', warm: 2, n: 3, reps: [8, 10] },
@@ -24,8 +24,8 @@ const PROGRAM = [
 ];
 // Plan's calorie targets for muscle gain (~250 kcal surplus) by activity level.
 const ACTIVITY = [
-  ['sedentary', 'Sedentary', 1524], ['light', 'Light · 1–3×/wk', 1746], ['moderate', 'Moderate · 3–5×/wk', 1860],
-  ['intense', 'Intense · 6–7×/wk', 1968], ['very', 'Very intense · daily', 2190]];
+  ['sedentary', 'Sedentary', 1524], ['light', 'Light (1-3×/wk)', 1746], ['moderate', 'Moderate (3-5×/wk)', 1860],
+  ['intense', 'Intense (6-7×/wk)', 1968], ['very', 'Very intense (daily)', 2190]];
 // Swap-in options for exercises that have alts. Picking one in a workout makes it the default next time.
 const ALTS = {
   '45° Back Extension': { warm: 1, n: 3, reps: [10, 15] },
@@ -38,16 +38,16 @@ const FORM = {
   'Hack Squat': { img: 'Hack_Squat', cues: ['Back and shoulders flat against the pads, feet shoulder-width', 'Lower until thighs are just below parallel', 'Drive up through your heels without locking your knees'] },
   'Chest Press': { img: 'Leverage_Chest_Press', cues: ['Set the seat so handles line up with mid-chest', 'Chest up, shoulder blades pinched back', 'Press forward, pause, return slowly without resting the stack'] },
   'Neutral Grip Lat Pulldown': { img: 'V-Bar_Pulldown', cues: ['Palms facing each other, thighs locked under the pad', 'Lean back slightly, chest up', 'Pull elbows down until the handle nearly touches your chest, return slowly'] },
-  'Chest Supported Row': { img: 'Lying_T-Bar_Row', cues: ['Upper chest at the top of the pad', 'Pull elbows back close to your sides', 'Squeeze your shoulder blades, lower under control — chest stays on the pad'] },
+  'Chest Supported Row': { img: 'Lying_T-Bar_Row', cues: ['Upper chest at the top of the pad', 'Pull elbows back close to your sides', 'Squeeze your shoulder blades, lower under control. Keep your chest on the pad'] },
   'Leg Extension': { img: 'Leg_Extensions', cues: ['Pad sits just above your ankles, knees in line with the machine pivot', 'Straighten your legs fully and pause a second', 'Lower slowly back to about 90°'] },
-  '45° Leg Press': { img: 'Leg_Press', cues: ['Feet shoulder-width in the middle of the platform', 'Lower until knees reach about 90° — lower back stays on the pad', 'Push through your heels, don\'t lock your knees at the top'] },
+  '45° Leg Press': { img: 'Leg_Press', cues: ['Feet shoulder-width in the middle of the platform', 'Lower until knees reach about 90°, lower back flat on the pad', 'Push through your heels, don\'t lock your knees at the top'] },
   'Shoulder Press': { img: 'Leverage_Shoulder_Press', cues: ['Handles start at shoulder height, chest up', 'Press straight up without arching your lower back', 'Lower back to shoulder height under control'] },
   'Cable Row': { img: 'Seated_Cable_Rows', cues: ['Knees slightly bent, sit tall with chest up', 'Pull the handle to your belly, elbows close to your body', 'Squeeze your back for a second, let your arms extend slowly'] },
   'Pec Fly': { img: 'Butterfly', cues: ['Back flat on the pad, arms roughly parallel to the floor', 'Bring the handles together in a hugging arc', 'Squeeze your chest, then open slowly until you feel a stretch'] },
-  'Preacher Curl': { img: 'Machine_Preacher_Curls', cues: ['Backs of your upper arms flat on the pad', 'Curl up — only your forearms move', 'Lower slowly all the way down'] },
-  'Machine Hip Abduction': { img: 'Thigh_Abductor', cues: ['Sit tall with the pads on the outside of your knees', 'Push your knees out as wide as you can and pause a second', 'Return slowly — lean your torso slightly forward to hit more of your glutes'] },
-  '45° Back Extension': { img: 'Hyperextensions_Back_Extensions', cues: ['Set the pad so it sits just below your hip crease', 'Hinge at the hips and lower your chest toward the floor', 'Squeeze your glutes to come up to a straight line — don\'t arch past it'] },
-  'Machine Hip Thrust': { img: 'Barbell_Hip_Thrust', cues: ['Upper back on the pad, feet flat about shoulder-width (photo shows the barbell version — same movement)', 'Drive your hips up until your body is straight from shoulders to knees', 'Squeeze your glutes for a second at the top, lower slowly'] },
+  'Preacher Curl': { img: 'Machine_Preacher_Curls', cues: ['Backs of your upper arms flat on the pad', 'Curl up. Only your forearms move', 'Lower slowly all the way down'] },
+  'Machine Hip Abduction': { img: 'Thigh_Abductor', cues: ['Sit tall with the pads on the outside of your knees', 'Push your knees out as wide as you can and pause a second', 'Return slowly. Lean your torso slightly forward to hit more of your glutes'] },
+  '45° Back Extension': { img: 'Hyperextensions_Back_Extensions', cues: ['Set the pad so it sits just below your hip crease', 'Hinge at the hips and lower your chest toward the floor', 'Squeeze your glutes to come up to a straight line. Don\'t arch past it'] },
+  'Machine Hip Thrust': { img: 'Barbell_Hip_Thrust', cues: ['Upper back on the pad, feet flat about shoulder-width (photo shows the barbell version, same movement)', 'Drive your hips up until your body is straight from shoulders to knees', 'Squeeze your glutes for a second at the top, lower slowly'] },
   'Incline Chest Press': { img: 'Leverage_Incline_Chest_Press', cues: ['Handles start near your upper chest', 'Chest up, shoulder blades pinched back', 'Press up and forward, return slowly'] },
   'Lat Pulldown': { img: 'Wide-Grip_Lat_Pulldown', cues: ['Grip a little wider than shoulders, thighs under the pad', 'Lean back slightly, pull the bar to your upper chest', 'Drive your elbows down and back, return slowly to a full stretch'] },
   'Seated Leg Curl': { img: 'Seated_Leg_Curl', cues: ['Pad just above your heels, thigh pad snug above your knees', 'Curl your heels down and back as far as you can', 'Pause, then return slowly'] }
@@ -103,6 +103,7 @@ function musclesFor(name) { return MUSCLES[name] || [[], []]; }
 const nippard = name => `https://www.youtube.com/results?search_query=${encodeURIComponent('Jeff Nippard how to ' + name.replace('45° ', ''))}`;
 
 const $ = (s, r = document) => r.querySelector(s);
+const icon = n => `<svg class="i" aria-hidden="true"><use href="#i-${n}"/></svg>`;
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const pad = n => String(n).padStart(2, '0');
 const iso = d => { const x = new Date(d); return `${x.getFullYear()}-${pad(x.getMonth() + 1)}-${pad(x.getDate())}`; };
@@ -126,7 +127,10 @@ function defaults() {
 // Old exercise names → current, so history and last-time suggestions carry over.
 const RENAMED = { 'Leg Press': '45° Leg Press', 'Leg Curl': 'Seated Leg Curl' };
 function migrate(s) {
-  [...(s.workouts || []), ...(s.active ? [s.active] : [])].forEach(w => w.exercises.forEach(e => { if (RENAMED[e.name]) e.name = RENAMED[e.name]; }));
+  [...(s.workouts || []), ...(s.active ? [s.active] : [])].forEach(w => w.exercises.forEach(e => {
+    if (RENAMED[e.name]) e.name = RENAMED[e.name];
+    if (e.suggest) e.suggest = e.suggest.replace(/ \u2014 (\w)/, (m, c) => '. ' + c.toUpperCase()).replace(/\u2013/g, '-');
+  }));
   return s;
 }
 function load() {
@@ -136,7 +140,7 @@ function load() {
   } catch (e) { /* fall through */ }
   return defaults();
 }
-function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { toast('Could not save — storage is full or blocked'); } }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { toast('Could not save. Storage is full or blocked.'); } }
 
 let S = load(), foodDate = today(), sessionOpen = false, restEnd = 0, restTotal = 90, weightRange = 30;
 
@@ -183,10 +187,10 @@ function lastFor(name) {
 // Double progression: hit the top of the rep range on every set with ≥2 RIR → add weight.
 function suggestion(ex) {
   const last = lastFor(ex.name);
-  if (!last) return { text: `First time — pick a weight you can do for ${ex.reps[0]}–${ex.reps[1]} reps with 2–3 left in the tank.`, weight: '' };
+  if (!last) return { text: `First time. Pick a weight you can do for ${ex.reps[0]}-${ex.reps[1]} reps with 2-3 left in the tank.`, weight: '' };
   const top = Math.max(...last.sets.map(s => +s.weight || 0));
   const allTop = last.sets.length >= ex.n && last.sets.every(s => +s.reps >= ex.reps[1] && (s.rir === '' || +s.rir >= 2));
-  if (allTop && top) return { text: `You hit ${ex.reps[1]} reps on every set last time — go up to ${r1(top + step())} ${unit()}.`, weight: String(r1(top + step())), up: true };
+  if (allTop && top) return { text: `You hit ${ex.reps[1]} reps on every set last time. Go up to ${r1(top + step())} ${unit()}.`, weight: String(r1(top + step())), up: true };
   return { text: top ? `Stay at ${top} ${unit()} and beat last time's reps.` : 'Beat last time.', weight: top ? String(top) : '' };
 }
 
@@ -215,7 +219,7 @@ function weightChart(days, mini = false) {
   const grid = mini ? '' : [hi, (hi + lo) / 2, lo].map(v => `<line class="grid" x1="${px}" x2="${W}" y1="${Y(v)}" y2="${Y(v)}"/><text class="axis" x="0" y="${Y(v) + 3}">${r1(v)}</text>`).join('');
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Weight trend chart">${grid}${dots}${pts.length > 1 ? `<polyline class="trend" points="${line}"/>` : ''}</svg>`;
 }
-function signed(v, u) { if (v == null) return '—'; const s = r1(v); return `<span class="${s > 0 ? 'up' : s < 0 ? 'down' : ''}">${s > 0 ? '+' : ''}${s}</span><small> ${u}</small>`; }
+function signed(v, u) { if (v == null) return '-'; const s = r1(v); return `<span class="${s > 0 ? 'up' : s < 0 ? 'down' : ''}">${s > 0 ? '+' : ''}${s}</span><small> ${u}</small>`; }
 
 // Dumbbell-shaped button that opens a day's workout. With a label it's full width; without, a compact icon.
 function dumbbell(day, label) {
@@ -229,12 +233,12 @@ function formThumb(name, small) {
 function openForm(name) {
   const f = FORM[name]; if (!f) return;
   $('#demo-body').innerHTML = `
-    <div class="sheet-head"><h2>${esc(name)}</h2><button type="button" class="icon-btn" data-act="closedemo" aria-label="Close">✕</button></div>
-    <div class="demo-anim" aria-label="${esc(name)} movement, start to finish"><img src="img/${f.img}_0.jpg" alt="${esc(name)} start position"><img class="end" src="img/${f.img}_1.jpg" alt="${esc(name)} finish position"><span class="demo-tag"><i>Start</i><i>Finish</i></span></div>
-    <div class="demo-frames"><figure><img src="img/${f.img}_0.jpg" alt=""><figcaption>1 · Start</figcaption></figure><figure><img src="img/${f.img}_1.jpg" alt=""><figcaption>2 · Finish</figcaption></figure></div>
+    <div class="sheet-head"><h2>${esc(name)}</h2><button type="button" class="icon-btn" data-act="closedemo" aria-label="Close">${icon('x')}</button></div>
+    <div class="demo-anim" aria-label="${esc(name)} movement, start to finish"><img src="img/${f.img}_0.jpg" alt="${esc(name)} start position"><img class="end" src="img/${f.img}_1.jpg" alt="${esc(name)} finish position"></div>
+    <div class="demo-frames"><figure><img src="img/${f.img}_0.jpg" alt=""><figcaption>Start</figcaption></figure><figure><img src="img/${f.img}_1.jpg" alt=""><figcaption>Finish</figcaption></figure></div>
     <div class="map-block">${bodyMap(...musclesFor(name))}<p class="map-legend"><span><i class="p"></i>Main: ${musclesFor(name)[0].map(k => MUSCLE_NAMES[k]).join(', ')}</span>${musclesFor(name)[1].length ? `<span><i class="s"></i>Also: ${musclesFor(name)[1].map(k => MUSCLE_NAMES[k]).join(', ')}</span>` : ''}</p></div>
     <ol class="cues">${f.cues.map(c => `<li>${esc(c)}</li>`).join('')}</ol>
-    <a class="btn block ghost" href="${nippard(name)}" target="_blank" rel="noopener">▶ Watch Jeff Nippard on YouTube</a>
+    <a class="btn block ghost" href="${nippard(name)}" target="_blank" rel="noopener">${icon('brand-youtube')}Watch Jeff Nippard on YouTube</a>
     <p class="hint" style="text-align:center;margin-top:10px">Photos: free-exercise-db (public domain)</p>`;
   $('#demo').showModal();
 }
@@ -252,33 +256,33 @@ VIEWS.today = () => {
   return `
   <header class="page-head"><p class="kicker">${prettyDate(today())}</p><h1>Today</h1></header>
   <a class="card" href="#food">
-    <div class="card-head"><h2>Nutrition</h2><span class="chev">›</span></div>
+    <div class="card-head"><h2>Nutrition</h2><span class="chev">${icon('chevron-right')}</span></div>
     <div class="nutri-body">
       <div class="ring-wrap">${ring(t.kcal, s.kcal)}<div class="ring-label"><b>${fmt(Math.abs(left))}</b><span>${left >= 0 ? 'kcal left' : 'kcal over'}</span></div></div>
       <div class="macros">${bar('Protein', 'pro', t.p, s.protein)}${bar('Fat', 'fat', t.f, s.fat)}${bar('Carbs', 'carb', t.c, s.carbs)}</div>
     </div>
-    <p class="foot">${fmt(t.kcal)} of ${fmt(s.kcal)} kcal eaten · protein goal ${s.protein} g</p>
+    <p class="foot">${fmt(t.kcal)} of ${fmt(s.kcal)} kcal eaten</p>
   </a>
   <section class="card">
     <div class="card-head"><h2>${S.active ? 'Workout in progress' : 'Next workout'}</h2><span class="muted small">${weekW}/3 this week</span></div>
     <div class="week-dots">${dots}</div>
-    <p class="big">Day ${nd} <span>· ${p.focus}</span></p>
-    <p class="muted small" style="margin-top:4px">${dayExercises(p).map(e => esc(e.name)).join(' · ')}</p>
+    <p class="big">Day ${nd}<span>${p.focus}</span></p>
+    <p class="muted small" style="margin-top:4px">${dayExercises(p).map(e => esc(e.name)).join(', ')}</p>
     ${S.active ? '<button class="btn block" data-act="resume">Resume workout</button>' : dumbbell(nd, `Day ${nd}`)}
   </section>
   <section class="card">
-    <div class="card-head"><h2>Weight trend</h2><a class="chev" href="#weight" aria-label="Open weight">›</a></div>
-    ${last ? `<div class="trend-big"><b>${r1(kgToU(last.trend))}</b><span class="muted">${unit()} · ${signed(wk, unit() + ' this week')}</span></div>` : ''}
+    <div class="card-head"><h2>Weight trend</h2><a class="chev" href="#weight" aria-label="Open weight">${icon('chevron-right')}</a></div>
+    ${last ? `<div class="trend-big"><b>${r1(kgToU(last.trend))}</b><span class="muted">${unit()}</span><span>${signed(wk, unit() + ' this week')}</span></div>` : ''}
     ${weightChart(30, true)}
     <form data-form="weight" class="inline" style="margin-top:14px">
-      <input class="inline-input" name="w" type="number" step="0.1" inputmode="decimal" placeholder="Today's weight (${unit()})" value="${S.weights.find(w => w.date === today()) ? r1(kgToU(S.weights.find(w => w.date === today()).kg)) : ''}">
+      <label class="field"><span>Today's weight (${unit()})</span><input name="w" type="number" step="0.1" inputmode="decimal" value="${S.weights.find(w => w.date === today()) ? r1(kgToU(S.weights.find(w => w.date === today()).kg)) : ''}"></label>
       <button class="btn small" type="submit">Log</button>
     </form>
   </section>
   <section class="card">
     <div class="card-head"><h2>Cardio this week</h2><span class="muted small">goal ${s.cardioGoal} min</span></div>
     ${bar('Moderate-intensity minutes', 'cardio', cardio, s.cardioGoal, ' min')}
-    <p class="hint" style="margin-top:10px">Plan: build toward 150 min/week at 97–135 bpm — brisk walks, incline treadmill, post-lift cardio.</p>
+    <p class="hint" style="margin-top:10px">Build toward 150 min a week at 97-135 bpm: brisk walks, incline treadmill, post-lift cardio.</p>
   </section>`;
 };
 
@@ -288,53 +292,53 @@ VIEWS.food = () => {
   const meals = MEALS.map(m => {
     const items = list.filter(f => f.meal === m), kc = items.reduce((a, f) => a + +f.kcal, 0);
     return `<section class="card">
-      <div class="meal-head"><h3>${m}${kc ? `<span class="muted">${fmt(kc)} kcal</span>` : ''}</h3><button class="add-btn" data-act="addfood" data-meal="${m}" aria-label="Add to ${m}">+</button></div>
-      ${items.map(f => `<div class="entry"><div class="name"><b>${esc(f.name)}</b><small>${f.servings && f.servings != 1 ? `${f.servings} servings · ` : ''}<span class="m-dot pro"></span>${r1(f.p)}P<span class="m-dot fat"></span>${r1(f.f)}F<span class="m-dot carb"></span>${r1(f.c)}C</small></div><span class="kcal">${fmt(f.kcal)}</span><button class="del" data-act="delfood" data-id="${f.id}" aria-label="Delete ${esc(f.name)}">✕</button></div>`).join('')}
+      <div class="meal-head"><h3>${m}${kc ? `<span class="muted">${fmt(kc)} kcal</span>` : ''}</h3><button class="add-btn" data-act="addfood" data-meal="${m}" aria-label="Add to ${m}">${icon('plus')}</button></div>
+      ${items.map(f => `<div class="entry"><div class="name"><b>${esc(f.name)}</b><small>${f.servings && f.servings != 1 ? `${f.servings} servings, ` : ''}<span class="m-dot pro"></span>${r1(f.p)}P<span class="m-dot fat"></span>${r1(f.f)}F<span class="m-dot carb"></span>${r1(f.c)}C</small></div><span class="kcal">${fmt(f.kcal)}</span><button class="del" data-act="delfood" data-id="${f.id}" aria-label="Delete ${esc(f.name)}">${icon('x')}</button></div>`).join('')}
     </section>`;
   }).join('');
   const prev = S.food[addDays(foodDate, -1)] || [];
   return `
   <header class="page-head row">
-    <div><p class="kicker">Food log</p><h1>${foodDate === today() ? 'Today' : prettyDate(foodDate, { weekday: 'short', month: 'short', day: 'numeric' })}</h1></div>
-    <div class="date-nav"><button data-act="fdate" data-d="-1" aria-label="Previous day">‹</button><button data-act="fdate" data-d="1" aria-label="Next day" ${foodDate >= today() ? 'disabled' : ''}>›</button></div>
+    <div><h1>${foodDate === today() ? 'Today' : prettyDate(foodDate, { weekday: 'short', month: 'short', day: 'numeric' })}</h1></div>
+    <div class="date-nav"><button data-act="fdate" data-d="-1" aria-label="Previous day">${icon('chevron-left')}</button><button data-act="fdate" data-d="1" aria-label="Next day" ${foodDate >= today() ? 'disabled' : ''}>${icon('chevron-right')}</button></div>
   </header>
   <section class="card"><div class="sum4">
     ${cell('kcal', '', t.kcal, s.kcal, '')}${cell('protein', 'pro', t.p, s.protein, 'g')}${cell('fat', 'fat', t.f, s.fat, 'g')}${cell('carbs', 'carb', t.c, s.carbs, 'g')}
   </div></section>
   ${meals}
   ${!list.length && prev.length ? `<button class="btn ghost block" data-act="copyprev">Copy ${prev.length} items from the day before</button>` : ''}
-  <button class="fab" data-act="addfood">+ Add food</button>`;
+  <button class="fab" data-act="addfood">${icon('plus')}Add food</button>`;
 };
 
 VIEWS.train = () => {
   const nd = nextDay(), ws = weekStart(), weekW = S.workouts.filter(w => w.date >= ws).length, s = S.settings;
   const hist = sortedWorkouts().slice(0, 30).map(w => `
-    <details class="hist"><summary><div><b>Day ${w.day} · ${PROGRAM[w.day - 1].focus}</b><span class="muted small">${shortDate(w.date)} · ${Math.max(1, Math.round((w.end - w.start) / 60000))} min${w.cardio ? ` · ${w.cardio} min cardio` : ''}</span></div><span class="pill">${fmt(volume(w))} ${unit()}</span></summary>
-      <div class="sets">${w.exercises.filter(e => e.sets.length).map(e => `<p><b>${esc(e.name)}</b> — ${e.sets.filter(x => x.kind === 's').map(x => `${x.weight || 0}×${x.reps || 0}${x.rir !== '' ? ` @${x.rir}` : ''}`).join(', ')}</p>`).join('')}
-      ${w.notes ? `<p>📝 ${esc(w.notes)}</p>` : ''}<button class="link danger" data-act="delworkout" data-id="${w.id}">Delete workout</button></div>
+    <details class="hist"><summary><div><b>Day ${w.day}: ${PROGRAM[w.day - 1].focus}</b><span class="muted small">${shortDate(w.date)}, ${Math.max(1, Math.round((w.end - w.start) / 60000))} min${w.cardio ? `, ${w.cardio} min cardio` : ''}</span></div><span class="pill">${fmt(volume(w))} ${unit()}</span></summary>
+      <div class="sets">${w.exercises.filter(e => e.sets.length).map(e => `<p><b>${esc(e.name)}</b>: ${e.sets.filter(x => x.kind === 's').map(x => `${x.weight || 0}×${x.reps || 0}${x.rir !== '' ? ` @${x.rir}` : ''}`).join(', ')}</p>`).join('')}
+      ${w.notes ? `<p>${icon('notes')} ${esc(w.notes)}</p>` : ''}<button class="link danger" data-act="delworkout" data-id="${w.id}">Delete workout</button></div>
     </details>`).join('');
   return `
-  <header class="page-head"><p class="kicker">3 full-body days / week</p><h1>Training</h1></header>
+  <header class="page-head"><h1>Training</h1></header>
   <section class="card">
     <div class="card-head"><h2>${S.active ? 'In progress' : 'Up next'}</h2><span class="muted small">${weekW}/3 this week</span></div>
-    <p class="big">Day ${S.active ? S.active.day : nd} <span>· ${PROGRAM[(S.active ? S.active.day : nd) - 1].focus}</span></p>
+    <p class="big">Day ${S.active ? S.active.day : nd}<span>${PROGRAM[(S.active ? S.active.day : nd) - 1].focus}</span></p>
     ${S.active ? '<button class="btn block" data-act="resume">Resume workout</button>' : dumbbell(nd, `Day ${nd}`)}
   </section>
   <section class="card">
     <div class="card-head"><h2>Cardio</h2><span class="muted small">${weekCardio()} / ${s.cardioGoal} min this week</span></div>
     ${bar('This week', 'cardio', weekCardio(), s.cardioGoal, ' min')}
     <form data-form="cardio" class="inline" style="margin-top:14px">
-      <input class="inline-input" name="minutes" type="number" min="1" inputmode="numeric" placeholder="Minutes">
-      <select class="inline-input" name="type" style="flex:1.2"><option>Incline walk</option><option>Brisk walk</option><option>Elliptical</option><option>Rowing</option><option>Cycling</option><option>Jogging</option><option>Other</option></select>
+      <label class="field"><span>Minutes</span><input name="minutes" type="number" min="1" inputmode="numeric"></label>
+      <label class="field" style="flex:1.3"><span>Type</span><select name="type"><option>Incline walk</option><option>Brisk walk</option><option>Elliptical</option><option>Rowing</option><option>Cycling</option><option>Jogging</option><option>Other</option></select></label>
       <button class="btn small" type="submit">Log</button>
     </form>
   </section>
   <h2 class="section-title">Program</h2>
   ${PROGRAM.map(p => `<section class="card">
-    <div class="card-head"><h2>Day ${p.day} <span class="muted">· ${p.focus}</span></h2>${dumbbell(p.day)}</div>
+    <div class="card-head"><h2>Day ${p.day}<span class="muted">${p.focus}</span></h2>${dumbbell(p.day)}</div>
     ${dayMap(p)}
-    <ul class="ex-list">${dayExercises(p).map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name">${esc(e.name)}${e.options ? `<small class="alt-note">Swap options: ${e.options.filter(o => o !== e.name).map(esc).join(' · ')}</small>` : ''}</span></button><span>${e.warm}W + ${e.n} × ${e.reps[0]}–${e.reps[1]}</span></li>`).join('')}</ul>
-    <p class="hint" style="margin:10px 0 0">5 min warm-up cardio · working sets at 2–3 RIR · rest 60–90 s · 20 min cardio after</p>
+    <ul class="ex-list">${dayExercises(p).map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name">${esc(e.name)}${e.options ? `<small class="alt-note">Swap options: ${e.options.filter(o => o !== e.name).map(esc).join(', ')}</small>` : ''}</span></button><span>${e.warm}W + ${e.n} × ${e.reps[0]}-${e.reps[1]}</span></li>`).join('')}</ul>
+    <p class="hint" style="margin:10px 0 0">Warm up 5 min. Working sets at 2-3 RIR, 60-90 s rest. 20 min cardio after.</p>
   </section>`).join('')}
   <h2 class="section-title">History</h2>
   <section class="card">${hist || '<p class="empty">Finished workouts show up here.</p>'}</section>`;
@@ -344,7 +348,7 @@ VIEWS.weight = () => {
   const ser = trendSeries(), last = ser.at(-1), todayW = S.weights.find(w => w.date === today());
   const list = [...ser].reverse().slice(0, 60);
   return `
-  <header class="page-head"><p class="kicker">Scale weight & trend</p><h1>Weight</h1></header>
+  <header class="page-head"><h1>Weight</h1></header>
   <section class="card">
     <div class="card-head"><div class="trend-big" style="margin:0">${last ? `<b>${r1(kgToU(last.trend))}</b><span class="muted">${unit()} trend</span>` : '<span class="muted">No data yet</span>'}</div>
       <div class="seg">${[[30, '1M'], [90, '3M'], [0, 'All']].map(([d, l]) => `<button class="${weightRange === d ? 'on' : ''}" data-act="wrange" data-d="${d}">${l}</button>`).join('')}</div></div>
@@ -352,9 +356,9 @@ VIEWS.weight = () => {
     <div class="stats">
       <div><b>${signed(trendChange(ser, 7), '')}</b><span>7-day change</span></div>
       <div><b>${signed(trendChange(ser, 30), '')}</b><span>30-day change</span></div>
-      <div><b>${last ? r1(kgToU(last.kg)) : '—'}</b><span>Last weigh-in</span></div>
+      <div><b>${last ? r1(kgToU(last.kg)) : '-'}</b><span>Last weigh-in</span></div>
     </div>
-    <p class="hint" style="margin-top:12px">Dots are daily scale weights; the line is your smoothed trend. Weigh in each morning — the trend ignores day-to-day water swings. For lean gain, a slow upward trend is the goal.</p>
+    <p class="hint" style="margin-top:12px">Dots are daily scale weights; the line is your smoothed trend. Weigh in each morning. The trend ignores day-to-day water swings. For lean gain, a slow upward trend is the goal.</p>
   </section>
   <section class="card">
     <form data-form="weight">
@@ -363,29 +367,29 @@ VIEWS.weight = () => {
       <button class="btn block" type="submit" style="margin-top:4px">Save weigh-in</button>
     </form>
   </section>
-  ${list.length ? `<section class="card">${list.map(p => `<div class="list-row"><span>${prettyDate(p.date, { weekday: 'short', month: 'short', day: 'numeric' })}</span><span><b>${r1(kgToU(p.kg))}</b> <span class="muted small">trend ${r1(kgToU(p.trend))}</span><button class="del" data-act="delweight" data-date="${p.date}" aria-label="Delete">✕</button></span></div>`).join('')}</section>` : ''}`;
+  ${list.length ? `<section class="card">${list.map(p => `<div class="list-row"><span>${prettyDate(p.date, { weekday: 'short', month: 'short', day: 'numeric' })}</span><span><b>${r1(kgToU(p.kg))}</b> <span class="muted small">trend ${r1(kgToU(p.trend))}</span><button class="del" data-act="delweight" data-date="${p.date}" aria-label="Delete">${icon('x')}</button></span></div>`).join('')}</section>` : ''}`;
 };
 
 VIEWS.more = () => {
   const s = S.settings, macroKcal = s.protein * 4 + s.fat * 9 + s.carbs * 4;
   return `
-  <header class="page-head"><p class="kicker">Targets & settings</p><h1>Plan</h1></header>
+  <header class="page-head"><h1>Plan</h1></header>
   <section class="card">
     <div class="card-head"><h2>Daily targets</h2></div>
     <div class="setting-row"><label for="s-act">Activity level<small>Sets calories from your plan</small></label><select id="s-act" data-setting="activity">${ACTIVITY.map(([k, l, kc]) => `<option value="${k}" ${s.activity === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
     <div class="setting-row"><label for="s-kcal">Calories<small>~250 kcal surplus for muscle gain</small></label><input id="s-kcal" type="number" data-setting="kcal" value="${s.kcal}" inputmode="numeric"></div>
-    <div class="setting-row"><label for="s-p">Protein (g)<small>Plan range 93–128 g · 20–25 g per meal</small></label><input id="s-p" type="number" data-setting="protein" value="${s.protein}" inputmode="numeric"></div>
-    <div class="setting-row"><label for="s-f">Fat (g)<small>Not set by the plan — editable</small></label><input id="s-f" type="number" data-setting="fat" value="${s.fat}" inputmode="numeric"></div>
+    <div class="setting-row"><label for="s-p">Protein (g)<small>Plan: 93-128 g, about 20-25 g per meal</small></label><input id="s-p" type="number" data-setting="protein" value="${s.protein}" inputmode="numeric"></div>
+    <div class="setting-row"><label for="s-f">Fat (g)<small>Not set by the plan</small></label><input id="s-f" type="number" data-setting="fat" value="${s.fat}" inputmode="numeric"></div>
     <div class="setting-row"><label for="s-c">Carbs (g)<small>Auto-fills the rest of your calories</small></label><input id="s-c" type="number" data-setting="carbs" value="${s.carbs}" inputmode="numeric"></div>
-    <p class="hint" style="margin-top:8px">Macros add up to ${fmt(macroKcal)} kcal${Math.abs(macroKcal - s.kcal) > 25 ? ` — ${fmt(Math.abs(macroKcal - s.kcal))} ${macroKcal > s.kcal ? 'over' : 'under'} your calorie target` : ''}.</p>
+    <p class="hint" style="margin-top:8px">Macros add up to ${fmt(macroKcal)} kcal${Math.abs(macroKcal - s.kcal) > 25 ? `, ${fmt(Math.abs(macroKcal - s.kcal))} ${macroKcal > s.kcal ? 'over' : 'under'} your calorie target` : ''}.</p>
   </section>
   <section class="card">
     <div class="card-head"><h2>Training</h2></div>
     <div class="setting-row"><label>Units<small>Body weight & lifts</small></label><div class="seg">${['lb', 'kg'].map(x => `<button class="${s.units === x ? 'on' : ''}" data-act="units" data-u="${x}">${x}</button>`).join('')}</div></div>
-    <div class="setting-row"><label for="s-rest">Rest timer (sec)<small>Plan: 60–90 s</small></label><input id="s-rest" type="number" data-setting="rest" value="${s.rest}" inputmode="numeric"></div>
+    <div class="setting-row"><label for="s-rest">Rest timer (sec)<small>Plan: 60-90 s</small></label><input id="s-rest" type="number" data-setting="rest" value="${s.rest}" inputmode="numeric"></div>
     <div class="setting-row"><label for="s-cg">Weekly cardio goal (min)<small>AHA: 150 min moderate</small></label><input id="s-cg" type="number" data-setting="cardioGoal" value="${s.cardioGoal}" inputmode="numeric"></div>
   </section>
-  ${S.foods.length ? `<section class="card"><div class="card-head"><h2>My Foods</h2><span class="muted small">${S.foods.length}</span></div>${[...S.foods].sort((a, b) => a.name.localeCompare(b.name)).map(f => `<div class="list-row"><span>${esc(f.name)}<br><small class="muted">${fmt(f.kcal)} kcal · ${r1(f.p)}P ${r1(f.f)}F ${r1(f.c)}C</small></span><button class="del" data-act="delsaved" data-id="${f.id}" aria-label="Remove">✕</button></div>`).join('')}</section>` : ''}
+  ${S.foods.length ? `<section class="card"><div class="card-head"><h2>My Foods</h2><span class="muted small">${S.foods.length}</span></div>${[...S.foods].sort((a, b) => a.name.localeCompare(b.name)).map(f => `<div class="list-row"><span>${esc(f.name)}<br><small class="muted">${fmt(f.kcal)} kcal, ${r1(f.p)}P ${r1(f.f)}F ${r1(f.c)}C</small></span><button class="del" data-act="delsaved" data-id="${f.id}" aria-label="Remove">${icon('x')}</button></div>`).join('')}</section>` : ''}
   <section class="card">
     <div class="card-head"><h2>Your data</h2></div>
     <p class="hint">Everything is stored on this device only. Export a backup now and then.</p>
@@ -393,8 +397,8 @@ VIEWS.more = () => {
   </section>
   <section class="card note">
     <div class="card-head"><h2>About your plan</h2></div>
-    <p>Built from your wellness plan by Alex Alvarez, ATC. Goal: build muscle and strength with a sustainable diet — no yo-yo dieting.</p>
-    <p>Calories are a slight surplus (~250 kcal). Protein 1.6–2.2 g/kg body weight. Training is 3 full-body days per week, each set taken to 2–3 reps in reserve, with 5 min of cardio before and 20 min after.</p>
+    <p>Built from your wellness plan by Alex Alvarez, ATC. Goal: build muscle and strength with a sustainable diet and no yo-yo dieting.</p>
+    <p>Calories are a slight surplus (~250 kcal). Protein 1.6-2.2 g/kg body weight. Training is 3 full-body days per week, each set taken to 2-3 reps in reserve, with 5 min of cardio before and 20 min after.</p>
     <p>The plan advises checking with a physician before changing diet or exercise.</p>
   </section>`;
 };
@@ -408,6 +412,7 @@ function route(keepScroll) {
   $('#view').innerHTML = VIEWS[tab]();
   window.scrollTo(0, keepScroll ? y : 0);
   $('#resume').hidden = !S.active || sessionOpen;
+  document.body.classList.toggle('has-resume', !$('#resume').hidden);
 }
 window.addEventListener('hashchange', () => route());
 
@@ -444,7 +449,7 @@ function closeSession() { sessionOpen = false; $('#session').hidden = true; docu
 function setRow(i, j) {
   const ex = S.active.exercises[i], s = ex.sets[j];
   const base = +ex.sets.find(x => x.kind === 's')?.weight || 0;
-  let label, phW = '—', phR, phRir = '—';
+  let label, phW = '', phR, phRir = '';
   if (s.kind === 'w') {
     const warms = ex.sets.filter(x => x.kind === 'w'), wi = warms.indexOf(s) + 1;
     const pct = warms.length === 1 ? 0.6 : [0.5, 0.75, 0.85][wi - 1] ?? 0.85;
@@ -460,28 +465,28 @@ function setRow(i, j) {
     <input aria-label="Weight" inputmode="decimal" data-k="weight" value="${esc(s.weight)}" placeholder="${esc(phW)}">
     <input aria-label="Reps" inputmode="numeric" data-k="reps" value="${esc(s.reps)}" placeholder="${esc(phR)}">
     <input aria-label="Reps in reserve" inputmode="numeric" data-k="rir" value="${esc(s.rir)}" placeholder="${phRir}">
-    <button class="tick" data-act="tick" aria-label="Mark set done">✓</button></div>`;
+    <button class="tick" data-act="tick" aria-label="Mark set done">${icon('check')}</button></div>`;
 }
 function renderSession() {
   const a = S.active, p = PROGRAM[a.day - 1], sc = $('#session').scrollTop;
   $('#session').innerHTML = `<div class="session-inner">
-    <header class="session-head"><button class="icon-btn" data-act="minimize" aria-label="Minimize">⌄</button>
-      <div style="text-align:center"><p class="kicker" style="margin:0">Day ${a.day} · ${p.focus}</p><h2 id="elapsed">0:00</h2></div>
+    <header class="session-head"><button class="icon-btn" data-act="minimize" aria-label="Minimize">${icon('chevron-down')}</button>
+      <div style="text-align:center"><p class="kicker" style="margin:0">Day ${a.day}: ${p.focus}</p><h2 id="elapsed">0:00</h2></div>
       <button class="btn small" data-act="finish">Finish</button></header>
     <section class="card"><label class="check"><input type="checkbox" data-field="warmup" ${a.warmup ? 'checked' : ''}> 5 min warm-up cardio</label>
-      <p class="hint" style="margin:6px 0 0 32px">97–135 bpm · jog, elliptical, row, or incline walk at 10–15%</p></section>
+      <p class="hint" style="margin:6px 0 0 32px">97-135 bpm. Jog, elliptical, row or incline walk (10-15%)</p></section>
     ${a.exercises.map((ex, i) => `<section class="card">
-      <div class="ex-head">${formThumb(ex.name)}<div class="ex-title"><h3>${esc(ex.name)}</h3><span class="pill">${ex.n} × ${ex.reps[0]}–${ex.reps[1]} · RIR 2–3</span><span class="muscles">${musclesFor(ex.name)[0].map(k => MUSCLE_NAMES[k]).join(' · ')}</span></div></div>
+      <div class="ex-head">${formThumb(ex.name)}<div class="ex-title"><h3>${esc(ex.name)}</h3><span class="pill">${ex.n} × ${ex.reps[0]}-${ex.reps[1]} @ RIR 2-3</span><span class="muscles">${musclesFor(ex.name)[0].map(k => MUSCLE_NAMES[k]).join(', ')}</span></div></div>
       ${ex.options ? `<label class="swap">Swap <select data-swap="${i}">${ex.options.map(o => `<option ${o === ex.name ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select></label>` : ''}
       ${ex.lastText ? `<p class="last">${esc(ex.lastText)}</p>` : ''}
-      <p class="suggest ${ex.up ? 'up' : ''}">${ex.up ? '↑ ' : ''}${esc(ex.suggest)}</p>
+      <p class="suggest ${ex.up ? 'up' : ''}">${ex.up ? icon('arrow-up') : ''}<span>${esc(ex.suggest)}</span></p>
       <div class="set-grid"><span>Set</span><span>${unit()}</span><span>Reps</span><span>RIR</span><span></span></div>
       ${ex.sets.map((_, j) => setRow(i, j)).join('')}
-      <button class="link" data-act="addset" data-ex="${i}">+ Add set</button>
+      <button class="link" data-act="addset" data-ex="${i}">Add set</button>
     </section>`).join('')}
     <section class="card">
       <label class="field"><span>Post-lift cardio (minutes)</span><input type="number" inputmode="numeric" data-field="cardio" value="${esc(a.cardio)}" placeholder="20"></label>
-      <p class="hint" style="margin:0">Moderate intensity — incline treadmill walk. Counts toward your weekly cardio goal.</p>
+      <p class="hint" style="margin:0">Moderate intensity, like an incline treadmill walk. Counts toward your weekly cardio goal.</p>
     </section>
     <section class="card"><label class="field" style="margin:0"><span>Notes</span><textarea data-field="notes" placeholder="How did it feel? Machine settings, seat heights…">${esc(a.notes)}</textarea></label></section>
     <button class="btn block" data-act="finish">Finish workout</button>
@@ -506,7 +511,7 @@ function finishWorkout() {
   if (w.cardio > 0) S.cardio.push({ id: uid(), date: w.date, minutes: w.cardio, type: 'Post-lift cardio', workout: w.id });
   S.active = null; save(); stopRest();
   location.hash = '#train'; closeSession();
-  toast(`Day ${w.day} logged · ${fmt(volume(w))} ${unit()} total volume`);
+  toast(`Day ${w.day} logged. ${fmt(volume(w))} ${unit()} total volume`);
 }
 
 /* ---------- rest timer ---------- */
@@ -517,7 +522,7 @@ function updateRest() {
   const left = Math.max(0, Math.ceil((restEnd - Date.now()) / 1000));
   $('#rest-time').textContent = mmss(left);
   $('#rest-bar').style.width = (left / restTotal * 100) + '%';
-  $('#rest-label').textContent = left ? 'Rest' : 'Rest done — next set';
+  $('#rest-label').textContent = left ? 'Rest' : 'Rest done. Next set';
   if (!left) { restEnd = 0; navigator.vibrate?.([200, 100, 200]); setTimeout(() => { if (!restEnd) $('#rest').hidden = true; }, 4000); }
 }
 setInterval(() => { updateRest(); tickElapsed(); }, 250);
