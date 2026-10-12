@@ -253,3 +253,20 @@ details.hist .sets b{color:var(--ink);font-weight:600}
 .db.mini .pl{width:6px;height:22px;border-radius:3px}
 .db.mini .pl.s{width:4px;height:16px;margin:0 1.5px;border-radius:2px}
 .db.mini .bar{flex:none;width:22px;height:5px;border-radius:2px}
+
+/* body map */
+.body-map{display:block;width:100%;max-width:340px;margin:0 auto}
+.body-map.compact{max-width:200px}
+.body-map .b,.body-map .m{fill:#dcdce1}
+.body-map .m{stroke:var(--card);stroke-width:1.4;stroke-linejoin:round}
+.body-map .m.p{fill:var(--pro)}
+.body-map .m.s{fill:color-mix(in srgb,var(--pro) 50%,var(--card))}
+.body-map text{font-size:12px;fill:var(--muted);text-anchor:middle;font-weight:600}
+@media (prefers-color-scheme:dark){.body-map .b,.body-map .m:not(.p):not(.s){fill:#34343a}}
+.map-block{margin-top:14px;background:var(--card2);border-radius:16px;padding:14px 10px 10px}
+.map-block .body-map .m{stroke:var(--card2)}
+.map-legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:12px;color:var(--muted);margin-top:8px}
+.map-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.map-legend i.p{background:var(--pro)}.map-legend i.s{background:color-mix(in srgb,var(--pro) 50%,var(--card))}
+.day-map{margin:0 0 12px}
+.muscles{font-size:12px;color:var(--pro);font-weight:600}

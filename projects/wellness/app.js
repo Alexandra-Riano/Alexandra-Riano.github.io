@@ -45,6 +45,45 @@ const FORM = {
   'Lat Pulldown': { img: 'Wide-Grip_Lat_Pulldown', cues: ['Grip a little wider than shoulders, thighs under the pad', 'Lean back slightly, pull the bar to your upper chest', 'Drive your elbows down and back, return slowly to a full stretch'] },
   'Leg Curl': { img: 'Seated_Leg_Curl', cues: ['Pad just above your heels, thigh pad snug above your knees', 'Curl your heels down and back as far as you can', 'Pause, then return slowly'] }
 };
+// Muscles worked: [main, also worked]. Keys match the body-map regions below.
+const MUSCLES = {
+  'Hack Squat': [['quads'], ['glutes', 'adductors']],
+  'Chest Press': [['chest'], ['fdelt', 'triceps']],
+  'Neutral Grip Lat Pulldown': [['lats'], ['upperback', 'rdelt', 'biceps']],
+  'Chest Supported Row': [['upperback'], ['lats', 'rdelt', 'biceps', 'traps']],
+  'Leg Extension': [['quads'], []],
+  'Leg Press': [['quads', 'glutes'], ['adductors']],
+  'Shoulder Press': [['fdelt'], ['sdelt', 'triceps']],
+  'Cable Row': [['lats', 'upperback'], ['rdelt', 'biceps']],
+  'Pec Fly': [['chest'], ['fdelt']],
+  'Preacher Curl': [['biceps'], ['forearms']],
+  'Forward Smith Machine Lunge': [['glutes', 'quads'], ['adductors', 'hams']],
+  'Incline Chest Press': [['chest'], ['fdelt', 'triceps']],
+  'Lat Pulldown': [['lats'], ['upperback', 'biceps']],
+  'Leg Curl': [['hams'], ['calves']]
+};
+const MUSCLE_NAMES = { quads: 'quads', glutes: 'glutes', adductors: 'inner thighs', chest: 'chest', fdelt: 'front delts', sdelt: 'side delts', rdelt: 'rear delts', triceps: 'triceps', biceps: 'biceps', forearms: 'forearms', lats: 'lats', upperback: 'upper back', traps: 'traps', hams: 'hamstrings', calves: 'calves' };
+const BODY = 'M80 62 Q60 64 50 90 L42 196 L56 198 L66 134 L68 182 Q65 190 67 198 L64 292 L67 302 L66 382 L70 398 L90 398 L92 302 L97 212 L103 212 L108 302 L110 398 L130 398 L134 382 L133 302 L136 292 L133 198 Q135 190 132 182 L134 134 L144 198 L158 196 L150 90 Q140 64 120 62 Z';
+const ARM_FORE = 'M48 144 Q42 170 44 194 L55 194 Q60 168 62 144 Z', ARM_UP = 'M54 100 Q46 120 50 140 L62 140 Q67 120 65 102 Z', SDELT = 'M62 68 Q48 74 48 96 L54 96 Q55 80 66 71 Z';
+const FRONT_MAP = { sdelt: SDELT, fdelt: 'M76 70 Q62 72 56 96 L66 98 Q70 82 82 75 Z', chest: 'M98 74 L82 74 Q68 84 68 102 Q78 113 98 109 Z', biceps: ARM_UP, forearms: ARM_FORE,
+  abs: 'M87 113 L98 113 L98 178 L89 178 Q85 150 87 113 Z', obliques: 'M84 113 Q72 117 70 134 Q71 162 83 182 L87 178 Q82 150 84 113 Z', quads: 'M69 198 Q61 244 70 290 L92 292 Q96 244 90 204 Z',
+  adductors: 'M91 204 Q97 244 93 272 L99 262 L99 206 Z', calves: 'M69 304 Q63 340 71 380 L85 380 Q91 342 90 304 Z' };
+const BACK_MAP = { sdelt: SDELT, rdelt: 'M76 70 Q62 72 56 96 L66 98 Q70 82 82 75 Z', traps: 'M100 56 L82 68 Q90 82 100 98 Z', upperback: 'M99 100 L84 74 Q73 82 74 102 Q86 114 99 120 Z',
+  lats: 'M73 106 Q64 124 69 160 Q82 152 99 136 L99 124 Q85 118 73 106 Z', triceps: ARM_UP, forearms: ARM_FORE, lowerback: 'M88 142 L99 138 L99 182 L86 184 Q84 162 88 142 Z',
+  glutes: 'M68 188 Q63 216 75 228 Q91 232 99 222 L99 190 Z', hams: 'M69 232 Q63 262 71 292 L92 292 Q97 262 96 232 Z', calves: 'M69 304 Q61 332 71 362 L86 364 Q93 332 90 304 Z' };
+function bodyMap(main, also, compact) {
+  const fig = (set, x) => `<g transform="translate(${x},0)"><path class="b" d="${BODY}"/><ellipse class="b" cx="100" cy="32" rx="18" ry="22"/>${Object.entries(set).map(([k, d]) => {
+    const cls = main.includes(k) ? 'm p' : also.includes(k) ? 'm s' : 'm';
+    return `<path class="${cls}" d="${d}"/><path class="${cls}" d="${d}" transform="translate(200,0) scale(-1,1)"/>`;
+  }).join('')}</g>`;
+  return `<svg class="body-map ${compact ? 'compact' : ''}" viewBox="0 0 400 ${compact ? 404 : 424}" role="img" aria-label="Muscles worked: ${main.map(k => MUSCLE_NAMES[k]).join(', ')}">${fig(FRONT_MAP, 0)}${fig(BACK_MAP, 200)}${compact ? '' : '<text x="100" y="420">Front</text><text x="300" y="420">Back</text>'}</svg>`;
+}
+function dayMap(p) {
+  const main = [...new Set(p.exercises.flatMap(e => musclesFor(e.name)[0]))];
+  const also = [...new Set(p.exercises.flatMap(e => musclesFor(e.name)[1]))].filter(k => !main.includes(k));
+  return `<div class="day-map">${bodyMap(main, also, true)}<p class="map-legend"><span><i class="p"></i>${main.map(k => MUSCLE_NAMES[k]).join(', ')}</span>${also.length ? `<span><i class="s"></i>${also.map(k => MUSCLE_NAMES[k]).join(', ')}</span>` : ''}</p></div>`;
+}
+function musclesFor(name) { return MUSCLES[name] || [[], []]; }
 const nippard = name => `https://www.youtube.com/results?search_query=${encodeURIComponent('Jeff Nippard how to ' + name.replace('Forward Smith Machine ', 'Smith machine '))}`;
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -171,6 +210,7 @@ function openForm(name) {
     <div class="sheet-head"><h2>${esc(name)}</h2><button type="button" class="icon-btn" data-act="closedemo" aria-label="Close">✕</button></div>
     <div class="demo-anim" aria-label="${esc(name)} movement, start to finish"><img src="img/${f.img}_0.jpg" alt="${esc(name)} start position"><img class="end" src="img/${f.img}_1.jpg" alt="${esc(name)} finish position"><span class="demo-tag"><i>Start</i><i>Finish</i></span></div>
     <div class="demo-frames"><figure><img src="img/${f.img}_0.jpg" alt=""><figcaption>1 · Start</figcaption></figure><figure><img src="img/${f.img}_1.jpg" alt=""><figcaption>2 · Finish</figcaption></figure></div>
+    <div class="map-block">${bodyMap(...musclesFor(name))}<p class="map-legend"><span><i class="p"></i>Main: ${musclesFor(name)[0].map(k => MUSCLE_NAMES[k]).join(', ')}</span>${musclesFor(name)[1].length ? `<span><i class="s"></i>Also: ${musclesFor(name)[1].map(k => MUSCLE_NAMES[k]).join(', ')}</span>` : ''}</p></div>
     <ol class="cues">${f.cues.map(c => `<li>${esc(c)}</li>`).join('')}</ol>
     <a class="btn block ghost" href="${nippard(name)}" target="_blank" rel="noopener">▶ Watch Jeff Nippard on YouTube</a>
     <p class="hint" style="text-align:center;margin-top:10px">Photos: free-exercise-db (public domain)</p>`;
@@ -270,6 +310,7 @@ VIEWS.train = () => {
   <h2 class="section-title">Program</h2>
   ${PROGRAM.map(p => `<section class="card">
     <div class="card-head"><h2>Day ${p.day} <span class="muted">· ${p.focus}</span></h2>${dumbbell(p.day)}</div>
+    ${dayMap(p)}
     <ul class="ex-list">${p.exercises.map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name">${esc(e.name)}</span></button><span>${e.warm}W + ${e.n} × ${e.reps[0]}–${e.reps[1]}</span></li>`).join('')}</ul>
     <p class="hint" style="margin:10px 0 0">5 min warm-up cardio · working sets at 2–3 RIR · rest 60–90 s · 20 min cardio after</p>
   </section>`).join('')}
@@ -399,7 +440,7 @@ function renderSession() {
     <section class="card"><label class="check"><input type="checkbox" data-field="warmup" ${a.warmup ? 'checked' : ''}> 5 min warm-up cardio</label>
       <p class="hint" style="margin:6px 0 0 32px">97–135 bpm · jog, elliptical, row, or incline walk at 10–15%</p></section>
     ${a.exercises.map((ex, i) => `<section class="card">
-      <div class="ex-head">${formThumb(ex.name)}<div class="ex-title"><h3>${esc(ex.name)}</h3><span class="pill">${ex.n} × ${ex.reps[0]}–${ex.reps[1]} · RIR 2–3</span></div></div>
+      <div class="ex-head">${formThumb(ex.name)}<div class="ex-title"><h3>${esc(ex.name)}</h3><span class="pill">${ex.n} × ${ex.reps[0]}–${ex.reps[1]} · RIR 2–3</span><span class="muscles">${musclesFor(ex.name)[0].map(k => MUSCLE_NAMES[k]).join(' · ')}</span></div></div>
       ${ex.lastText ? `<p class="last">${esc(ex.lastText)}</p>` : ''}
       <p class="suggest ${ex.up ? 'up' : ''}">${ex.up ? '↑ ' : ''}${esc(ex.suggest)}</p>
       <div class="set-grid"><span>Set</span><span>${unit()}</span><span>Reps</span><span>RIR</span><span></span></div>
