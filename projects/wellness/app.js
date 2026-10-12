@@ -1,5 +1,6 @@
 'use strict';
 const KEY = 'alex-wellness-v1';
+const APP_VERSION = 28; // keep in step with ?v= in index.html and CACHE in service-worker.js
 
 // From "Alexandra Riano Wellness Plan" (Alex Alvarez, ATC), 1st microcycle, 3 full-body days.
 // warm = warm-up sets, n = working sets, reps = target range. All working sets at 2-3 RIR, 60-90 s rest.
@@ -769,7 +770,8 @@ VIEWS.more = () => {
     <p>Built from your wellness plan by Alex Alvarez, ATC. Goal: build muscle and strength with a sustainable diet and no yo-yo dieting.</p>
     <p>Calories are a slight surplus (~250 kcal). Protein 1.6-2.2 g/kg body weight. Training is 3 full-body days per week, each set taken to 2-3 reps in reserve, with 5 min of cardio before and 20 min after.</p>
     <p>The plan advises checking with a physician before changing diet or exercise.</p>
-  </section>`;
+  </section>
+  <p class="hint" style="text-align:center">App version ${APP_VERSION}</p>`;
 };
 
 /* ---------- routing ---------- */
@@ -815,7 +817,7 @@ async function swapExercise(i, name) {
   save(); renderSession(); toast(`Swapped to ${name}`);
 }
 function openSession() { sessionOpen = true; renderSession(); $('#session').hidden = false; document.body.classList.add('locked'); $('#resume').hidden = true; }
-function closeSession() { sessionOpen = false; $('#session').hidden = true; document.body.classList.remove('locked'); route(true); }
+function closeSession() { if (pendingReload) return location.reload(); sessionOpen = false; $('#session').hidden = true; document.body.classList.remove('locked'); route(true); }
 
 function setRow(i, j) {
   const ex = S.active.exercises[i], s = ex.sets[j];
@@ -1112,4 +1114,18 @@ document.addEventListener('change', e => {
 
 route();
 if (S.active && location.hash === '#session') openSession();
-if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('service-worker.js').catch(() => {});
+// Keep installed copies current: check for a new version on every open and reload onto it.
+// Mid-workout the reload waits until the workout screen is closed (the workout itself is saved either way).
+let pendingReload = false;
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register('service-worker.js').then(reg => {
+    reg.update();
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) reg.update(); });
+  }).catch(() => {});
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController || pendingReload) return;
+    if (sessionOpen) { pendingReload = true; return; }
+    location.reload();
+  });
+}
