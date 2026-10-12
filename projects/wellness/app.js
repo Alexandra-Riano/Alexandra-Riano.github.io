@@ -120,7 +120,7 @@ const mmss = s => `${Math.floor(s / 60)}:${pad(s % 60)}`;
 
 function defaults() {
   return {
-    settings: { units: 'lb', activity: 'moderate', kcal: 1860, protein: 110, fat: 52, carbs: 238, cardioGoal: 150, rest: 90 },
+    settings: { theme: 'auto', units: 'lb', activity: 'moderate', kcal: 1860, protein: 110, fat: 52, carbs: 238, cardioGoal: 150, rest: 90 },
     food: {}, foods: [], weights: [], workouts: [], cardio: [], active: null, swaps: {}
   };
 }
@@ -145,6 +145,14 @@ function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e
 let S = load(), foodDate = today(), foodOnToday = true, sessionOpen = false, restEnd = 0, restTotal = 90, weightRange = 30;
 
 const unit = () => S.settings.units;
+function applyTheme() {
+  const t = S.settings.theme || 'auto', root = document.documentElement;
+  if (t === 'auto') root.removeAttribute('data-theme'); else root.dataset.theme = t;
+  const dark = t === 'dark' || (t === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
+  $$('meta[name=theme-color]').forEach(m => { m.removeAttribute('media'); m.content = dark ? '#0c0c0e' : '#f2f2f6'; });
+}
+applyTheme();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
 const kgToU = kg => unit() === 'lb' ? kg * 2.20462 : kg;
 const uToKg = v => unit() === 'lb' ? v / 2.20462 : v;
 const step = () => unit() === 'lb' ? 5 : 2.5;
@@ -384,6 +392,10 @@ VIEWS.more = () => {
   return `
   <header class="page-head"><h1>Plan</h1></header>
   <section class="card">
+    <div class="card-head"><h2>Appearance</h2></div>
+    <div class="setting-row"><label>Theme<small>Auto follows your phone</small></label><div class="seg">${[['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark']].map(([v, l]) => `<button class="${(s.theme || 'auto') === v ? 'on' : ''}" data-act="theme" data-t="${v}">${l}</button>`).join('')}</div></div>
+  </section>
+  <section class="card">
     <div class="card-head"><h2>Daily targets</h2></div>
     <div class="setting-row"><label for="s-act">Activity level<small>Sets calories from your plan</small></label><select id="s-act" data-setting="activity">${ACTIVITY.map(([k, l, kc]) => `<option value="${k}" ${s.activity === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
     <div class="setting-row"><label for="s-kcal">Calories<small>~250 kcal surplus for muscle gain</small></label><input id="s-kcal" type="number" data-setting="kcal" value="${s.kcal}" inputmode="numeric"></div>
@@ -602,6 +614,7 @@ const ACT = {
   wrange: b => { weightRange = +b.dataset.d; route(true); },
   delweight: b => { S.weights = S.weights.filter(w => w.date !== b.dataset.date); save(); route(true); },
   delsaved: b => { S.foods = S.foods.filter(f => f.id !== b.dataset.id); save(); route(true); },
+  theme: b => { S.settings.theme = b.dataset.t; save(); applyTheme(); route(true); },
   units: b => {
     const to = b.dataset.u; if (to === S.settings.units) return;
     // Lift weights are stored in the unit they were entered in, so convert them along with the label.
@@ -616,7 +629,7 @@ const ACT = {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `wellness-backup-${today()}.json`;
     a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   },
-  reset: async () => { if (await ask('Erase all food, weight and workout data on this device?', 'Erase', true) && await ask('Really erase everything? Export a backup first if unsure.', 'Erase everything', true)) { S = defaults(); save(); route(); toast('All data reset'); } }
+  reset: async () => { if (await ask('Erase all food, weight and workout data on this device?', 'Erase', true) && await ask('Really erase everything? Export a backup first if unsure.', 'Erase everything', true)) { S = defaults(); save(); applyTheme(); route(); toast('All data reset'); } }
 };
 
 document.addEventListener('click', e => {
@@ -696,7 +709,7 @@ document.addEventListener('change', e => {
       try {
         const d = JSON.parse(r.result);
         if (!d.settings) throw new Error('bad file');
-        S = migrate({ ...defaults(), ...d, settings: { ...defaults().settings, ...d.settings } }); save(); route(); toast('Backup restored');
+        S = migrate({ ...defaults(), ...d, settings: { ...defaults().settings, ...d.settings } }); save(); applyTheme(); route(); toast('Backup restored');
       } catch (err) { toast('That file is not a Wellness backup'); }
     };
     r.readAsText(t.files[0]);
