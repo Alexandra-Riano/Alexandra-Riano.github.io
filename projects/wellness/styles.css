@@ -348,3 +348,8 @@ details.hist .sets b{color:var(--ink);font-weight:600}
 .program-note{margin:-2px 4px 12px}
 .place-tag{display:inline-block;margin-left:8px;font-size:11px;font-weight:700;color:var(--ink);background:var(--card2);border-radius:var(--r-pill);padding:2px 8px;vertical-align:1px}
 .setup{font-size:12px;color:var(--muted)}
+.no-photo{display:grid;place-items:center;background:var(--card2);color:var(--muted)}
+.thumb.sm.no-photo{font-size:18px}
+.thumb-btn.no-photo{font-size:24px}
+.thumb-btn.no-photo span{background:var(--line);color:var(--ink)}
+.setup-line{font-size:14px;margin-top:14px;padding:10px 12px;border-radius:var(--r-ctl);background:var(--card2)}

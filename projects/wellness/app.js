@@ -26,28 +26,29 @@ const PROGRAM = [
 const ACTIVITY = [
   ['sedentary', 'Sedentary', 1524], ['light', 'Light (1-3×/wk)', 1746], ['moderate', 'Moderate (3-5×/wk)', 1860],
   ['intense', 'Intense (6-7×/wk)', 1968], ['very', 'Very intense (daily)', 2190]];
-// Home version on Tonal (cable machine, smart bar, bench, ankle straps). Same day numbers hit the same areas
-// as the gym days, so the rotation continues whichever place you train. Every move is A or S tier on
-// Jeff Nippard's lists (tier is for the movement; Tonal does it with cables). inc = progression jump in lb.
+// Home version on Tonal, a cable machine: every move uses the cable arms (handles, rope or ankle strap).
+// Same day numbers hit the same areas as the gym days, so the rotation continues whichever place you train.
+// Tiers are from Jeff Nippard's lists. Cable Squat is the one exception: no cable quad move is ranked A/S,
+// and it is the closest squat pattern Tonal can load. inc = progression jump in lb.
 const TONAL = [
   { day: 1, focus: 'Full body A', exercises: [
-    { name: 'Front Squat', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Bench Press', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Neutral Lat Pulldown', warm: 1, n: 3, reps: [8, 10] },
-    { name: 'Seated Row', warm: 1, n: 3, reps: [8, 10] },
+    { name: 'Cable Squat', warm: 2, n: 3, reps: [8, 10] },
+    { name: 'Seated Cable Fly', warm: 1, n: 3, reps: [10, 12], inc: 2 },
+    { name: 'Neutral-Grip Cable Pulldown', warm: 1, n: 3, reps: [8, 10] },
+    { name: 'Seated Cable Row', warm: 1, n: 3, reps: [8, 10] },
     { name: 'Cable Lateral Raise', warm: 1, n: 3, reps: [12, 15], inc: 2 }] },
   { day: 2, focus: 'Full body B', exercises: [
-    { name: 'Romanian Deadlift', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Incline Bench Press', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Wide-Grip Seated Row', warm: 1, n: 3, reps: [10, 12] },
-    { name: 'Seated Cable Fly', warm: 1, n: 3, reps: [10, 12], inc: 2 },
-    { name: 'Bayesian Curl', warm: 1, n: 3, reps: [10, 12], inc: 2 }] },
+    { name: 'Cable Romanian Deadlift', warm: 2, n: 3, reps: [8, 10] },
+    { name: 'Cable Crossover', warm: 1, n: 3, reps: [10, 12], inc: 2 },
+    { name: 'Wide-Grip Cable Row', warm: 1, n: 3, reps: [10, 12] },
+    { name: 'Bayesian Cable Curl', warm: 1, n: 3, reps: [10, 12], inc: 2 },
+    { name: 'Rope Face Pull', warm: 1, n: 3, reps: [12, 15], inc: 2 }] },
   { day: 3, focus: 'Full body C', exercises: [
-    { name: 'Front Squat', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Wide-Grip Lat Pulldown', warm: 1, n: 3, reps: [8, 10] },
-    { name: 'Cable Glute Kickback', warm: 1, n: 3, reps: [12, 15], inc: 2 },
-    { name: 'Overhead Triceps Extension', warm: 1, n: 3, reps: [10, 12], inc: 2 },
-    { name: 'Reverse Cable Fly', warm: 1, n: 3, reps: [12, 15], inc: 2 }] }
+    { name: 'Cable Squat', warm: 2, n: 3, reps: [8, 10] },
+    { name: 'Wide-Grip Cable Pulldown', warm: 1, n: 3, reps: [8, 10] },
+    { name: 'Cable Press-Around', warm: 1, n: 3, reps: [10, 12], inc: 2 },
+    { name: 'Overhead Cable Triceps Extension', warm: 1, n: 3, reps: [10, 12], inc: 2 },
+    { name: 'Cable Glute Kickback', warm: 1, n: 3, reps: [12, 15], inc: 2 }] }
 ];
 const PLACES = { gym: { label: 'Gym', days: PROGRAM }, tonal: { label: 'Tonal', days: TONAL } };
 const daysFor = place => (PLACES[place] || PLACES.gym).days;
@@ -73,20 +74,20 @@ const FORM = {
   'Preacher Curl': { img: 'Machine_Preacher_Curls', cues: ['Backs of your upper arms flat on the pad', 'Curl up. Only your forearms move', 'Lower slowly all the way down'] },
   'Machine Hip Abduction': { img: 'Thigh_Abductor', cues: ['Sit tall with the pads on the outside of your knees', 'Push your knees out as wide as you can and pause a second', 'Return slowly. Lean your torso slightly forward to hit more of your glutes'] },
   '45° Back Extension': { img: 'Hyperextensions_Back_Extensions', cues: ['Set the pad so it sits just below your hip crease', 'Hinge at the hips and lower your chest toward the floor', 'Squeeze your glutes to come up to a straight line. Don\'t arch past it'] },
-  'Front Squat': { img: 'Front_Barbell_Squat', tonal: 'Smart bar, arms low', cues: ['Bar across the front of your shoulders, elbows high (photo shows a barbell, same position)', 'Sit down between your heels until thighs reach parallel, chest tall', 'Drive up through mid-foot. Tonal tops out at 200 lb total on the original model'] },
-  'Bench Press': { img: 'Barbell_Bench_Press_-_Medium_Grip', tonal: 'Smart bar, arms low, flat bench', cues: ['Lie on the bench with eyes under the bar, shoulder blades pinched', 'Lower to mid-chest with elbows about 45° from your sides', 'Press up and slightly back, keep your feet planted'] },
-  'Neutral Lat Pulldown': { img: 'V-Bar_Pulldown', tonal: 'Handles, arms high, kneel or sit facing Tonal', cues: ['Palms facing each other, lean back slightly', 'Pull elbows down to your sides until hands reach your upper chest', 'Return slowly to a full stretch overhead'] },
-  'Seated Row': { img: 'Seated_Cable_Rows', tonal: 'Handles, arms low, sit on the floor or bench', cues: ['Sit tall with knees slightly bent', 'Row the handles to your belly, elbows close to your body', 'Squeeze your back for a second, then reach forward slowly'] },
-  'Cable Lateral Raise': { img: 'Side_Lateral_Raise', tonal: 'One handle, arm low, cable crossing in front of you', cues: ['Stand side-on to Tonal and hold the handle with the far hand (photo shows dumbbells, same arm path)', 'Raise your arm out to the side, leading with the elbow, to shoulder height', 'Lower slowly. Do all reps, then switch arms'] },
-  'Romanian Deadlift': { img: 'Romanian_Deadlift', tonal: 'Smart bar, arms low', cues: ['Soft knees, push your hips straight back', 'Slide the bar down your thighs until you feel a big hamstring stretch', 'Squeeze your glutes to stand tall. Keep your back flat'] },
-  'Incline Bench Press': { img: 'Barbell_Incline_Bench_Press_-_Medium_Grip', tonal: 'Smart bar, arms low, bench inclined', cues: ['Set the bench to about 30°, shoulder blades pinched', 'Lower to your upper chest', 'Press up over your shoulders and control the way down'] },
-  'Wide-Grip Seated Row': { img: 'Seated_Cable_Rows', tonal: 'Smart bar, arms low, sit facing Tonal', cues: ['Overhand grip a bit wider than your shoulders', 'Row the bar to your lower chest with elbows flared about 45°', 'Squeeze your upper back, then reach forward slowly'] },
-  'Seated Cable Fly': { img: 'Cable_Crossover', tonal: 'Handles, arms at chest height, sit on bench facing away', cues: ['Sit tall with arms open and a slight bend in the elbows (photo shows the standing version)', 'Hug the handles together in front of your chest', 'Open slowly until you feel a deep chest stretch'] },
-  'Bayesian Curl': { img: 'Standing_One-Arm_Cable_Curl', tonal: 'One handle, arm low, face away from Tonal', cues: ['Face away from Tonal and step forward so your arm is pulled slightly behind you (photo shows a regular cable curl)', 'Curl up without letting your elbow drift forward', 'Lower slowly to a full stretch. Do all reps, then switch arms'] },
-  'Wide-Grip Lat Pulldown': { img: 'Wide-Grip_Lat_Pulldown', tonal: 'Smart bar, arms high, kneel facing Tonal', cues: ['Grip a little wider than your shoulders, lean back slightly', 'Pull the bar to your upper chest, driving elbows down and back', 'Return slowly to a full stretch'] },
+  'Cable Squat': { tonal: 'Both handles, arms low, handles held at your shoulders', cues: ['Face Tonal, hold a handle at each shoulder with elbows tucked', 'Sit down between your heels until thighs reach parallel, chest tall', 'Drive up through mid-foot. No photo yet: it looks like a goblet squat with a handle in each hand'] },
+  'Seated Cable Fly': { img: 'Cable_Crossover', tonal: 'Handles, arms at chest height, sit on the bench facing away', cues: ['Sit tall with arms open and elbows slightly bent (photo shows the standing version)', 'Hug the handles together in front of your chest', 'Open slowly until you feel a deep chest stretch'] },
+  'Neutral-Grip Cable Pulldown': { img: 'V-Bar_Pulldown', tonal: 'Handles, arms high, kneel facing Tonal', cues: ['Palms facing each other, lean back slightly', 'Pull your elbows down to your sides until hands reach your upper chest', 'Return slowly to a full stretch overhead'] },
+  'Seated Cable Row': { img: 'Seated_Cable_Rows', tonal: 'Handles, arms low, sit facing Tonal', cues: ['Sit tall with knees slightly bent', 'Row the handles to your belly, elbows close to your body', 'Squeeze your back for a second, then reach forward slowly'] },
+  'Cable Lateral Raise': { img: 'Standing_Low-Pulley_Deltoid_Raise', tonal: 'One handle, arm low, stand side-on to Tonal', cues: ['Hold the handle with the hand farther from Tonal, cable across your body', 'Raise your arm out to the side, leading with the elbow, to shoulder height', 'Lower slowly. Do all reps, then switch arms'] },
+  'Cable Romanian Deadlift': { img: 'Cable_Deadlifts', tonal: 'Both handles, arms low, stand facing Tonal', cues: ['Soft knees, push your hips straight back toward the wall behind you', 'Let the handles travel down your shins until you feel a big hamstring stretch', 'Squeeze your glutes to stand tall. Keep your back flat'] },
+  'Cable Crossover': { img: 'Cable_Crossover', tonal: 'Handles, arms high, one step forward from Tonal', cues: ['Stagger your feet and lean slightly forward', 'Sweep the handles down and together in front of your hips', 'Return slowly until your chest is stretched'] },
+  'Wide-Grip Cable Row': { img: 'Seated_Cable_Rows', tonal: 'Handles, arms at chest height, sit facing Tonal', cues: ['Palms down, arms wide', 'Row with elbows flared out about 45° toward your upper chest', 'Squeeze your upper back, then reach forward slowly'] },
+  'Bayesian Cable Curl': { img: 'Standing_One-Arm_Cable_Curl', tonal: 'One handle, arm low, face away from Tonal', cues: ['Face away and step forward so the cable pulls your arm slightly behind you (photo shows a regular cable curl)', 'Curl up without letting your elbow drift forward', 'Lower slowly to a full stretch. Do all reps, then switch arms'] },
+  'Rope Face Pull': { img: 'Face_Pull', tonal: 'Rope, arms at head height, stand facing Tonal', cues: ['Grip the rope with thumbs toward you', 'Pull toward your forehead, spreading the rope apart', 'Squeeze the back of your shoulders, return slowly'] },
+  'Wide-Grip Cable Pulldown': { img: 'Wide-Grip_Lat_Pulldown', tonal: 'Handles, arms high and angled wide, kneel facing Tonal', cues: ['Hands wider than your shoulders, lean back slightly', 'Pull the handles to your upper chest, driving elbows down and back', 'Return slowly to a full stretch'] },
+  'Cable Press-Around': { img: 'Single-Arm_Cable_Crossover', tonal: 'One handle, arm at chest height, back to Tonal', cues: ['Stand with your back to Tonal, handle at chest level', 'Press forward and across your body past the middle of your chest', 'Return slowly into the stretch. Do all reps, then switch arms'] },
+  'Overhead Cable Triceps Extension': { img: 'Cable_Rope_Overhead_Triceps_Extension', tonal: 'Rope, arms low, face away from Tonal', cues: ['Face away with the rope behind your head, elbows pointing up', 'Straighten your arms overhead without moving your elbows', 'Lower slowly into a deep stretch behind your head'] },
   'Cable Glute Kickback': { img: 'One-Legged_Cable_Kickback', tonal: 'Ankle strap, arm low, hold Tonal for balance', cues: ['Strap one ankle and hinge forward slightly', 'Kick the leg straight back, squeezing your glute at the top', 'Return slowly without arching your lower back. Then switch legs'] },
-  'Overhead Triceps Extension': { img: 'Cable_Rope_Overhead_Triceps_Extension', tonal: 'Rope or both handles, arms low, face away from Tonal', cues: ['Face away with your hands behind your head, elbows pointing up', 'Straighten your arms overhead without moving your elbows', 'Lower slowly into a deep stretch behind your head'] },
-  'Reverse Cable Fly': { img: 'Cable_Rear_Delt_Fly', tonal: 'Handles, arms at shoulder height, cables crossed', cues: ['Face Tonal, cross the cables and take each handle in the opposite hand', 'Pull your arms out wide in a reverse hug, thumbs up', 'Squeeze the back of your shoulders, return slowly'] },
   'Machine Hip Thrust': { img: 'Barbell_Hip_Thrust', cues: ['Upper back on the pad, feet flat about shoulder-width (photo shows the barbell version, same movement)', 'Drive your hips up until your body is straight from shoulders to knees', 'Squeeze your glutes for a second at the top, lower slowly'] },
   'Incline Chest Press': { img: 'Leverage_Incline_Chest_Press', cues: ['Handles start near your upper chest', 'Chest up, shoulder blades pinched back', 'Press up and forward, return slowly'] },
   'Lat Pulldown': { img: 'Wide-Grip_Lat_Pulldown', cues: ['Grip a little wider than shoulders, thighs under the pad', 'Lean back slightly, pull the bar to your upper chest', 'Drive your elbows down and back, return slowly to a full stretch'] },
@@ -106,21 +107,21 @@ const MUSCLES = {
   'Preacher Curl': [['biceps'], ['forearms']],
   'Machine Hip Abduction': [['glutes'], []],
   '45° Back Extension': [['glutes', 'hams'], ['lowerback']],
-  'Machine Hip Thrust': [['glutes'], ['hams', 'quads']],
-  'Front Squat': [['quads'], ['glutes', 'adductors']],
-  'Bench Press': [['chest'], ['fdelt', 'triceps']],
-  'Neutral Lat Pulldown': [['lats'], ['upperback', 'rdelt', 'biceps']],
-  'Seated Row': [['lats', 'upperback'], ['rdelt', 'biceps']],
-  'Cable Lateral Raise': [['sdelt'], []],
-  'Romanian Deadlift': [['hams', 'glutes'], ['lowerback']],
-  'Incline Bench Press': [['chest'], ['fdelt', 'triceps']],
-  'Wide-Grip Seated Row': [['upperback'], ['rdelt', 'lats', 'biceps']],
+  'Cable Squat': [['quads'], ['glutes', 'adductors']],
   'Seated Cable Fly': [['chest'], ['fdelt']],
-  'Bayesian Curl': [['biceps'], ['forearms']],
-  'Wide-Grip Lat Pulldown': [['lats'], ['upperback', 'biceps']],
+  'Neutral-Grip Cable Pulldown': [['lats'], ['upperback', 'rdelt', 'biceps']],
+  'Seated Cable Row': [['lats', 'upperback'], ['rdelt', 'biceps']],
+  'Cable Lateral Raise': [['sdelt'], []],
+  'Cable Romanian Deadlift': [['hams', 'glutes'], ['lowerback']],
+  'Cable Crossover': [['chest'], ['fdelt']],
+  'Wide-Grip Cable Row': [['upperback'], ['rdelt', 'lats', 'biceps']],
+  'Bayesian Cable Curl': [['biceps'], ['forearms']],
+  'Rope Face Pull': [['rdelt', 'upperback'], ['traps']],
+  'Wide-Grip Cable Pulldown': [['lats'], ['upperback', 'biceps']],
+  'Cable Press-Around': [['chest'], ['fdelt']],
+  'Overhead Cable Triceps Extension': [['triceps'], []],
   'Cable Glute Kickback': [['glutes'], ['hams']],
-  'Overhead Triceps Extension': [['triceps'], []],
-  'Reverse Cable Fly': [['rdelt'], ['upperback']],
+  'Machine Hip Thrust': [['glutes'], ['hams', 'quads']],
   'Incline Chest Press': [['chest'], ['fdelt', 'triceps']],
   'Lat Pulldown': [['lats'], ['upperback', 'biceps']],
   'Seated Leg Curl': [['hams'], ['calves']]
@@ -305,6 +306,8 @@ function dumbbell(day, label, place = S.settings.place) {
 }
 function formThumb(name, small) {
   const f = FORM[name]; if (!f) return '';
+  if (!f.img) return small ? `<span class="thumb sm no-photo" aria-hidden="true">${icon('barbell')}</span>`
+    : `<button class="thumb-btn no-photo" data-act="form" data-name="${esc(name)}" aria-label="How to do ${esc(name)}">${icon('barbell')}<span>Form</span></button>`;
   return small ? `<img class="thumb sm" src="img/${f.img}_1.jpg" alt="" loading="lazy">`
     : `<button class="thumb-btn" data-act="form" data-name="${esc(name)}" aria-label="How to do ${esc(name)}"><img class="thumb" src="img/${f.img}_1.jpg" alt="" loading="lazy"><span>Form</span></button>`;
 }
@@ -312,9 +315,10 @@ function openForm(name) {
   const f = FORM[name]; if (!f) return;
   $('#demo-body').innerHTML = `
     <div class="sheet-head"><h2 id="demo-title">${esc(name)}</h2><button type="button" class="icon-btn" data-act="closedemo" aria-label="Close">${icon('x')}</button></div>
-    <div class="demo-anim" aria-label="${esc(name)} movement, start to finish"><img src="img/${f.img}_0.jpg" alt="${esc(name)} start position"><img class="end" src="img/${f.img}_1.jpg" alt="${esc(name)} finish position"></div>
-    <div class="demo-frames"><figure><img src="img/${f.img}_0.jpg" alt=""><figcaption>Start</figcaption></figure><figure><img src="img/${f.img}_1.jpg" alt=""><figcaption>Finish</figcaption></figure></div>
+${f.img ? `<div class="demo-anim" aria-label="${esc(name)} movement, start to finish"><img src="img/${f.img}_0.jpg" alt="${esc(name)} start position"><img class="end" src="img/${f.img}_1.jpg" alt="${esc(name)} finish position"></div>
+    <div class="demo-frames"><figure><img src="img/${f.img}_0.jpg" alt=""><figcaption>Start</figcaption></figure><figure><img src="img/${f.img}_1.jpg" alt=""><figcaption>Finish</figcaption></figure></div>` : '<p class="hint" style="margin:0 0 4px">No photo for this cable move yet. Follow the setup and tips below.</p>'}
     <div class="map-block">${bodyMap(...musclesFor(name))}<p class="map-legend"><span><i class="p"></i>Main: ${musclesFor(name)[0].map(k => MUSCLE_NAMES[k]).join(', ')}</span>${musclesFor(name)[1].length ? `<span><i class="s"></i>Also: ${musclesFor(name)[1].map(k => MUSCLE_NAMES[k]).join(', ')}</span>` : ''}</p></div>
+    ${f.tonal ? `<p class="setup-line"><b>Tonal setup:</b> ${esc(f.tonal)}</p>` : ''}
     <ol class="cues">${f.cues.map(c => `<li>${esc(c)}</li>`).join('')}</ol>
     <a class="btn block ghost" href="${nippard(name)}" target="_blank" rel="noopener">${icon('brand-youtube')}Watch Jeff Nippard on YouTube</a>
     <p class="hint" style="text-align:center;margin-top:10px">Photos: free-exercise-db (public domain)</p>`;
