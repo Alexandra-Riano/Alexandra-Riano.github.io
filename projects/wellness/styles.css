@@ -80,9 +80,9 @@ h1,h2,h3,p{margin:0}
 .meal-head{display:flex;justify-content:space-between;align-items:center}
 .meal-head h3{font-size:16px;font-weight:700}
 .meal-head .muted{font-size:13px;margin-left:6px;font-weight:500}
-.add-btn{border:0;background:var(--card2);width:44px;height:44px;border-radius:50%;font-size:20px;display:grid;place-items:center;margin:-6px -6px -6px 0}
+.add-btn{border:0;background:var(--card2);width:44px;height:44px;border-radius:50%;font-size:20px;display:grid;place-items:center;margin-right:-6px}
 .entry{display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--line)}
-.entry:first-of-type{margin-top:10px}
+.entry:first-of-type{margin-top:8px}
 .entry .name{flex:1;min-width:0}
 .entry .name b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .entry .name small{color:var(--muted);font-size:12px}
@@ -118,7 +118,7 @@ h1,h2,h3,p{margin:0}
 .inline .field{flex:1;margin:0}
 .inline .btn{flex:none}
 .seg{display:inline-flex;background:var(--card2);border-radius:var(--r-pill);padding:3px}
-.seg button{border:0;background:none;min-height:38px;padding:0 14px;border-radius:var(--r-pill);font-size:13px;font-weight:600;color:var(--muted)}
+.seg button{border:0;background:none;min-height:44px;min-width:44px;padding:0 14px;border-radius:var(--r-pill);font-size:13px;font-weight:600;color:var(--muted)}
 .seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px var(--shadow)}
 
 /* weight */
@@ -290,3 +290,4 @@ details.hist .sets b{color:var(--ink);font-weight:600}
   .db:hover,.db:active{transform:none}
 }
 .has-resume .fab{bottom:calc(var(--tab) + env(safe-area-inset-bottom) + 72px)}
+.has-resume .view{padding-bottom:calc(var(--tab) + env(safe-area-inset-bottom) + 150px)}
