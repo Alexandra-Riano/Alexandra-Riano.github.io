@@ -5,25 +5,25 @@ const KEY = 'alex-wellness-v1';
 // warm = warm-up sets, n = working sets, reps = target range. All working sets at 2-3 RIR, 60-90 s rest.
 const PROGRAM = [
   { day: 1, focus: 'Full body A', exercises: [
-    { name: 'Hack Squat', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Chest Press', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Neutral Grip Lat Pulldown', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Chest Supported Row', warm: 1, n: 3, reps: [8, 10] },
-    { name: 'Leg Extension', warm: 1, n: 3, reps: [10, 12] },
-    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] },
+    { name: 'Hack Squat', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Chest Press', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Neutral Grip Lat Pulldown', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Chest Supported Row', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Leg Extension', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] },
   { day: 2, focus: 'Full body B', exercises: [
-    { name: '45° Leg Press', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Shoulder Press', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Cable Row', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Pec Fly', warm: 1, n: 3, reps: [8, 12] },
-    { name: 'Preacher Curl', warm: 1, n: 3, reps: [8, 12] },
-    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] },
+    { name: '45° Leg Press', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Shoulder Press', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Cable Row', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Pec Fly', warm: 0, n: 3, reps: [8, 12] },
+    { name: 'Preacher Curl', warm: 0, n: 3, reps: [8, 12] },
+    { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] },
   { day: 3, focus: 'Full body C', exercises: [
-    { name: 'Machine Hip Abduction', warm: 1, n: 3, reps: [12, 15], alts: ['45° Back Extension', 'Machine Hip Thrust'] },
-    { name: 'Incline Chest Press', warm: 2, n: 3, reps: [10, 12] },
-    { name: 'Lat Pulldown', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Seated Leg Curl', warm: 2, n: 3, reps: [10, 12] },
-    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] }
+    { name: 'Machine Hip Abduction', warm: 0, n: 3, reps: [12, 15], alts: ['45° Back Extension', 'Machine Hip Thrust'] },
+    { name: 'Incline Chest Press', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'Lat Pulldown', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Seated Leg Curl', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] }
 ];
 // Plan's calorie targets for muscle gain (~250 kcal surplus) by activity level.
 const ACTIVITY = [
@@ -35,61 +35,61 @@ const ACTIVITY = [
 // and it is the closest squat pattern Tonal can load. inc = progression jump in lb.
 const TONAL = [
   { day: 1, focus: 'Full body A', exercises: [
-    { name: 'Cable Squat', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Seated Cable Fly', warm: 1, n: 3, reps: [10, 12], inc: 2 },
-    { name: 'Neutral-Grip Cable Pulldown', warm: 1, n: 3, reps: [8, 10] },
-    { name: 'Seated Cable Row', warm: 1, n: 3, reps: [8, 10] },
-    { name: 'Cable Lateral Raise', warm: 1, n: 3, reps: [12, 15], inc: 2 },
-    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] },
+    { name: 'Cable Squat', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Seated Cable Fly', warm: 0, n: 3, reps: [10, 12], inc: 2 },
+    { name: 'Neutral-Grip Cable Pulldown', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Seated Cable Row', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Cable Lateral Raise', warm: 0, n: 3, reps: [12, 15], inc: 2 },
+    { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] },
   { day: 2, focus: 'Full body B', exercises: [
-    { name: 'Cable Romanian Deadlift', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Cable Crossover', warm: 1, n: 3, reps: [10, 12], inc: 2 },
-    { name: 'Wide-Grip Cable Row', warm: 1, n: 3, reps: [10, 12] },
-    { name: 'Bayesian Cable Curl', warm: 1, n: 3, reps: [10, 12], inc: 2 },
-    { name: 'Rope Face Pull', warm: 1, n: 3, reps: [12, 15], inc: 2 },
-    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] },
+    { name: 'Cable Romanian Deadlift', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Cable Crossover', warm: 0, n: 3, reps: [10, 12], inc: 2 },
+    { name: 'Wide-Grip Cable Row', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'Bayesian Cable Curl', warm: 0, n: 3, reps: [10, 12], inc: 2 },
+    { name: 'Rope Face Pull', warm: 0, n: 3, reps: [12, 15], inc: 2 },
+    { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] },
   { day: 3, focus: 'Full body C', exercises: [
-    { name: 'Cable Squat', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Wide-Grip Cable Pulldown', warm: 1, n: 3, reps: [8, 10] },
-    { name: 'Cable Press-Around', warm: 1, n: 3, reps: [10, 12], inc: 2 },
-    { name: 'Overhead Cable Triceps Extension', warm: 1, n: 3, reps: [10, 12], inc: 2 },
-    { name: 'Cable Glute Kickback', warm: 1, n: 3, reps: [12, 15], inc: 2 },
-    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] }
+    { name: 'Cable Squat', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Wide-Grip Cable Pulldown', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Cable Press-Around', warm: 0, n: 3, reps: [10, 12], inc: 2 },
+    { name: 'Overhead Cable Triceps Extension', warm: 0, n: 3, reps: [10, 12], inc: 2 },
+    { name: 'Cable Glute Kickback', warm: 0, n: 3, reps: [12, 15], inc: 2 },
+    { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] }
 ];
 // Free weights only: dumbbells plus an adjustable bench. Same day numbers as the other programs.
 // All A or S tier on Nippard's lists except Goblet Squat (B): no non-lunge dumbbell quad move is ranked A/S,
 // so Bulgarian Split Squat (S) is offered as its swap for when lunges are on the menu. Log the weight of ONE dumbbell.
 const DUMBBELL = [
   { day: 1, focus: 'Full body A', exercises: [
-    { name: 'Goblet Squat', warm: 2, n: 3, reps: [8, 12], alts: ['Bulgarian Split Squat'] },
-    { name: 'Flat Dumbbell Press', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'One-Arm Dumbbell Row', warm: 1, n: 3, reps: [8, 10] },
-    { name: 'Lean-In Lateral Raise', warm: 1, n: 3, reps: [12, 15] },
-    { name: 'Dumbbell Skullcrusher', warm: 1, n: 3, reps: [10, 12] },
-    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] },
+    { name: 'Goblet Squat', warm: 0, n: 3, reps: [8, 12], alts: ['Bulgarian Split Squat'] },
+    { name: 'Flat Dumbbell Press', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'One-Arm Dumbbell Row', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Lean-In Lateral Raise', warm: 0, n: 3, reps: [12, 15] },
+    { name: 'Dumbbell Skullcrusher', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] },
   { day: 2, focus: 'Full body B', exercises: [
-    { name: 'Dumbbell Romanian Deadlift', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Seated Dumbbell Shoulder Press', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Chest-Supported Dumbbell Row', warm: 1, n: 3, reps: [10, 12] },
-    { name: 'Dumbbell Fly', warm: 1, n: 3, reps: [10, 12] },
-    { name: 'Dumbbell Preacher Curl', warm: 1, n: 3, reps: [10, 12] },
-    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] },
+    { name: 'Dumbbell Romanian Deadlift', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Seated Dumbbell Shoulder Press', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Chest-Supported Dumbbell Row', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'Dumbbell Fly', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'Dumbbell Preacher Curl', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] },
   { day: 3, focus: 'Full body C', exercises: [
-    { name: 'Goblet Squat', warm: 2, n: 3, reps: [8, 12], alts: ['Bulgarian Split Squat'] },
-    { name: 'Incline Dumbbell Press', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Dumbbell Pullover', warm: 1, n: 3, reps: [10, 12] },
-    { name: 'Single-Leg Dumbbell Hip Thrust', warm: 1, n: 3, reps: [10, 12] },
-    { name: 'Hammer Curl', warm: 1, n: 3, reps: [10, 12] },
-    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] }
+    { name: 'Goblet Squat', warm: 0, n: 3, reps: [8, 12], alts: ['Bulgarian Split Squat'] },
+    { name: 'Incline Dumbbell Press', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Dumbbell Pullover', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'Single-Leg Dumbbell Hip Thrust', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'Hammer Curl', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] }
 ];
 const PLACES = { gym: { label: 'Gym', days: PROGRAM }, tonal: { label: 'Tonal', days: TONAL }, dumbbells: { label: 'Dumbbells', days: DUMBBELL } };
 const daysFor = place => (PLACES[place] || PLACES.gym).days;
 const planOf = w => daysFor(w.place)[w.day - 1];
 // Swap-in options for exercises that have alts. Picking one in a workout makes it the default next time.
 const ALTS = {
-  '45° Back Extension': { warm: 1, n: 3, reps: [10, 15] },
-  'Machine Hip Thrust': { warm: 2, n: 3, reps: [8, 12] },
-  'Bulgarian Split Squat': { warm: 1, n: 3, reps: [8, 10] }
+  '45° Back Extension': { warm: 0, n: 3, reps: [10, 15] },
+  'Machine Hip Thrust': { warm: 0, n: 3, reps: [8, 12] },
+  'Bulgarian Split Squat': { warm: 0, n: 3, reps: [8, 10] }
 };
 const MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
 
@@ -105,7 +105,7 @@ const FORM = {
   'Cable Row': { img: 'Seated_Cable_Rows', cues: ['Knees slightly bent, sit tall with chest up', 'Pull the handle to your belly, elbows close to your body', 'Squeeze your back for a second, let your arms extend slowly'] },
   'Pec Fly': { img: 'Butterfly', cues: ['Back flat on the pad, arms roughly parallel to the floor', 'Bring the handles together in a hugging arc', 'Squeeze your chest, then open slowly until you feel a stretch'] },
   'Preacher Curl': { img: 'Machine_Preacher_Curls', cues: ['Backs of your upper arms flat on the pad', 'Curl up. Only your forearms move', 'Lower slowly all the way down'] },
-  'Dragon Flag': { cues: ['Lie on a bench (or the floor) and grip something solid behind your head', 'Brace hard and lift your body up onto your upper back, straight from shoulders to feet, then lower slowly as one piece', 'New to it? Start with knees tucked, or only do the slow lowering part. No photo yet'] },
+  'Dragon Fly': { cues: ['Lie on a bench (or the floor) and grip something solid behind your head', 'Brace hard and lift your body up onto your upper back, straight from shoulders to feet, then lower slowly as one piece', 'New to it? Start with knees tucked, or only do the slow lowering part. No photo yet'] },
   'Goblet Squat': { img: 'Goblet_Squat', setup: 'One dumbbell held vertically at your chest', cues: ['Hold the dumbbell by one end against your chest, feet a bit wider than hips', 'Sit down between your heels as deep as you can with a tall chest', 'Drive up through mid-foot. Swap to Bulgarian Split Squat (S tier) when you start doing lunges'] },
   'Bulgarian Split Squat': { img: 'Split_Squat_with_Dumbbells', setup: 'Two dumbbells, back foot on the bench', cues: ['Rear foot up on the bench, front foot far enough forward to sink straight down (photo shows the version without a bench)', 'Lower until your front thigh is parallel, torso slightly forward', 'Push through the front heel. Do all reps, then switch legs'] },
   'Flat Dumbbell Press': { img: 'Dumbbell_Bench_Press', setup: 'Two dumbbells, flat bench', cues: ['Lie back with shoulder blades pinched, dumbbells over your chest', 'Lower until the dumbbells are beside your chest and you feel a stretch', 'Press up and slightly together without clanking them'] },
@@ -170,7 +170,7 @@ const MUSCLES = {
   'Single-Leg Dumbbell Hip Thrust': [['glutes'], ['hams']],
   'Hammer Curl': [['biceps'], ['forearms']],
   'Machine Hip Abduction': [['glutes'], []],
-  'Dragon Flag': [['abs'], ['obliques']],
+  'Dragon Fly': [['abs'], ['obliques']],
   '45° Back Extension': [['glutes', 'hams'], ['lowerback']],
   'Cable Squat': [['quads'], ['glutes', 'adductors']],
   'Seated Cable Fly': [['chest'], ['fdelt']],
@@ -300,7 +300,7 @@ function defaults() {
   };
 }
 // Old exercise names → current, so history and last-time suggestions carry over.
-const RENAMED = { 'Leg Press': '45° Leg Press', 'Leg Curl': 'Seated Leg Curl' };
+const RENAMED = { 'Leg Press': '45° Leg Press', 'Leg Curl': 'Seated Leg Curl', 'Dragon Flag': 'Dragon Fly' };
 function migrate(s) {
   [...(s.workouts || []), ...(s.active ? [s.active] : [])].forEach(w => w.exercises.forEach(e => {
     if (RENAMED[e.name]) e.name = RENAMED[e.name];
@@ -551,7 +551,7 @@ VIEWS.train = () => {
   ${daysFor(S.settings.place).map(p => `<section class="card">
     <div class="card-head"><h2>Day ${p.day}<span class="muted">${p.focus}</span></h2>${dumbbell(p.day)}</div>
     ${dayMap(p)}
-    <ul class="ex-list">${dayExercises(p).map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name"><span class="ex-label">${esc(e.name)}</span>${FORM[e.name]?.setup && S.settings.place !== 'gym' ? `<small class="alt-note">${esc(FORM[e.name].setup)}</small>` : ''}${e.options ? `<small class="alt-note">Swap options: ${e.options.filter(o => o !== e.name).map(esc).join(', ')}</small>` : ''}</span></button><span>${e.warm}W + ${e.n} × ${e.reps[0]}-${e.reps[1]}</span></li>`).join('')}</ul>
+    <ul class="ex-list">${dayExercises(p).map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name"><span class="ex-label">${esc(e.name)}</span>${FORM[e.name]?.setup && S.settings.place !== 'gym' ? `<small class="alt-note">${esc(FORM[e.name].setup)}</small>` : ''}${e.options ? `<small class="alt-note">Swap options: ${e.options.filter(o => o !== e.name).map(esc).join(', ')}</small>` : ''}</span></button><span>${e.warm ? `${e.warm}W + ` : ''}${e.n} × ${e.reps[0]}-${e.reps[1]}</span></li>`).join('')}</ul>
     ${stretchBlock(p)}
     <p class="hint" style="margin:10px 0 0">Warm up 5 min. Working sets at 2-3 RIR, 60-90 s rest. ${S.settings.place !== 'gym' ? '20 min brisk walk after if you can.' : '20 min cardio after.'}</p>
   </section>`).join('')}
