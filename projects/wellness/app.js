@@ -83,6 +83,7 @@ const DUMBBELL = [
     { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] }
 ];
 const PLACES = { gym: { label: 'Gym', days: PROGRAM }, tonal: { label: 'Tonal', days: TONAL }, dumbbells: { label: 'Dumbbells', days: DUMBBELL } };
+Object.entries(PLACES).forEach(([k, v]) => v.days.forEach(d => { d.place = k; }));
 const daysFor = place => (PLACES[place] || PLACES.gym).days;
 const planOf = w => daysFor(w.place)[w.day - 1];
 // Swap-in options for exercises that have alts. Picking one in a workout makes it the default next time.
@@ -213,7 +214,14 @@ function pick(e) {
   const spec = chosen && ALTS[chosen] ? { ...ALTS[chosen], name: chosen } : e;
   return { ...spec, slot: e.name, options: e.alts ? [e.name, ...e.alts] : null };
 }
-const dayExercises = p => p.exercises.map(pick);
+const extraKey = (place, day) => `${place || 'gym'}-${day}`;
+const extrasFor = p => (S.extras?.[extraKey(p.place, p.day)] || []).map(e => ({ ...e, warm: 0, slot: e.name, options: null, extra: true }));
+// A saved replacement takes over the program slot; the original stays restorable.
+const replacedFor = (p, slot) => S.replaced?.[extraKey(p.place, p.day)]?.[slot];
+const dayExercises = p => p.exercises.map(e => {
+  const r = replacedFor(p, e.name);
+  return r ? { ...r, warm: 0, slot: e.name, options: null, replaces: e.name } : pick(e);
+}).concat(extrasFor(p));
 /* ---------- stretches ---------- */
 // Dynamic moves before lifting, static holds after (static stretching right before lifting can sap a little strength).
 // Built from the muscles the day's exercises actually train, so every place and swap gets matching stretches.
@@ -274,7 +282,7 @@ function dayMap(p) {
   const also = [...new Set(dayExercises(p).flatMap(e => musclesFor(e.name)[1]))].filter(k => !main.includes(k));
   return `<div class="day-map">${bodyMap(main, also, true)}<p class="map-legend"><span><i class="p"></i>${main.map(k => MUSCLE_NAMES[k]).join(', ')}</span>${also.length ? `<span><i class="s"></i>${also.map(k => MUSCLE_NAMES[k]).join(', ')}</span>` : ''}</p></div>`;
 }
-function musclesFor(name) { return MUSCLES[name] || [[], []]; }
+function musclesFor(name) { return MUSCLES[name] || S.customMuscles?.[name] || [[], []]; }
 const nippard = name => `https://www.youtube.com/results?search_query=${encodeURIComponent('Jeff Nippard how to ' + name.replace('45° ', ''))}`;
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -438,11 +446,85 @@ function dumbbell(day, label, place = S.settings.place) {
   return `<button class="db ${label ? '' : 'mini'}" data-act="start" data-day="${day}" data-place="${place}" aria-label="Open Day ${day} ${PLACES[place].label} workout"><i class="pl"></i><i class="pl s"></i><span class="bar">${label ? esc(label) : ''}</span><i class="pl s"></i><i class="pl"></i></button>`;
 }
 function formThumb(name, small) {
-  const f = FORM[name]; if (!f) return '';
+  const f = FORM[name];
+  if (!f) return small ? `<span class="thumb sm no-photo" aria-hidden="true">${icon('barbell')}</span>` : `<span class="thumb-btn no-photo" aria-hidden="true">${icon('barbell')}</span>`;
   if (!f.img) return small ? `<span class="thumb sm no-photo" aria-hidden="true">${icon('barbell')}</span>`
     : `<button class="thumb-btn no-photo" data-act="form" data-name="${esc(name)}" aria-label="How to do ${esc(name)}">${icon('barbell')}<span>Form</span></button>`;
   return small ? `<img class="thumb sm" src="img/${f.img}_1.jpg" alt="" loading="lazy">`
     : `<button class="thumb-btn" data-act="form" data-name="${esc(name)}" aria-label="How to do ${esc(name)}"><img class="thumb" src="img/${f.img}_1.jpg" alt="" loading="lazy"><span>Form</span></button>`;
+}
+/* ---------- add exercise ---------- */
+let addCtx = null;
+const knownSpecs = () => {
+  const m = new Map();
+  [...PROGRAM, ...TONAL, ...DUMBBELL].forEach(d => d.exercises.forEach(e => { if (!m.has(e.name)) m.set(e.name, e); }));
+  Object.entries(ALTS).forEach(([n, e]) => { if (!m.has(n)) m.set(n, { ...e, name: n }); });
+  Object.values(S.extras || {}).flat().forEach(e => { if (!m.has(e.name)) m.set(e.name, e); });
+  return m;
+};
+function openAddExercise(place, day, mode, target) {
+  addCtx = { place, day, mode, target };
+  const f = $('#addex form'); f.reset();
+  $('#addex-title').textContent = target ? `Replace ${target.name}` : mode === 'session' ? 'Add exercise' : `Add to Day ${day} (${PLACES[place].label})`;
+  $('#addex-submit').textContent = target ? 'Replace exercise' : 'Add exercise';
+  $('#ex-names').innerHTML = [...knownSpecs().keys()].sort().map(n => `<option value="${esc(n)}"></option>`).join('');
+  $('#addex-muscle').innerHTML = '<option value="">Pick one</option>' + Object.entries(MUSCLE_NAMES).map(([k, v]) => `<option value="${k}">${v[0].toUpperCase() + v.slice(1)}</option>`).join('');
+  $('#addex-keep').hidden = mode !== 'session';
+  $('#addex-keep-label').textContent = target ? `Keep this change in Day ${day}` : `Keep it in Day ${day} for next time`;
+  $('#addex').showModal(); f.name.focus();
+}
+// Typing a known exercise fills in its usual sets, reps and muscle.
+function fillKnown(f) {
+  const spec = knownSpecs().get(f.name.value.trim());
+  if (!spec) return;
+  f.sets.value = spec.n; f.lo.value = spec.reps[0]; f.hi.value = spec.reps[1];
+  const m = musclesFor(spec.name)[0][0]; if (m) f.muscle.value = m;
+}
+function addExercise(f) {
+  const name = f.name.value.trim().replace(/\s+/g, ' ');
+  const n = Math.min(10, Math.max(1, parseInt(f.sets.value, 10) || 3));
+  let lo = Math.max(1, parseInt(f.lo.value, 10) || 8), hi = Math.max(1, parseInt(f.hi.value, 10) || 12);
+  if (lo > hi) [lo, hi] = [hi, lo];
+  if (!name) return toast('Enter an exercise name');
+  const known = knownSpecs().get(name);
+  if (!MUSCLES[name] && !S.customMuscles?.[name]) {
+    if (!f.muscle.value) return toast('Pick the main muscle');
+    S.customMuscles = { ...S.customMuscles, [name]: [[f.muscle.value], []] };
+  }
+  const spec = { name, n, reps: [lo, hi], ...(known?.bw ? { bw: true } : {}), ...(known?.inc ? { inc: known.inc } : {}) };
+  const key = extraKey(addCtx.place, addCtx.day);
+  const plan = daysFor(addCtx.place)[addCtx.day - 1];
+  const keep = addCtx.mode !== 'session' || f.keep.checked;
+  if (addCtx.target) return replaceExercise(spec, key, plan, keep);
+  if (addCtx.mode === 'session') {
+    if (S.active.exercises.some(e => e.name === name)) return toast(`${name} is already in this workout`);
+    S.active.exercises.push({ ...buildExercise({ ...spec, warm: 0, slot: name, options: null }), added: true });
+  } else if (dayExercises(plan).some(e => e.name === name)) return toast(`${name} is already in Day ${addCtx.day}`);
+  if (keep && !(S.extras?.[key] || []).some(e => e.name === name) && !plan.exercises.some(e => e.name === name)) {
+    S.extras = { ...S.extras, [key]: [...(S.extras?.[key] || []), spec] };
+  }
+  save(); $('#addex').close();
+  if (addCtx.mode === 'session') { renderSession(); $('#session').scrollTop = $('#session').scrollHeight; } else route(true);
+  toast(`${name} added${keep && addCtx.mode === 'session' ? ` to Day ${addCtx.day}` : ''}`);
+}
+function replaceExercise(spec, key, plan, keep) {
+  const { slot, index } = addCtx.target, name = spec.name;
+  if (addCtx.mode === 'session') {
+    if (S.active.exercises.some((e, i) => i !== index && e.name === name)) return toast(`${name} is already in this workout`);
+    const old = S.active.exercises[index];
+    S.active.exercises[index] = { ...buildExercise({ ...spec, warm: 0, slot: old.slot || old.name, options: null }), added: old.added };
+  } else if (dayExercises(plan).some(e => e.slot !== slot && e.name === name)) return toast(`${name} is already in Day ${addCtx.day}`);
+  const isSlot = plan.exercises.some(e => e.name === slot);
+  if (keep && isSlot) {
+    const day = { ...(S.replaced?.[key] || {}) };
+    if (name === slot) delete day[slot]; else day[slot] = spec;
+    S.replaced = { ...S.replaced, [key]: day };
+  } else if (keep) {
+    S.extras = { ...S.extras, [key]: (S.extras?.[key] || []).map(e => e.name === slot ? spec : e) };
+  }
+  save(); $('#addex').close();
+  if (addCtx.mode === 'session') renderSession(); else route(true);
+  toast(`Replaced with ${name}${keep && addCtx.mode === 'session' ? ` in Day ${addCtx.day}` : ''}`);
 }
 function openForm(name) {
   const f = FORM[name]; if (!f) return;
@@ -551,7 +633,8 @@ VIEWS.train = () => {
   ${daysFor(S.settings.place).map(p => `<section class="card">
     <div class="card-head"><h2>Day ${p.day}<span class="muted">${p.focus}</span></h2>${dumbbell(p.day)}</div>
     ${dayMap(p)}
-    <ul class="ex-list">${dayExercises(p).map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name"><span class="ex-label">${esc(e.name)}</span>${FORM[e.name]?.setup && S.settings.place !== 'gym' ? `<small class="alt-note">${esc(FORM[e.name].setup)}</small>` : ''}${e.options ? `<small class="alt-note">Swap options: ${e.options.filter(o => o !== e.name).map(esc).join(', ')}</small>` : ''}</span></button><span>${e.warm ? `${e.warm}W + ` : ''}${e.n} × ${e.reps[0]}-${e.reps[1]}</span></li>`).join('')}</ul>
+    <ul class="ex-list">${dayExercises(p).map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name"><span class="ex-label">${esc(e.name)}</span>${FORM[e.name]?.setup && S.settings.place !== 'gym' ? `<small class="alt-note">${esc(FORM[e.name].setup)}</small>` : ''}${e.replaces ? `<small class="alt-note">Replaces ${esc(e.replaces)}</small>` : ''}${e.options ? `<small class="alt-note">Swap options: ${e.options.filter(o => o !== e.name).map(esc).join(', ')}</small>` : ''}</span></button><span>${e.warm ? `${e.warm}W + ` : ''}${e.n} × ${e.reps[0]}-${e.reps[1]}</span>${e.replaces ? `<button class="del" data-act="restore" data-place="${p.place}" data-day="${p.day}" data-slot="${esc(e.slot)}" aria-label="Switch back to ${esc(e.replaces)}">${icon('arrow-back-up')}</button>` : e.extra ? '' : `<button class="del" data-act="replaceex" data-place="${p.place}" data-day="${p.day}" data-slot="${esc(e.slot)}" data-name="${esc(e.name)}" aria-label="Replace ${esc(e.name)}">${icon('arrows-exchange')}</button>`}${e.extra ? `<button class="del" data-act="removeextra" data-place="${p.place}" data-day="${p.day}" data-name="${esc(e.name)}" aria-label="Remove ${esc(e.name)} from Day ${p.day}">${icon('x')}</button>` : ''}</li>`).join('')}</ul>
+    <button class="link add-ex-link" data-act="addex" data-place="${p.place}" data-day="${p.day}">${icon('plus')}Add exercise to Day ${p.day}</button>
     ${stretchBlock(p)}
     <p class="hint" style="margin:10px 0 0">Warm up 5 min. Working sets at 2-3 RIR, 60-90 s rest. ${S.settings.place !== 'gym' ? '20 min brisk walk after if you can.' : '20 min cardio after.'}</p>
   </section>`).join('')}
@@ -772,8 +855,9 @@ function renderSession() {
       <p class="suggest ${ex.up ? 'up' : ''}">${ex.up ? icon('arrow-up') : ''}<span>${esc(ex.suggest)}</span></p>
       <div class="set-grid"><span>Set</span><span>${unit()}</span><span>Reps</span><span>RIR</span><span></span></div>
       ${ex.sets.map((_, j) => setRow(i, j)).join('')}
-      <button class="link" data-act="addset" data-ex="${i}">Add set</button>
+      <div class="ex-foot"><button class="link" data-act="addset" data-ex="${i}">Add set</button><button class="link" data-act="replaceex" data-ex="${i}">Replace</button>${ex.added ? `<button class="link danger" data-act="removeex" data-ex="${i}">Remove exercise</button>` : ''}</div>
     </section>`).join('')}
+    <button class="btn ghost block add-ex-btn" data-act="addex">${icon('plus')}Add exercise</button>
     <section class="card">
       <h3 class="st-head">Cool-down stretches</h3>
       <p class="hint" style="margin:2px 0 6px">Hold each for 30 seconds. Easy pressure, no bouncing.</p>
@@ -867,6 +951,33 @@ const ACT = {
   },
   addfood: b => openFoodSheet(b.dataset.meal),
   closesheet: () => $('#sheet').close(),
+  addex: b => S.active && sessionOpen && !b.dataset.place ? openAddExercise(S.active.place || 'gym', S.active.day, 'session') : openAddExercise(b.dataset.place, +b.dataset.day, 'program'),
+  closeaddex: () => $('#addex').close(),
+  replaceex: async b => {
+    if (b.dataset.ex !== undefined) {
+      const i = +b.dataset.ex, ex = S.active.exercises[i];
+      if (ex.sets.some(s => s.done) && !(await ask(`Replace ${ex.name}? Its checked-off sets won't be saved.`, 'Replace'))) return;
+      return openAddExercise(S.active.place || 'gym', S.active.day, 'session', { slot: ex.slot || ex.name, index: i, name: ex.name });
+    }
+    openAddExercise(b.dataset.place, +b.dataset.day, 'program', { slot: b.dataset.slot, name: b.dataset.name });
+  },
+  restore: async b => {
+    if (!(await ask(`Switch back to ${b.dataset.slot}?`, 'Switch back'))) return;
+    const key = extraKey(b.dataset.place, b.dataset.day), day = { ...(S.replaced?.[key] || {}) };
+    delete day[b.dataset.slot]; S.replaced = { ...S.replaced, [key]: day };
+    save(); route(true); toast(`Back to ${b.dataset.slot}`);
+  },
+  removeextra: async b => {
+    if (!(await ask(`Remove ${b.dataset.name} from Day ${b.dataset.day}?`, 'Remove', true))) return;
+    const key = extraKey(b.dataset.place, b.dataset.day);
+    S.extras = { ...S.extras, [key]: (S.extras?.[key] || []).filter(e => e.name !== b.dataset.name) };
+    save(); route(true); toast('Removed');
+  },
+  removeex: async b => {
+    const i = +b.dataset.ex, ex = S.active.exercises[i];
+    if (ex.sets.some(s => s.done) && !(await ask(`Remove ${ex.name}? Its checked-off sets won't be saved.`, 'Remove', true))) return;
+    S.active.exercises.splice(i, 1); save(); renderSession();
+  },
   form: b => openForm(b.dataset.name),
   stretchform: b => openStretch(b.dataset.name),
   closedemo: () => $('#demo').close(),
@@ -914,7 +1025,7 @@ document.addEventListener('click', e => {
 $('#ask').addEventListener('click', e => { const b = e.target.closest('button[value]'); if (b) { e.preventDefault(); answerAsk(b.value === 'ok'); } });
 $('#ask').addEventListener('cancel', () => answerAsk(false));
 $('#ask').addEventListener('close', () => { if (askResolve) answerAsk(false); });
-['#sheet', '#demo'].forEach(id => $(id).addEventListener('click', e => { if (e.target === $(id)) $(id).close(); }));
+['#sheet', '#demo', '#addex'].forEach(id => $(id).addEventListener('click', e => { if (e.target === $(id)) $(id).close(); }));
 
 document.addEventListener('submit', e => {
   const f = e.target, kind = f.dataset.form; if (!kind) return;
@@ -937,6 +1048,8 @@ document.addEventListener('submit', e => {
     const date = f.date?.value || today(), kg = uToKg(v), i = S.weights.findIndex(x => x.date === date);
     if (i >= 0) S.weights[i].kg = kg; else S.weights.push({ date, kg });
     save(); route(true); toast('Weigh-in saved');
+  } else if (kind === 'addex') {
+    addExercise(f);
   } else if (kind === 'cardio') {
     const m = parseInt(f.minutes.value, 10); if (!m) return;
     S.cardio.push({ id: uid(), date: today(), minutes: m, type: f.type.value }); save(); route(true); toast(`${m} min ${f.type.value.toLowerCase()} logged`);
@@ -945,6 +1058,7 @@ document.addEventListener('submit', e => {
 
 document.addEventListener('input', e => {
   const t = e.target;
+  if (t.closest('#addex') && t.name === 'name') return fillKnown(t.form);
   if (!S.active || !t.closest('#session')) return;
   if (t.dataset.k) {
     const row = t.closest('.set-row'), ex = S.active.exercises[+row.dataset.ex], s = ex.sets[+row.dataset.set];

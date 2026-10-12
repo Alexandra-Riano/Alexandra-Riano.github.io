@@ -374,3 +374,11 @@ details.stretches summary>span:first-child{display:flex;align-items:center;gap:8
 .st-thumb{flex:none;border:0;padding:0;background:none;border-radius:var(--r-ctl);width:44px;height:44px;display:grid;place-items:center}
 .st-thumb .thumb.sm{width:44px;height:44px}
 .st-text{flex:1;min-width:0;border:0;background:none;padding:0;text-align:left;font-size:14px;min-height:44px}
+
+/* add exercise */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.add-ex-link{display:flex;align-items:center;gap:6px;text-decoration:none;min-height:44px}
+.add-ex-btn{margin-bottom:12px}
+.ex-foot{display:flex;justify-content:space-between;align-items:center}
+.ex-list li .del{margin-left:-4px}
+#addex-keep[hidden]{display:none}
