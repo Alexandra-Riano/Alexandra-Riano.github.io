@@ -120,7 +120,7 @@ const mmss = s => `${Math.floor(s / 60)}:${pad(s % 60)}`;
 
 function defaults() {
   return {
-    settings: { theme: 'auto', units: 'lb', activity: 'moderate', kcal: 1860, protein: 110, fat: 52, carbs: 238, cardioGoal: 150, rest: 90 },
+    settings: { theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light', units: 'lb', activity: 'moderate', kcal: 1860, protein: 110, fat: 52, carbs: 238, cardioGoal: 150, rest: 90 },
     food: {}, foods: [], weights: [], workouts: [], cardio: [], active: null, swaps: {}
   };
 }
@@ -145,15 +145,16 @@ function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e
 let S = load(), foodDate = today(), foodOnToday = true, sessionOpen = false, restEnd = 0, restTotal = 90, weightRange = 30;
 
 const unit = () => S.settings.units;
-const isDark = () => S.settings.theme === 'dark' || (S.settings.theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+// Theme only changes when the button is tapped. Older saves with 'auto' get pinned to whatever showed at the time.
+if (S.settings.theme !== 'dark' && S.settings.theme !== 'light') S.settings.theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+try { if (JSON.parse(localStorage.getItem(KEY))?.settings?.theme !== S.settings.theme) save(); } catch (e) { save(); }
+const isDark = () => S.settings.theme === 'dark';
 function applyTheme() {
-  const t = S.settings.theme || 'auto', root = document.documentElement;
-  if (t === 'auto') root.removeAttribute('data-theme'); else root.dataset.theme = t;
+  document.documentElement.dataset.theme = S.settings.theme;
   const dark = isDark();
   $$('meta[name=theme-color]').forEach(m => { m.removeAttribute('media'); m.content = dark ? '#0c0c0e' : '#f2f2f6'; });
 }
 applyTheme();
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { applyTheme(); if (typeof route === 'function' && !sessionOpen) route(true); });
 const kgToU = kg => unit() === 'lb' ? kg * 2.20462 : kg;
 const uToKg = v => unit() === 'lb' ? v / 2.20462 : v;
 const step = () => unit() === 'lb' ? 5 : 2.5;
