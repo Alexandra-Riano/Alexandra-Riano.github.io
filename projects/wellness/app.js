@@ -26,6 +26,32 @@ const PROGRAM = [
 const ACTIVITY = [
   ['sedentary', 'Sedentary', 1524], ['light', 'Light (1-3×/wk)', 1746], ['moderate', 'Moderate (3-5×/wk)', 1860],
   ['intense', 'Intense (6-7×/wk)', 1968], ['very', 'Very intense (daily)', 2190]];
+// Home version on Tonal (cable machine, smart bar, bench, ankle straps). Same day numbers hit the same areas
+// as the gym days, so the rotation continues whichever place you train. Every move is A or S tier on
+// Jeff Nippard's lists (tier is for the movement; Tonal does it with cables). inc = progression jump in lb.
+const TONAL = [
+  { day: 1, focus: 'Full body A', exercises: [
+    { name: 'Front Squat', warm: 2, n: 3, reps: [8, 10] },
+    { name: 'Bench Press', warm: 2, n: 3, reps: [8, 10] },
+    { name: 'Neutral Lat Pulldown', warm: 1, n: 3, reps: [8, 10] },
+    { name: 'Seated Row', warm: 1, n: 3, reps: [8, 10] },
+    { name: 'Cable Lateral Raise', warm: 1, n: 3, reps: [12, 15], inc: 2 }] },
+  { day: 2, focus: 'Full body B', exercises: [
+    { name: 'Romanian Deadlift', warm: 2, n: 3, reps: [8, 10] },
+    { name: 'Incline Bench Press', warm: 2, n: 3, reps: [8, 10] },
+    { name: 'Wide-Grip Seated Row', warm: 1, n: 3, reps: [10, 12] },
+    { name: 'Seated Cable Fly', warm: 1, n: 3, reps: [10, 12], inc: 2 },
+    { name: 'Bayesian Curl', warm: 1, n: 3, reps: [10, 12], inc: 2 }] },
+  { day: 3, focus: 'Full body C', exercises: [
+    { name: 'Front Squat', warm: 2, n: 3, reps: [8, 10] },
+    { name: 'Wide-Grip Lat Pulldown', warm: 1, n: 3, reps: [8, 10] },
+    { name: 'Cable Glute Kickback', warm: 1, n: 3, reps: [12, 15], inc: 2 },
+    { name: 'Overhead Triceps Extension', warm: 1, n: 3, reps: [10, 12], inc: 2 },
+    { name: 'Reverse Cable Fly', warm: 1, n: 3, reps: [12, 15], inc: 2 }] }
+];
+const PLACES = { gym: { label: 'Gym', days: PROGRAM }, tonal: { label: 'Tonal', days: TONAL } };
+const daysFor = place => (PLACES[place] || PLACES.gym).days;
+const planOf = w => daysFor(w.place)[w.day - 1];
 // Swap-in options for exercises that have alts. Picking one in a workout makes it the default next time.
 const ALTS = {
   '45° Back Extension': { warm: 1, n: 3, reps: [10, 15] },
@@ -47,6 +73,20 @@ const FORM = {
   'Preacher Curl': { img: 'Machine_Preacher_Curls', cues: ['Backs of your upper arms flat on the pad', 'Curl up. Only your forearms move', 'Lower slowly all the way down'] },
   'Machine Hip Abduction': { img: 'Thigh_Abductor', cues: ['Sit tall with the pads on the outside of your knees', 'Push your knees out as wide as you can and pause a second', 'Return slowly. Lean your torso slightly forward to hit more of your glutes'] },
   '45° Back Extension': { img: 'Hyperextensions_Back_Extensions', cues: ['Set the pad so it sits just below your hip crease', 'Hinge at the hips and lower your chest toward the floor', 'Squeeze your glutes to come up to a straight line. Don\'t arch past it'] },
+  'Front Squat': { img: 'Front_Barbell_Squat', tonal: 'Smart bar, arms low', cues: ['Bar across the front of your shoulders, elbows high (photo shows a barbell, same position)', 'Sit down between your heels until thighs reach parallel, chest tall', 'Drive up through mid-foot. Tonal tops out at 200 lb total on the original model'] },
+  'Bench Press': { img: 'Barbell_Bench_Press_-_Medium_Grip', tonal: 'Smart bar, arms low, flat bench', cues: ['Lie on the bench with eyes under the bar, shoulder blades pinched', 'Lower to mid-chest with elbows about 45° from your sides', 'Press up and slightly back, keep your feet planted'] },
+  'Neutral Lat Pulldown': { img: 'V-Bar_Pulldown', tonal: 'Handles, arms high, kneel or sit facing Tonal', cues: ['Palms facing each other, lean back slightly', 'Pull elbows down to your sides until hands reach your upper chest', 'Return slowly to a full stretch overhead'] },
+  'Seated Row': { img: 'Seated_Cable_Rows', tonal: 'Handles, arms low, sit on the floor or bench', cues: ['Sit tall with knees slightly bent', 'Row the handles to your belly, elbows close to your body', 'Squeeze your back for a second, then reach forward slowly'] },
+  'Cable Lateral Raise': { img: 'Side_Lateral_Raise', tonal: 'One handle, arm low, cable crossing in front of you', cues: ['Stand side-on to Tonal and hold the handle with the far hand (photo shows dumbbells, same arm path)', 'Raise your arm out to the side, leading with the elbow, to shoulder height', 'Lower slowly. Do all reps, then switch arms'] },
+  'Romanian Deadlift': { img: 'Romanian_Deadlift', tonal: 'Smart bar, arms low', cues: ['Soft knees, push your hips straight back', 'Slide the bar down your thighs until you feel a big hamstring stretch', 'Squeeze your glutes to stand tall. Keep your back flat'] },
+  'Incline Bench Press': { img: 'Barbell_Incline_Bench_Press_-_Medium_Grip', tonal: 'Smart bar, arms low, bench inclined', cues: ['Set the bench to about 30°, shoulder blades pinched', 'Lower to your upper chest', 'Press up over your shoulders and control the way down'] },
+  'Wide-Grip Seated Row': { img: 'Seated_Cable_Rows', tonal: 'Smart bar, arms low, sit facing Tonal', cues: ['Overhand grip a bit wider than your shoulders', 'Row the bar to your lower chest with elbows flared about 45°', 'Squeeze your upper back, then reach forward slowly'] },
+  'Seated Cable Fly': { img: 'Cable_Crossover', tonal: 'Handles, arms at chest height, sit on bench facing away', cues: ['Sit tall with arms open and a slight bend in the elbows (photo shows the standing version)', 'Hug the handles together in front of your chest', 'Open slowly until you feel a deep chest stretch'] },
+  'Bayesian Curl': { img: 'Standing_One-Arm_Cable_Curl', tonal: 'One handle, arm low, face away from Tonal', cues: ['Face away from Tonal and step forward so your arm is pulled slightly behind you (photo shows a regular cable curl)', 'Curl up without letting your elbow drift forward', 'Lower slowly to a full stretch. Do all reps, then switch arms'] },
+  'Wide-Grip Lat Pulldown': { img: 'Wide-Grip_Lat_Pulldown', tonal: 'Smart bar, arms high, kneel facing Tonal', cues: ['Grip a little wider than your shoulders, lean back slightly', 'Pull the bar to your upper chest, driving elbows down and back', 'Return slowly to a full stretch'] },
+  'Cable Glute Kickback': { img: 'One-Legged_Cable_Kickback', tonal: 'Ankle strap, arm low, hold Tonal for balance', cues: ['Strap one ankle and hinge forward slightly', 'Kick the leg straight back, squeezing your glute at the top', 'Return slowly without arching your lower back. Then switch legs'] },
+  'Overhead Triceps Extension': { img: 'Cable_Rope_Overhead_Triceps_Extension', tonal: 'Rope or both handles, arms low, face away from Tonal', cues: ['Face away with your hands behind your head, elbows pointing up', 'Straighten your arms overhead without moving your elbows', 'Lower slowly into a deep stretch behind your head'] },
+  'Reverse Cable Fly': { img: 'Cable_Rear_Delt_Fly', tonal: 'Handles, arms at shoulder height, cables crossed', cues: ['Face Tonal, cross the cables and take each handle in the opposite hand', 'Pull your arms out wide in a reverse hug, thumbs up', 'Squeeze the back of your shoulders, return slowly'] },
   'Machine Hip Thrust': { img: 'Barbell_Hip_Thrust', cues: ['Upper back on the pad, feet flat about shoulder-width (photo shows the barbell version, same movement)', 'Drive your hips up until your body is straight from shoulders to knees', 'Squeeze your glutes for a second at the top, lower slowly'] },
   'Incline Chest Press': { img: 'Leverage_Incline_Chest_Press', cues: ['Handles start near your upper chest', 'Chest up, shoulder blades pinched back', 'Press up and forward, return slowly'] },
   'Lat Pulldown': { img: 'Wide-Grip_Lat_Pulldown', cues: ['Grip a little wider than shoulders, thighs under the pad', 'Lean back slightly, pull the bar to your upper chest', 'Drive your elbows down and back, return slowly to a full stretch'] },
@@ -67,6 +107,20 @@ const MUSCLES = {
   'Machine Hip Abduction': [['glutes'], []],
   '45° Back Extension': [['glutes', 'hams'], ['lowerback']],
   'Machine Hip Thrust': [['glutes'], ['hams', 'quads']],
+  'Front Squat': [['quads'], ['glutes', 'adductors']],
+  'Bench Press': [['chest'], ['fdelt', 'triceps']],
+  'Neutral Lat Pulldown': [['lats'], ['upperback', 'rdelt', 'biceps']],
+  'Seated Row': [['lats', 'upperback'], ['rdelt', 'biceps']],
+  'Cable Lateral Raise': [['sdelt'], []],
+  'Romanian Deadlift': [['hams', 'glutes'], ['lowerback']],
+  'Incline Bench Press': [['chest'], ['fdelt', 'triceps']],
+  'Wide-Grip Seated Row': [['upperback'], ['rdelt', 'lats', 'biceps']],
+  'Seated Cable Fly': [['chest'], ['fdelt']],
+  'Bayesian Curl': [['biceps'], ['forearms']],
+  'Wide-Grip Lat Pulldown': [['lats'], ['upperback', 'biceps']],
+  'Cable Glute Kickback': [['glutes'], ['hams']],
+  'Overhead Triceps Extension': [['triceps'], []],
+  'Reverse Cable Fly': [['rdelt'], ['upperback']],
   'Incline Chest Press': [['chest'], ['fdelt', 'triceps']],
   'Lat Pulldown': [['lats'], ['upperback', 'biceps']],
   'Seated Leg Curl': [['hams'], ['calves']]
@@ -120,7 +174,7 @@ const mmss = s => `${Math.floor(s / 60)}:${pad(s % 60)}`;
 
 function defaults() {
   return {
-    settings: { theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light', units: 'lb', activity: 'moderate', kcal: 1860, protein: 110, fat: 52, carbs: 238, cardioGoal: 150, rest: 90 },
+    settings: { place: 'gym', theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light', units: 'lb', activity: 'moderate', kcal: 1860, protein: 110, fat: 52, carbs: 238, cardioGoal: 150, rest: 90 },
     food: {}, foods: [], weights: [], workouts: [], cardio: [], active: null, swaps: {}
   };
 }
@@ -158,6 +212,7 @@ applyTheme();
 const kgToU = kg => unit() === 'lb' ? kg * 2.20462 : kg;
 const uToKg = v => unit() === 'lb' ? v / 2.20462 : v;
 const step = () => unit() === 'lb' ? 5 : 2.5;
+const incFor = ex => ex.inc && unit() === 'lb' ? ex.inc : step();
 
 // In-app confirm. The browser's own confirm pop-up is silently blocked in some in-app browsers and installed web apps.
 function ask(message, okLabel = 'OK', danger = false) {
@@ -209,7 +264,7 @@ function suggestion(ex) {
   if (!last) return { text: `First time. Pick a weight you can do for ${ex.reps[0]}-${ex.reps[1]} reps with 2-3 left in the tank.`, weight: '' };
   const top = Math.max(...last.sets.map(s => +s.weight || 0));
   const allTop = last.sets.length >= ex.n && last.sets.every(s => +s.reps >= ex.reps[1] && (s.rir === '' || +s.rir >= 2));
-  if (allTop && top) return { text: `You hit ${ex.reps[1]} reps on every set last time. Go up to ${r1(top + step())} ${unit()}.`, weight: String(r1(top + step())), up: true };
+  if (allTop && top) return { text: `You hit ${ex.reps[1]} reps on every set last time. Go up to ${r1(top + incFor(ex))} ${unit()}.`, weight: String(r1(top + incFor(ex))), up: true };
   return { text: top ? `Stay at ${top} ${unit()} and beat last time's reps.` : 'Beat last time.', weight: top ? String(top) : '' };
 }
 
@@ -240,9 +295,13 @@ function weightChart(days, mini = false) {
 }
 function signed(v, u) { if (v == null) return '-'; const s = r1(v); return `<span class="${s > 0 ? 'up' : s < 0 ? 'down' : ''}">${s > 0 ? '+' : ''}${s}</span><small> ${u}</small>`; }
 
+// Gym / Tonal picker for where the next workout happens. Remembered between workouts.
+function placePicker() {
+  return `<div class="seg place-seg" role="group" aria-label="Where are you training?">${Object.entries(PLACES).map(([k, v]) => `<button class="${S.settings.place === k ? 'on' : ''}" data-act="place" data-p="${k}" aria-pressed="${S.settings.place === k}">${v.label}</button>`).join('')}</div>`;
+}
 // Dumbbell-shaped button that opens a day's workout. With a label it's full width; without, a compact icon.
-function dumbbell(day, label) {
-  return `<button class="db ${label ? '' : 'mini'}" data-act="start" data-day="${day}" aria-label="Open Day ${day} workout"><i class="pl"></i><i class="pl s"></i><span class="bar">${label ? esc(label) : ''}</span><i class="pl s"></i><i class="pl"></i></button>`;
+function dumbbell(day, label, place = S.settings.place) {
+  return `<button class="db ${label ? '' : 'mini'}" data-act="start" data-day="${day}" data-place="${place}" aria-label="Open Day ${day} ${PLACES[place].label} workout"><i class="pl"></i><i class="pl s"></i><span class="bar">${label ? esc(label) : ''}</span><i class="pl s"></i><i class="pl"></i></button>`;
 }
 function formThumb(name, small) {
   const f = FORM[name]; if (!f) return '';
@@ -267,7 +326,7 @@ const VIEWS = {};
 
 VIEWS.today = () => {
   const s = S.settings, t = totals(today()), left = s.kcal - t.kcal;
-  const nd = S.active ? S.active.day : nextDay(), p = PROGRAM[nd - 1], ws = weekStart();
+  const nd = S.active ? S.active.day : nextDay(), p = S.active ? planOf(S.active) : daysFor(S.settings.place)[nd - 1], ws = weekStart();
   const doneDates = new Set(S.workouts.map(w => w.date));
   const weekW = S.workouts.filter(w => w.date >= ws).length, cardio = weekCardio();
   const ser = trendSeries(), last = ser.at(-1), wk = trendChange(ser, 7);
@@ -285,7 +344,8 @@ VIEWS.today = () => {
   <section class="card">
     <div class="card-head"><h2>${S.active ? 'Workout in progress' : 'Next workout'}</h2><span class="muted small">${weekW}/3 this week</span></div>
     <div class="week-dots">${dots}</div>
-    <p class="big">Day ${nd}<span>${p.focus}</span></p>
+    ${S.active ? '' : placePicker()}
+    <p class="big">Day ${nd}<span>${S.active ? PLACES[S.active.place || 'gym'].label + ', ' : ''}${p.focus}</span></p>
     <p class="muted small" style="margin-top:4px">${dayExercises(p).map(e => esc(e.name)).join(', ')}</p>
     ${S.active ? '<button class="btn block" data-act="resume">Resume workout</button>' : dumbbell(nd, `Day ${nd}`)}
   </section>
@@ -336,7 +396,8 @@ VIEWS.train = () => {
   <header class="page-head"><h1>Training</h1></header>
   <section class="card">
     <div class="card-head"><h2>${S.active ? 'In progress' : 'Up next'}</h2><span class="muted small">${weekW}/3 this week</span></div>
-    <p class="big">Day ${S.active ? S.active.day : nd}<span>${PROGRAM[(S.active ? S.active.day : nd) - 1].focus}</span></p>
+    ${S.active ? '' : placePicker()}
+    <p class="big">Day ${S.active ? S.active.day : nd}<span>${S.active ? PLACES[S.active.place || 'gym'].label + ', ' + planOf(S.active).focus : daysFor(S.settings.place)[nd - 1].focus}</span></p>
     ${S.active ? '<button class="btn block" data-act="resume">Resume workout</button>' : dumbbell(nd, `Day ${nd}`)}
   </section>
   <section class="card">
@@ -348,15 +409,16 @@ VIEWS.train = () => {
       <button class="btn small" type="submit">Log</button>
     </form>
   </section>
-  <h2 class="section-title">Program</h2>
-  ${PROGRAM.map(p => `<section class="card">
+  <div class="program-head"><h2 class="section-title">${PLACES[S.settings.place].label} program</h2>${placePicker()}</div>
+  ${S.settings.place === 'tonal' ? '<p class="hint program-note">Same day numbers as the gym, so you can mix: Day 1 at the gym, Day 2 on Tonal. Moves not in the Tonal library can be done in Free Lift.</p>' : ''}
+  ${daysFor(S.settings.place).map(p => `<section class="card">
     <div class="card-head"><h2>Day ${p.day}<span class="muted">${p.focus}</span></h2>${dumbbell(p.day)}</div>
     ${dayMap(p)}
-    <ul class="ex-list">${dayExercises(p).map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name">${esc(e.name)}${e.options ? `<small class="alt-note">Swap options: ${e.options.filter(o => o !== e.name).map(esc).join(', ')}</small>` : ''}</span></button><span>${e.warm}W + ${e.n} × ${e.reps[0]}-${e.reps[1]}</span></li>`).join('')}</ul>
-    <p class="hint" style="margin:10px 0 0">Warm up 5 min. Working sets at 2-3 RIR, 60-90 s rest. 20 min cardio after.</p>
+    <ul class="ex-list">${dayExercises(p).map(e => `<li><button class="ex-link" data-act="form" data-name="${esc(e.name)}">${formThumb(e.name, true)}<span class="ex-name"><span class="ex-label">${esc(e.name)}</span>${FORM[e.name]?.tonal && S.settings.place === 'tonal' ? `<small class="alt-note">${esc(FORM[e.name].tonal)}</small>` : ''}${e.options ? `<small class="alt-note">Swap options: ${e.options.filter(o => o !== e.name).map(esc).join(', ')}</small>` : ''}</span></button><span>${e.warm}W + ${e.n} × ${e.reps[0]}-${e.reps[1]}</span></li>`).join('')}</ul>
+    <p class="hint" style="margin:10px 0 0">Warm up 5 min. Working sets at 2-3 RIR, 60-90 s rest. ${S.settings.place === 'tonal' ? '20 min brisk walk after if you can.' : '20 min cardio after.'}</p>
   </section>`).join('')}
   <a class="card" href="#history">
-    <div class="card-head" style="margin:0"><div><h2>History</h2><p class="muted small">${last ? `Last: Day ${last.day}, ${shortDate(last.date)}` : 'Finished workouts show up here'}</p></div><span class="chev">${icon('chevron-right')}</span></div>
+    <div class="card-head" style="margin:0"><div><h2>History</h2><p class="muted small">${last ? `Last: Day ${last.day} (${PLACES[last.place || 'gym'].label}), ${shortDate(last.date)}` : 'Finished workouts show up here'}</p></div><span class="chev">${icon('chevron-right')}</span></div>
   </a>`;
 };
 
@@ -378,7 +440,7 @@ function workoutCard(w, prs) {
   const sets = done.reduce((a, e) => a + e.sets.filter(x => x.kind === 's').length, 0);
   const mins = Math.max(1, Math.round((w.end - w.start) / 60000));
   return `<article class="card hcard">
-    <div class="card-head"><div><h2>${prettyDate(w.date, { weekday: 'short', month: 'short', day: 'numeric' })}</h2><p class="muted small">Day ${w.day}: ${PROGRAM[w.day - 1]?.focus || ''}</p></div><span class="muted small">${mins} min</span></div>
+    <div class="card-head"><div><h2>${prettyDate(w.date, { weekday: 'short', month: 'short', day: 'numeric' })}</h2><p class="muted small">Day ${w.day}: ${planOf(w)?.focus || ''}<span class="place-tag">${PLACES[w.place || 'gym'].label}</span></p></div><span class="muted small">${mins} min</span></div>
     <div class="hstats"><div><b>${fmt(volume(w))}</b><span>${unit()} volume</span></div><div><b>${sets}</b><span>working sets</span></div><div><b>${w.cardio || 0}</b><span>min cardio</span></div></div>
     ${done.length ? done.map(e => `<div class="hex">
       <div class="hex-name">${formThumb(e.name, true)}<b>${esc(e.name)}</b>${prs.has(w.id + '|' + e.name) ? `<span class="pr">${icon('trophy')}PR</span>` : ''}</div>
@@ -501,11 +563,11 @@ window.addEventListener('hashchange', () => route());
 document.addEventListener('visibilitychange', () => { if (!document.hidden && !sessionOpen) route(true); });
 
 /* ---------- workout session ---------- */
-async function startWorkout(day) {
+async function startWorkout(day, place = S.settings.place) {
   if (S.active && !(await ask('You already have a workout in progress. Replace it?', 'Replace', true))) return;
-  const p = PROGRAM[day - 1];
+  const p = daysFor(place)[day - 1];
   S.active = {
-    id: uid(), day, start: Date.now(), warmup: false, cardio: '', notes: '',
+    id: uid(), day, place, start: Date.now(), warmup: false, cardio: '', notes: '',
     exercises: dayExercises(p).map(buildExercise)
   };
   save(); openSession();
@@ -513,7 +575,7 @@ async function startWorkout(day) {
 function buildExercise(e) {
   const sg = suggestion(e), last = lastFor(e.name);
   return {
-    name: e.name, slot: e.slot, options: e.options, n: e.n, reps: e.reps, suggest: sg.text, up: !!sg.up,
+    name: e.name, slot: e.slot, options: e.options, n: e.n, reps: e.reps, inc: e.inc, suggest: sg.text, up: !!sg.up,
     lastText: last ? `Last time (${shortDate(last.date)}): ${last.sets.map(s => `${s.weight || 0}×${s.reps || 0}`).join(', ')}` : '',
     sets: [...Array(e.warm)].map(() => ({ kind: 'w', weight: '', reps: '', rir: '', done: false }))
       .concat([...Array(e.n)].map((_, i) => ({ kind: 's', weight: sg.weight, reps: '', rir: '', done: false, ph: last?.sets[i]?.reps || '' })))
@@ -522,7 +584,7 @@ function buildExercise(e) {
 async function swapExercise(i, name) {
   const ex = S.active.exercises[i];
   if (ex.sets.some(s => s.done) && !(await ask('Swap this exercise? Sets you checked off for it will be cleared.', 'Swap'))) return renderSession();
-  const slot = PROGRAM[S.active.day - 1].exercises.find(e => e.name === ex.slot);
+  const slot = planOf(S.active).exercises.find(e => e.name === ex.slot);
   S.swaps = { ...S.swaps, [slot.name]: name === slot.name ? undefined : name };
   S.active.exercises[i] = buildExercise(pick(slot));
   save(); renderSession(); toast(`Swapped to ${name}`);
@@ -552,15 +614,15 @@ function setRow(i, j) {
     <button class="tick" data-act="tick" aria-label="Mark set done">${icon('check')}</button></div>`;
 }
 function renderSession() {
-  const a = S.active, p = PROGRAM[a.day - 1], sc = $('#session').scrollTop;
+  const a = S.active, p = planOf(a), tonal = a.place === 'tonal', sc = $('#session').scrollTop;
   $('#session').innerHTML = `<div class="session-inner">
     <header class="session-head"><button class="icon-btn" data-act="minimize" aria-label="Minimize">${icon('chevron-down')}</button>
-      <div style="text-align:center"><h2>Day ${a.day}</h2><p class="kicker" style="margin:0">${p.focus}</p></div>
+      <div style="text-align:center"><h2>Day ${a.day}</h2><p class="kicker" style="margin:0">${PLACES[a.place || 'gym'].label}, ${p.focus}</p></div>
       <button class="btn small" data-act="finish">Finish</button></header>
     <section class="card"><label class="check"><input type="checkbox" data-field="warmup" ${a.warmup ? 'checked' : ''}> 5 min warm-up cardio</label>
-      <p class="hint" style="margin:6px 0 0 32px">97-135 bpm. Jog, elliptical, row or incline walk (10-15%)</p></section>
+      <p class="hint" style="margin:6px 0 0 32px">${tonal ? '97-135 bpm. Brisk walk, jumping jacks or a Tonal warm-up' : '97-135 bpm. Jog, elliptical, row or incline walk (10-15%)'}</p></section>
     ${a.exercises.map((ex, i) => `<section class="card">
-      <div class="ex-head">${formThumb(ex.name)}<div class="ex-title"><h3>${esc(ex.name)}</h3><span class="pill">${ex.n} × ${ex.reps[0]}-${ex.reps[1]} @ RIR 2-3</span><span class="muscles">${musclesFor(ex.name)[0].map(k => MUSCLE_NAMES[k]).join(', ')}</span></div></div>
+      <div class="ex-head">${formThumb(ex.name)}<div class="ex-title"><h3>${esc(ex.name)}</h3><span class="pill">${ex.n} × ${ex.reps[0]}-${ex.reps[1]} @ RIR 2-3</span><span class="muscles">${musclesFor(ex.name)[0].map(k => MUSCLE_NAMES[k]).join(', ')}</span>${tonal && FORM[ex.name]?.tonal ? `<span class="setup">${esc(FORM[ex.name].tonal)}</span>` : ''}</div></div>
       ${ex.options ? `<label class="swap">Swap <select data-swap="${i}">${ex.options.map(o => `<option ${o === ex.name ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select></label>` : ''}
       ${ex.lastText ? `<p class="last">${esc(ex.lastText)}</p>` : ''}
       <p class="suggest ${ex.up ? 'up' : ''}">${ex.up ? icon('arrow-up') : ''}<span>${esc(ex.suggest)}</span></p>
@@ -587,7 +649,7 @@ async function finishWorkout() {
     if (!a.exercises.some(e => e.sets.some(s => s.done)) && !(await ask('No sets are checked off. Finish anyway?', 'Finish'))) return;
     if (S.active !== a) return;
     const w = {
-      id: a.id, day: a.day, date: iso(a.start), start: a.start, end: Date.now(), warmup: a.warmup, cardio: +a.cardio || 0, notes: a.notes,
+      id: a.id, day: a.day, place: a.place || 'gym', date: iso(a.start), start: a.start, end: Date.now(), warmup: a.warmup, cardio: +a.cardio || 0, notes: a.notes,
       exercises: a.exercises.map(e => ({ name: e.name, reps: e.reps, sets: e.sets.filter(s => s.done).map(({ kind, weight, reps, rir }) => ({ kind, weight, reps, rir })) }))
     };
     S.workouts.push(w);
@@ -624,7 +686,8 @@ function balanceCarbs() { const s = S.settings; s.carbs = Math.max(0, Math.round
 
 /* ---------- events ---------- */
 const ACT = {
-  start: b => startWorkout(+b.dataset.day),
+  start: b => startWorkout(+b.dataset.day, b.dataset.place || S.settings.place),
+  place: b => { S.settings.place = b.dataset.p; save(); route(true); },
   resume: () => openSession(),
   minimize: () => closeSession(),
   finish: () => finishWorkout(),

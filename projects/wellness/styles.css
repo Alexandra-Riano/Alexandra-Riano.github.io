@@ -177,7 +177,7 @@ details.hist .sets b{color:var(--ink);font-weight:600}
 .thumb{width:100%;height:100%;object-fit:cover;display:block}
 .thumb.sm{width:36px;height:36px;border-radius:var(--r-ctl);flex:none}
 .ex-link{flex:1;display:flex;align-items:center;gap:10px;border:0;background:none;padding:0;text-align:left;font-size:14px;min-width:0;min-height:44px}
-.ex-name{text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.ex-label{text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
 .demo-anim{position:relative;border-radius:var(--r-ctl);overflow:hidden;aspect-ratio:3/2;background:var(--card2)}
 .demo-anim img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .demo-anim .end{animation:flip 2.6s ease-in-out infinite}
@@ -338,3 +338,13 @@ details.hist .sets b{color:var(--ink);font-weight:600}
 .sess{padding:10px 0;border-top:1px solid var(--line)}
 .sess .chip-row{margin-top:6px}
 .tabbar a{max-width:96px}
+
+/* gym / tonal */
+.place-seg{display:flex;margin:2px 0 14px}
+.place-seg button{flex:1}
+.program-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:26px 0 10px}
+.program-head .section-title{margin:0 4px}
+.program-head .place-seg{margin:0;flex:none;width:170px}
+.program-note{margin:-2px 4px 12px}
+.place-tag{display:inline-block;margin-left:8px;font-size:11px;font-weight:700;color:var(--ink);background:var(--card2);border-radius:var(--r-pill);padding:2px 8px;vertical-align:1px}
+.setup{font-size:12px;color:var(--muted)}
