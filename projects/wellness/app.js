@@ -11,7 +11,7 @@ const PROGRAM = [
     { name: 'Chest Supported Row', warm: 1, n: 3, reps: [8, 10] },
     { name: 'Leg Extension', warm: 1, n: 3, reps: [10, 12] }] },
   { day: 2, focus: 'Full body B', exercises: [
-    { name: 'Leg Press', warm: 2, n: 3, reps: [8, 10] },
+    { name: '45° Leg Press', warm: 2, n: 3, reps: [8, 10] },
     { name: 'Shoulder Press', warm: 2, n: 3, reps: [8, 10] },
     { name: 'Cable Row', warm: 2, n: 3, reps: [8, 10] },
     { name: 'Pec Fly', warm: 1, n: 3, reps: [8, 12] },
@@ -20,7 +20,7 @@ const PROGRAM = [
     { name: 'Forward Smith Machine Lunge', warm: 2, n: 4, reps: [8, 10] },
     { name: 'Incline Chest Press', warm: 2, n: 3, reps: [10, 12] },
     { name: 'Lat Pulldown', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Leg Curl', warm: 2, n: 3, reps: [10, 12] }] }
+    { name: 'Seated Leg Curl', warm: 2, n: 3, reps: [10, 12] }] }
 ];
 // Plan's calorie targets for muscle gain (~250 kcal surplus) by activity level.
 const ACTIVITY = [
@@ -35,7 +35,7 @@ const FORM = {
   'Neutral Grip Lat Pulldown': { img: 'V-Bar_Pulldown', cues: ['Palms facing each other, thighs locked under the pad', 'Lean back slightly, chest up', 'Pull elbows down until the handle nearly touches your chest, return slowly'] },
   'Chest Supported Row': { img: 'Lying_T-Bar_Row', cues: ['Upper chest at the top of the pad', 'Pull elbows back close to your sides', 'Squeeze your shoulder blades, lower under control — chest stays on the pad'] },
   'Leg Extension': { img: 'Leg_Extensions', cues: ['Pad sits just above your ankles, knees in line with the machine pivot', 'Straighten your legs fully and pause a second', 'Lower slowly back to about 90°'] },
-  'Leg Press': { img: 'Leg_Press', cues: ['Feet shoulder-width in the middle of the platform', 'Lower until knees reach about 90° — lower back stays on the pad', 'Push through your heels, don\'t lock your knees at the top'] },
+  '45° Leg Press': { img: 'Leg_Press', cues: ['Feet shoulder-width in the middle of the platform', 'Lower until knees reach about 90° — lower back stays on the pad', 'Push through your heels, don\'t lock your knees at the top'] },
   'Shoulder Press': { img: 'Leverage_Shoulder_Press', cues: ['Handles start at shoulder height, chest up', 'Press straight up without arching your lower back', 'Lower back to shoulder height under control'] },
   'Cable Row': { img: 'Seated_Cable_Rows', cues: ['Knees slightly bent, sit tall with chest up', 'Pull the handle to your belly, elbows close to your body', 'Squeeze your back for a second, let your arms extend slowly'] },
   'Pec Fly': { img: 'Butterfly', cues: ['Back flat on the pad, arms roughly parallel to the floor', 'Bring the handles together in a hugging arc', 'Squeeze your chest, then open slowly until you feel a stretch'] },
@@ -43,7 +43,7 @@ const FORM = {
   'Forward Smith Machine Lunge': { img: 'Barbell_Lunge', cues: ['Bar across your upper back, stand tall (shown with a free barbell — same movement in the Smith)', 'Step forward and lower until both knees are about 90°', 'Push through the front heel to stand back up'] },
   'Incline Chest Press': { img: 'Leverage_Incline_Chest_Press', cues: ['Handles start near your upper chest', 'Chest up, shoulder blades pinched back', 'Press up and forward, return slowly'] },
   'Lat Pulldown': { img: 'Wide-Grip_Lat_Pulldown', cues: ['Grip a little wider than shoulders, thighs under the pad', 'Lean back slightly, pull the bar to your upper chest', 'Drive your elbows down and back, return slowly to a full stretch'] },
-  'Leg Curl': { img: 'Seated_Leg_Curl', cues: ['Pad just above your heels, thigh pad snug above your knees', 'Curl your heels down and back as far as you can', 'Pause, then return slowly'] }
+  'Seated Leg Curl': { img: 'Seated_Leg_Curl', cues: ['Pad just above your heels, thigh pad snug above your knees', 'Curl your heels down and back as far as you can', 'Pause, then return slowly'] }
 };
 // Muscles worked: [main, also worked]. Keys match the body-map regions below.
 const MUSCLES = {
@@ -52,7 +52,7 @@ const MUSCLES = {
   'Neutral Grip Lat Pulldown': [['lats'], ['upperback', 'rdelt', 'biceps']],
   'Chest Supported Row': [['upperback'], ['lats', 'rdelt', 'biceps', 'traps']],
   'Leg Extension': [['quads'], []],
-  'Leg Press': [['quads', 'glutes'], ['adductors']],
+  '45° Leg Press': [['quads', 'glutes'], ['adductors']],
   'Shoulder Press': [['fdelt'], ['sdelt', 'triceps']],
   'Cable Row': [['lats', 'upperback'], ['rdelt', 'biceps']],
   'Pec Fly': [['chest'], ['fdelt']],
@@ -60,7 +60,7 @@ const MUSCLES = {
   'Forward Smith Machine Lunge': [['glutes', 'quads'], ['adductors', 'hams']],
   'Incline Chest Press': [['chest'], ['fdelt', 'triceps']],
   'Lat Pulldown': [['lats'], ['upperback', 'biceps']],
-  'Leg Curl': [['hams'], ['calves']]
+  'Seated Leg Curl': [['hams'], ['calves']]
 };
 const MUSCLE_NAMES = { quads: 'quads', glutes: 'glutes', adductors: 'inner thighs', chest: 'chest', fdelt: 'front delts', sdelt: 'side delts', rdelt: 'rear delts', triceps: 'triceps', biceps: 'biceps', forearms: 'forearms', lats: 'lats', upperback: 'upper back', traps: 'traps', hams: 'hamstrings', calves: 'calves' };
 const BODY = 'M80 62 Q60 64 50 90 L42 196 L56 198 L66 134 L68 182 Q65 190 67 198 L64 292 L67 302 L66 382 L70 398 L90 398 L92 302 L97 212 L103 212 L108 302 L110 398 L130 398 L134 382 L133 302 L136 292 L133 198 Q135 190 132 182 L134 134 L144 198 L158 196 L150 90 Q140 64 120 62 Z';
@@ -107,10 +107,16 @@ function defaults() {
     food: {}, foods: [], weights: [], workouts: [], cardio: [], active: null
   };
 }
+// Old exercise names → current, so history and last-time suggestions carry over.
+const RENAMED = { 'Leg Press': '45° Leg Press', 'Leg Curl': 'Seated Leg Curl' };
+function migrate(s) {
+  [...(s.workouts || []), ...(s.active ? [s.active] : [])].forEach(w => w.exercises.forEach(e => { if (RENAMED[e.name]) e.name = RENAMED[e.name]; }));
+  return s;
+}
 function load() {
   try {
     const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && s.settings) { const d = defaults(); return { ...d, ...s, settings: { ...d.settings, ...s.settings } }; }
+    if (s && s.settings) { const d = defaults(); return migrate({ ...d, ...s, settings: { ...d.settings, ...s.settings } }); }
   } catch (e) { /* fall through */ }
   return defaults();
 }
@@ -635,7 +641,7 @@ document.addEventListener('change', e => {
       try {
         const d = JSON.parse(r.result);
         if (!d.settings) throw new Error('bad file');
-        S = { ...defaults(), ...d, settings: { ...defaults().settings, ...d.settings } }; save(); route(); toast('Backup restored');
+        S = migrate({ ...defaults(), ...d, settings: { ...defaults().settings, ...d.settings } }); save(); route(); toast('Backup restored');
       } catch (err) { toast('That file is not a Wellness backup'); }
     };
     r.readAsText(t.files[0]);
