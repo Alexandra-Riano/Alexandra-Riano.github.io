@@ -9,18 +9,21 @@ const PROGRAM = [
     { name: 'Chest Press', warm: 2, n: 3, reps: [8, 10] },
     { name: 'Neutral Grip Lat Pulldown', warm: 2, n: 3, reps: [8, 10] },
     { name: 'Chest Supported Row', warm: 1, n: 3, reps: [8, 10] },
-    { name: 'Leg Extension', warm: 1, n: 3, reps: [10, 12] }] },
+    { name: 'Leg Extension', warm: 1, n: 3, reps: [10, 12] },
+    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] },
   { day: 2, focus: 'Full body B', exercises: [
     { name: '45° Leg Press', warm: 2, n: 3, reps: [8, 10] },
     { name: 'Shoulder Press', warm: 2, n: 3, reps: [8, 10] },
     { name: 'Cable Row', warm: 2, n: 3, reps: [8, 10] },
     { name: 'Pec Fly', warm: 1, n: 3, reps: [8, 12] },
-    { name: 'Preacher Curl', warm: 1, n: 3, reps: [8, 12] }] },
+    { name: 'Preacher Curl', warm: 1, n: 3, reps: [8, 12] },
+    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] },
   { day: 3, focus: 'Full body C', exercises: [
     { name: 'Machine Hip Abduction', warm: 1, n: 3, reps: [12, 15], alts: ['45° Back Extension', 'Machine Hip Thrust'] },
     { name: 'Incline Chest Press', warm: 2, n: 3, reps: [10, 12] },
     { name: 'Lat Pulldown', warm: 2, n: 3, reps: [8, 10] },
-    { name: 'Seated Leg Curl', warm: 2, n: 3, reps: [10, 12] }] }
+    { name: 'Seated Leg Curl', warm: 2, n: 3, reps: [10, 12] },
+    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] }
 ];
 // Plan's calorie targets for muscle gain (~250 kcal surplus) by activity level.
 const ACTIVITY = [
@@ -36,19 +39,22 @@ const TONAL = [
     { name: 'Seated Cable Fly', warm: 1, n: 3, reps: [10, 12], inc: 2 },
     { name: 'Neutral-Grip Cable Pulldown', warm: 1, n: 3, reps: [8, 10] },
     { name: 'Seated Cable Row', warm: 1, n: 3, reps: [8, 10] },
-    { name: 'Cable Lateral Raise', warm: 1, n: 3, reps: [12, 15], inc: 2 }] },
+    { name: 'Cable Lateral Raise', warm: 1, n: 3, reps: [12, 15], inc: 2 },
+    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] },
   { day: 2, focus: 'Full body B', exercises: [
     { name: 'Cable Romanian Deadlift', warm: 2, n: 3, reps: [8, 10] },
     { name: 'Cable Crossover', warm: 1, n: 3, reps: [10, 12], inc: 2 },
     { name: 'Wide-Grip Cable Row', warm: 1, n: 3, reps: [10, 12] },
     { name: 'Bayesian Cable Curl', warm: 1, n: 3, reps: [10, 12], inc: 2 },
-    { name: 'Rope Face Pull', warm: 1, n: 3, reps: [12, 15], inc: 2 }] },
+    { name: 'Rope Face Pull', warm: 1, n: 3, reps: [12, 15], inc: 2 },
+    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] },
   { day: 3, focus: 'Full body C', exercises: [
     { name: 'Cable Squat', warm: 2, n: 3, reps: [8, 10] },
     { name: 'Wide-Grip Cable Pulldown', warm: 1, n: 3, reps: [8, 10] },
     { name: 'Cable Press-Around', warm: 1, n: 3, reps: [10, 12], inc: 2 },
     { name: 'Overhead Cable Triceps Extension', warm: 1, n: 3, reps: [10, 12], inc: 2 },
-    { name: 'Cable Glute Kickback', warm: 1, n: 3, reps: [12, 15], inc: 2 }] }
+    { name: 'Cable Glute Kickback', warm: 1, n: 3, reps: [12, 15], inc: 2 },
+    { name: 'Dragon Flag', warm: 0, n: 2, reps: [5, 8], bw: true }] }
 ];
 const PLACES = { gym: { label: 'Gym', days: PROGRAM }, tonal: { label: 'Tonal', days: TONAL } };
 const daysFor = place => (PLACES[place] || PLACES.gym).days;
@@ -72,6 +78,7 @@ const FORM = {
   'Cable Row': { img: 'Seated_Cable_Rows', cues: ['Knees slightly bent, sit tall with chest up', 'Pull the handle to your belly, elbows close to your body', 'Squeeze your back for a second, let your arms extend slowly'] },
   'Pec Fly': { img: 'Butterfly', cues: ['Back flat on the pad, arms roughly parallel to the floor', 'Bring the handles together in a hugging arc', 'Squeeze your chest, then open slowly until you feel a stretch'] },
   'Preacher Curl': { img: 'Machine_Preacher_Curls', cues: ['Backs of your upper arms flat on the pad', 'Curl up. Only your forearms move', 'Lower slowly all the way down'] },
+  'Dragon Flag': { cues: ['Lie on a bench (or the floor) and grip something solid behind your head', 'Brace hard and lift your body up onto your upper back, straight from shoulders to feet, then lower slowly as one piece', 'New to it? Start with knees tucked, or only do the slow lowering part. No photo yet'] },
   'Machine Hip Abduction': { img: 'Thigh_Abductor', cues: ['Sit tall with the pads on the outside of your knees', 'Push your knees out as wide as you can and pause a second', 'Return slowly. Lean your torso slightly forward to hit more of your glutes'] },
   '45° Back Extension': { img: 'Hyperextensions_Back_Extensions', cues: ['Set the pad so it sits just below your hip crease', 'Hinge at the hips and lower your chest toward the floor', 'Squeeze your glutes to come up to a straight line. Don\'t arch past it'] },
   'Cable Squat': { tonal: 'Both handles, arms low, handles held at your shoulders', cues: ['Face Tonal, hold a handle at each shoulder with elbows tucked', 'Sit down between your heels until thighs reach parallel, chest tall', 'Drive up through mid-foot. No photo yet: it looks like a goblet squat with a handle in each hand'] },
@@ -106,6 +113,7 @@ const MUSCLES = {
   'Pec Fly': [['chest'], ['fdelt']],
   'Preacher Curl': [['biceps'], ['forearms']],
   'Machine Hip Abduction': [['glutes'], []],
+  'Dragon Flag': [['abs'], ['obliques']],
   '45° Back Extension': [['glutes', 'hams'], ['lowerback']],
   'Cable Squat': [['quads'], ['glutes', 'adductors']],
   'Seated Cable Fly': [['chest'], ['fdelt']],
@@ -126,7 +134,7 @@ const MUSCLES = {
   'Lat Pulldown': [['lats'], ['upperback', 'biceps']],
   'Seated Leg Curl': [['hams'], ['calves']]
 };
-const MUSCLE_NAMES = { quads: 'quads', glutes: 'glutes', adductors: 'inner thighs', chest: 'chest', fdelt: 'front delts', sdelt: 'side delts', rdelt: 'rear delts', triceps: 'triceps', biceps: 'biceps', forearms: 'forearms', lats: 'lats', upperback: 'upper back', traps: 'traps', lowerback: 'lower back', hams: 'hamstrings', calves: 'calves' };
+const MUSCLE_NAMES = { quads: 'quads', glutes: 'glutes', adductors: 'inner thighs', chest: 'chest', fdelt: 'front delts', sdelt: 'side delts', rdelt: 'rear delts', triceps: 'triceps', biceps: 'biceps', forearms: 'forearms', lats: 'lats', upperback: 'upper back', traps: 'traps', lowerback: 'lower back', abs: 'abs', obliques: 'obliques', hams: 'hamstrings', calves: 'calves' };
 const BODY = 'M80 62 Q60 64 50 90 L42 196 L56 198 L66 134 L68 182 Q65 190 67 198 L64 292 L67 302 L66 382 L70 398 L90 398 L92 302 L97 212 L103 212 L108 302 L110 398 L130 398 L134 382 L133 302 L136 292 L133 198 Q135 190 132 182 L134 134 L144 198 L158 196 L150 90 Q140 64 120 62 Z';
 const ARM_FORE = 'M48 144 Q42 170 44 194 L55 194 Q60 168 62 144 Z', ARM_UP = 'M54 100 Q46 120 50 140 L62 140 Q67 120 65 102 Z', SDELT = 'M62 68 Q48 74 48 96 L54 96 Q55 80 66 71 Z';
 const FRONT_MAP = { sdelt: SDELT, fdelt: 'M76 70 Q62 72 56 96 L66 98 Q70 82 82 75 Z', chest: 'M98 74 L82 74 Q68 84 68 102 Q78 113 98 109 Z', biceps: ARM_UP, forearms: ARM_FORE,
@@ -216,13 +224,20 @@ const step = () => unit() === 'lb' ? 5 : 2.5;
 const incFor = ex => ex.inc && unit() === 'lb' ? ex.inc : step();
 
 // In-app confirm. The browser's own confirm pop-up is silently blocked in some in-app browsers and installed web apps.
+// Buttons answer directly on tap; the close event only covers Escape / back gestures.
+let askResolve = null;
 function ask(message, okLabel = 'OK', danger = false) {
+  if (askResolve) askResolve(false);
   return new Promise(resolve => {
     const d = $('#ask'); $('#ask-msg').textContent = message;
     const ok = $('#ask-ok'); ok.textContent = okLabel; ok.classList.toggle('danger', danger);
-    const onClose = () => { d.removeEventListener('close', onClose); resolve(d.returnValue === 'ok'); };
-    d.returnValue = ''; d.addEventListener('close', onClose); d.showModal(); ok.focus();
+    askResolve = resolve; d.showModal(); ok.focus();
   });
+}
+function answerAsk(yes) {
+  const r = askResolve; askResolve = null;
+  if ($('#ask').open) $('#ask').close();
+  if (r) r(yes);
 }
 function toast(msg) {
   const t = $('#toast'); t.textContent = msg; t.classList.add('show');
@@ -262,6 +277,12 @@ function lastFor(name) {
 // Double progression: hit the top of the rep range on every set with ≥2 RIR → add weight.
 function suggestion(ex) {
   const last = lastFor(ex.name);
+  if (ex.bw) {
+    if (!last) return { text: `Bodyweight. Start with the easiest version you can control for ${ex.reps[0]}-${ex.reps[1]} reps.`, weight: '' };
+    const allTop = last.sets.length >= ex.n && last.sets.every(s => +s.reps >= ex.reps[1]);
+    return allTop ? { text: `You hit ${ex.reps[1]} reps on every set. Make it harder: straighter legs or a slower lowering.`, weight: '', up: true }
+      : { text: "Beat last time's reps.", weight: '' };
+  }
   if (!last) return { text: `First time. Pick a weight you can do for ${ex.reps[0]}-${ex.reps[1]} reps with 2-3 left in the tank.`, weight: '' };
   const top = Math.max(...last.sets.map(s => +s.weight || 0));
   const allTop = last.sets.length >= ex.n && last.sets.every(s => +s.reps >= ex.reps[1] && (s.rir === '' || +s.rir >= 2));
@@ -438,7 +459,7 @@ function prMap() {
   }));
   return prs;
 }
-const setChip = x => `<span class="chip-set ${x.kind === 'w' ? 'warm' : ''}">${x.kind === 'w' ? '<i>W</i>' : ''}<b>${esc(x.weight || 0)}</b> × ${esc(x.reps || 0)}${x.kind === 's' && x.rir !== '' && x.rir != null ? `<small>RIR ${esc(x.rir)}</small>` : ''}</span>`;
+const setChip = x => `<span class="chip-set ${x.kind === 'w' ? 'warm' : ''}">${x.kind === 'w' ? '<i>W</i>' : ''}<b>${+x.weight ? esc(x.weight) : 'BW'}</b> × ${esc(x.reps || 0)}${x.kind === 's' && x.rir !== '' && x.rir != null ? `<small>RIR ${esc(x.rir)}</small>` : ''}</span>`;
 function workoutCard(w, prs) {
   const done = w.exercises.filter(e => e.sets.length);
   const sets = done.reduce((a, e) => a + e.sets.filter(x => x.kind === 's').length, 0);
@@ -467,6 +488,10 @@ function exerciseSummaries() {
 // Change in top working weight from the first logged session to the latest.
 function progress(sessions) {
   if (sessions.length < 2) return `<div class="prog"><span class="muted small">Progress</span><b class="muted">First session</b></div>`;
+  if (sessions.every(x => !x.top)) {
+    const reps = x => Math.max(0, ...x.sets.map(y => +y.reps || 0)), d = reps(sessions.at(-1)) - reps(sessions[0]);
+    return `<div class="prog"><span class="muted small">Since ${shortDate(sessions[0].date)}</span><b class="${d > 0 ? 'up' : d < 0 ? 'down' : 'muted'}">${d > 0 ? '+' : ''}${d === 0 ? 'Same reps' : `${d} reps`}</b></div>`;
+  }
   const d = r1(sessions.at(-1).top - sessions[0].top);
   return `<div class="prog"><span class="muted small">Since ${shortDate(sessions[0].date)}</span><b class="${d > 0 ? 'up' : d < 0 ? 'down' : 'muted'}">${d > 0 ? '+' : ''}${d === 0 ? 'Same weight' : `${d} ${unit()}`}</b></div>`;
 }
@@ -478,7 +503,7 @@ VIEWS.history = () => {
   if (historyMode === 'exercises') {
     body = exerciseSummaries().map(x => `<article class="card hcard">
       <div class="hex-name">${formThumb(x.name, true)}<b>${esc(x.name)}</b></div>
-      <div class="ex-sum"><div><span class="muted small">Best set</span><b>${esc(x.bestSet.weight || 0)} ${unit()} × ${esc(x.bestSet.reps || 0)}</b></div>${progress(x.sessions)}</div>
+      <div class="ex-sum"><div><span class="muted small">Best set</span><b>${+x.bestSet.weight ? `${esc(x.bestSet.weight)} ${unit()}` : 'BW'} × ${esc(x.bestSet.reps || 0)}</b></div>${progress(x.sessions)}</div>
       ${[...x.sessions].reverse().slice(0, 6).map(s => `<div class="sess"><span class="muted small">${shortDate(s.date)}</span><div class="chip-row">${s.sets.map(setChip).join('')}</div></div>`).join('')}
     </article>`).join('') || '<section class="card"><p class="empty" style="margin:0">No working sets logged yet.</p></section>';
   } else {
@@ -579,7 +604,7 @@ async function startWorkout(day, place = S.settings.place) {
 function buildExercise(e) {
   const sg = suggestion(e), last = lastFor(e.name);
   return {
-    name: e.name, slot: e.slot, options: e.options, n: e.n, reps: e.reps, inc: e.inc, suggest: sg.text, up: !!sg.up,
+    name: e.name, slot: e.slot, options: e.options, n: e.n, reps: e.reps, inc: e.inc, bw: e.bw, suggest: sg.text, up: !!sg.up,
     lastText: last ? `Last time (${shortDate(last.date)}): ${last.sets.map(s => `${s.weight || 0}×${s.reps || 0}`).join(', ')}` : '',
     sets: [...Array(e.warm)].map(() => ({ kind: 'w', weight: '', reps: '', rir: '', done: false }))
       .concat([...Array(e.n)].map((_, i) => ({ kind: 's', weight: sg.weight, reps: '', rir: '', done: false, ph: last?.sets[i]?.reps || '' })))
@@ -609,6 +634,7 @@ function setRow(i, j) {
   } else {
     label = String(ex.sets.filter(x => x.kind === 's').indexOf(s) + 1);
     phR = s.ph || `${ex.reps[0]}-${ex.reps[1]}`; phRir = '2-3';
+    if (ex.bw) phW = 'BW';
   }
   return `<div class="set-row ${s.kind === 'w' ? 'is-warm' : ''} ${s.done ? 'done' : ''}" data-ex="${i}" data-set="${j}">
     <span class="set-tag">${label}</span>
@@ -765,6 +791,9 @@ document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]');
   if (b && ACT[b.dataset.act]) { e.preventDefault(); ACT[b.dataset.act](b, e); }
 });
+$('#ask').addEventListener('click', e => { const b = e.target.closest('button[value]'); if (b) { e.preventDefault(); answerAsk(b.value === 'ok'); } });
+$('#ask').addEventListener('cancel', () => answerAsk(false));
+$('#ask').addEventListener('close', () => { if (askResolve) answerAsk(false); });
 ['#sheet', '#demo'].forEach(id => $(id).addEventListener('click', e => { if (e.target === $(id)) $(id).close(); }));
 
 document.addEventListener('submit', e => {
