@@ -1,6 +1,6 @@
 'use strict';
 const KEY = 'alex-wellness-v1';
-const APP_VERSION = 29; // keep in step with ?v= in index.html and CACHE in service-worker.js
+const APP_VERSION = 30; // keep in step with ?v= in index.html and CACHE in service-worker.js
 
 // From "Alexandra Riano Wellness Plan" (Alex Alvarez, ATC), 1st microcycle, 3 full-body days.
 // warm = warm-up sets, n = working sets, reps = target range. All working sets at 2-3 RIR, 60-90 s rest.
@@ -57,10 +57,11 @@ const TONAL = [
     { name: 'Cable Glute Kickback', warm: 0, n: 3, reps: [12, 15], inc: 2 },
     { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] }
 ];
-// Free weights only: dumbbells plus an adjustable bench. Same day numbers as the other programs.
-// No incline bench or chest-support pad needed, just a flat bench.
-// All A or S tier on Nippard's lists except Goblet Squat (B): no non-lunge dumbbell quad move is ranked A/S,
-// so Bulgarian Split Squat (S) is offered as its swap for when lunges are on the menu. Log the weight of ONE dumbbell.
+// Free weights only: dumbbells plus a flat bench (no incline bench or chest-support pad).
+// No main lift repeats across the three days. Tiers from Jeff Nippard's lists: everything is A except
+// Goblet Squat (B, the only ranked non-lunge dumbbell quad move) and Dragon Fly (S, his only ranked ab move here).
+// S-tier dumbbell moves need gear or lunges (Bulgarian Split Squat, Dumbbell Preacher Curl), so they are swaps
+// or left out. Log the weight of ONE dumbbell.
 const DUMBBELL = [
   { day: 1, focus: 'Full body A', exercises: [
     { name: 'Goblet Squat', warm: 0, n: 3, reps: [8, 12], alts: ['Bulgarian Split Squat'] },
@@ -70,18 +71,19 @@ const DUMBBELL = [
     { name: 'Dumbbell Skullcrusher', warm: 0, n: 3, reps: [10, 12] },
     { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] },
   { day: 2, focus: 'Full body B', exercises: [
-    { name: 'Dumbbell Romanian Deadlift', warm: 0, n: 3, reps: [8, 10] },
+    { name: 'Dumbbell Romanian Deadlift', warm: 0, n: 3, reps: [8, 10], alts: ['Single-Leg Dumbbell Hip Thrust'] },
     { name: 'Seated Dumbbell Shoulder Press', warm: 0, n: 3, reps: [8, 10] },
-    { name: 'One-Arm Dumbbell Row', warm: 0, n: 3, reps: [10, 12], alts: ['Kroc Row'] },
+    { name: 'Dumbbell Pullover', warm: 0, n: 3, reps: [10, 12] },
     { name: 'Dumbbell Fly', warm: 0, n: 3, reps: [10, 12] },
     { name: 'Standing Dumbbell Curl', warm: 0, n: 3, reps: [10, 12], alts: ['Lying Dumbbell Curl'] },
     { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] },
   { day: 3, focus: 'Full body C', exercises: [
-    { name: 'Goblet Squat', warm: 0, n: 3, reps: [8, 12], alts: ['Bulgarian Split Squat'] },
+    { name: 'Dumbbell Step-Up', warm: 0, n: 3, reps: [8, 12], alts: ['Goblet Squat', 'Bulgarian Split Squat'] },
     { name: 'Deficit Push-Up', warm: 0, n: 3, reps: [8, 12], bw: true, alts: ['Flat Dumbbell Press'] },
-    { name: 'Dumbbell Pullover', warm: 0, n: 3, reps: [10, 12] },
-    { name: 'Single-Leg Dumbbell Hip Thrust', warm: 0, n: 3, reps: [10, 12] },
-    { name: 'Hammer Curl', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'Kroc Row', warm: 0, n: 2, reps: [12, 20], alts: ['One-Arm Dumbbell Row'] },
+    { name: 'Side-Lying Lateral Raise', warm: 0, n: 3, reps: [12, 15] },
+    { name: 'One-Arm Overhead Extension', warm: 0, n: 3, reps: [10, 12] },
+    { name: 'Hammer Curl', warm: 0, n: 2, reps: [10, 12] },
     { name: 'Dragon Fly', warm: 0, n: 2, reps: [5, 8], bw: true }] }
 ];
 const PLACES = { gym: { label: 'Gym', days: PROGRAM }, tonal: { label: 'Tonal', days: TONAL }, dumbbells: { label: 'Dumbbells', days: DUMBBELL } };
@@ -95,7 +97,10 @@ const ALTS = {
   'Bulgarian Split Squat': { warm: 0, n: 3, reps: [8, 10] },
   'Kroc Row': { warm: 0, n: 2, reps: [12, 20] },
   'Lying Dumbbell Curl': { warm: 0, n: 3, reps: [10, 12] },
-  'Flat Dumbbell Press': { warm: 0, n: 3, reps: [8, 10] }
+  'Flat Dumbbell Press': { warm: 0, n: 3, reps: [8, 10] },
+  'Goblet Squat': { warm: 0, n: 3, reps: [8, 12] },
+  'Single-Leg Dumbbell Hip Thrust': { warm: 0, n: 3, reps: [10, 12] },
+  'One-Arm Dumbbell Row': { warm: 0, n: 3, reps: [8, 10] }
 };
 const MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
 
@@ -128,6 +133,9 @@ const FORM = {
   'Standing Dumbbell Curl': { img: 'Dumbbell_Bicep_Curl', setup: 'Two dumbbells, standing', cues: ['Stand tall, palms facing forward, elbows by your sides', 'Curl both dumbbells up without swinging', 'Lower slowly to straight arms'] },
   'Lying Dumbbell Curl': { img: 'Lying_Supine_Dumbbell_Curl', setup: 'Two dumbbells, lie on a flat bench, arms hanging down', cues: ['Lie on your back on the bench and let your arms hang straight down past it', 'Curl up while keeping your upper arms pointing at the floor', 'Lower slowly into a deep biceps stretch'] },
   'Deficit Push-Up': { img: 'Pushups', setup: 'Two dumbbells on the floor as handles', cues: ['Grip two dumbbells on the floor as handles so your chest can sink below your hands (photo shows a regular push-up)', 'Lower until your chest is between the dumbbells, body in a straight line', 'Push up. Too hard? Do them from your knees'] },
+  'Dumbbell Step-Up': { img: 'Dumbbell_Step_Ups', setup: 'Two dumbbells, a flat bench or sturdy box', cues: ['Hold a dumbbell in each hand, one whole foot on the bench', 'Drive through that heel to stand up on the bench, without pushing off the back foot', 'Step down slowly. Do all reps, then switch legs. Start with a lower step if needed'] },
+  'Side-Lying Lateral Raise': { img: 'Lying_One-Arm_Lateral_Raise', setup: 'One light dumbbell, lie on your side on the bench or floor', cues: ['Lie on your side, dumbbell in the top hand in front of your hips', 'Raise the arm up and out until it points at the ceiling, elbow slightly bent', 'Lower slowly. Do all reps, then switch sides'] },
+  'One-Arm Overhead Extension': { img: 'Dumbbell_One-Arm_Triceps_Extension', setup: 'One dumbbell, standing or seated', cues: ['Hold the dumbbell straight overhead, elbow pointing up', 'Lower it behind your head by bending only the elbow', 'Straighten back up. Do all reps, then switch arms'] },
   'Machine Hip Abduction': { img: 'Thigh_Abductor', cues: ['Sit tall with the pads on the outside of your knees', 'Push your knees out as wide as you can and pause a second', 'Return slowly. Lean your torso slightly forward to hit more of your glutes'] },
   '45° Back Extension': { img: 'Hyperextensions_Back_Extensions', cues: ['Set the pad so it sits just below your hip crease', 'Hinge at the hips and lower your chest toward the floor', 'Squeeze your glutes to come up to a straight line. Don\'t arch past it'] },
   'Cable Squat': { setup: 'Both handles, arms low, handles held at your shoulders', cues: ['Face Tonal, hold a handle at each shoulder with elbows tucked', 'Sit down between your heels until thighs reach parallel, chest tall', 'Drive up through mid-foot. No photo yet: it looks like a goblet squat with a handle in each hand'] },
@@ -177,6 +185,9 @@ const MUSCLES = {
   'Standing Dumbbell Curl': [['biceps'], ['forearms']],
   'Lying Dumbbell Curl': [['biceps'], ['forearms']],
   'Deficit Push-Up': [['chest'], ['fdelt', 'triceps', 'abs']],
+  'Dumbbell Step-Up': [['quads', 'glutes'], ['hams', 'adductors']],
+  'Side-Lying Lateral Raise': [['sdelt'], []],
+  'One-Arm Overhead Extension': [['triceps'], []],
   'Machine Hip Abduction': [['glutes'], []],
   'Dragon Fly': [['abs'], ['obliques']],
   '45° Back Extension': [['glutes', 'hams'], ['lowerback']],
