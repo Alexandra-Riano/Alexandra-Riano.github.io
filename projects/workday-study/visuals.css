@@ -50,3 +50,10 @@
 
 .book-cite{margin:10px 0 0;font-size:var(--fs-sm);color:var(--text-2)}
 .vis .vtable+.vtable{margin-top:4px}
+.notes{display:grid;gap:12px;margin-top:4px}
+.notes-title{margin:8px 0 0;font-size:var(--fs-lg)}
+.note h3{margin:0 0 8px;font-size:var(--fs-md)}
+.note ul{margin:0;padding-left:18px;display:grid;gap:8px}
+.note li{line-height:1.5}
+.note li b{display:block;font-weight:700;margin-bottom:2px}
+.note .book-cite{margin-top:10px}
