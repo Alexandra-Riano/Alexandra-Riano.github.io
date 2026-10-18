@@ -322,3 +322,18 @@ body.has-pod .page{padding-bottom:300px}
   *{transition:none!important;scroll-behavior:auto!important}
   button:active:not(:disabled){transform:none}
 }
+
+.quiz-note{font-size:var(--fs-sm);color:var(--text-2);background:var(--surface-2);border-radius:var(--r-sm);padding:10px 12px;margin:0 0 12px}
+.feedback.is-ok{background:var(--ok-soft);border-left:4px solid var(--ok)}
+.feedback.is-bad{background:var(--bad-soft);border-left:4px solid var(--bad)}
+.feedback b{display:block;font-size:var(--fs-md);margin-bottom:4px}
+.feedback p{margin:4px 0 0}
+.feedback span{font-weight:700}
+.quiz-review{margin-top:20px}
+.review-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.review-head h2{font-size:var(--fs-lg);margin:0}
+.review-head label{font-size:var(--fs-sm);display:flex;align-items:center;gap:6px;cursor:pointer}
+.quiz-review ol{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.review-item{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px}
+.review-item h3{font-size:var(--fs-md);margin:4px 0 0;line-height:1.4}
+.quiz-review.only-missed .review-item.is-ok{display:none}
