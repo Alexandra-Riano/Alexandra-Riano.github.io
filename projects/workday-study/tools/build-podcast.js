@@ -23,7 +23,8 @@ const speak = t => t
   .replace(/\bHCM\b/g, 'H C M').replace(/\bJM\b/g, 'Job Management').replace(/\bPM\b/g, 'Position Management')
   .replace(/\bCOAS\b/g, 'C O A S').replace(/\bCOUS\b/g, 'C O U S').replace(/\bCOO\b/g, 'C O O')
   .replace(/(\d+)%\+/g, '$1% or higher').replace(/#(\d)/g, 'number $1')
-  .replace(/bp:/g, 'B P colon').replace(/event:/g, 'event colon');
+  .replace(/bp:/g, 'B P colon').replace(/event:/g, 'event colon')
+  .replace(/\b(sup|org|worker):/g, '$1 colon').replace(/type \? /g, 'type a question mark ').replace(/\(ISUs\)/g, '(I S Us)');
 const listSay = a => a.length === 2 ? a.join(' and ') : a.length > 1 ? a.slice(0, -1).join(', ') + ', and ' + a[a.length - 1] : a[0];
 const ord = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
 
