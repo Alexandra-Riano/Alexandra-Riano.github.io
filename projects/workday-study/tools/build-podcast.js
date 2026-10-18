@@ -15,6 +15,8 @@ const lesson = id => L.find(x => x[0] === id), dom = id => D.find(d => d[0] === 
 
 const P = ms => ` [[slnc ${ms}]] `;
 const speak = t => t
+  // Drop course-book page citations such as "(B1 p. 82)" or "Answer key, B2 p. 275." so they are not read aloud.
+  .replace(/\s*\((?:Answer key, )?B[12] pp?\. [^)]*\)/g, '').replace(/(?:Answer key, )?\bB[12] pp?\. [\d–\-, ;BpP.]+\.?/g, '')
   .replace(/\bBP\b/g, 'business process').replace(/\bBPs\b/g, 'business processes')
   .replace(/\bvs\.?\b/g, 'versus').replace(/\be\.g\.,?/g, 'for example,').replace(/&/g, ' and ')
   .replace(/ > /g, ', then ').replace(/ · /g, ', ').replace(/—/g, ', ').replace(/→/g, ' to ')

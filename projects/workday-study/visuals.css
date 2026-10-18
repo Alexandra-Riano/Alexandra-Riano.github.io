@@ -47,3 +47,6 @@
 .vgate{display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:stretch}
 .vgate .g{display:grid;place-items:center;text-align:center;font-size:var(--fs-xs);font-weight:700;border-radius:var(--r-sm);padding:6px;background:var(--v-warn-bg);color:var(--v-warn-fg);min-width:76px}
 @media (max-width:420px){.vgate{grid-template-columns:1fr}.vform .vr{grid-template-columns:1fr}}
+
+.book-cite{margin:10px 0 0;font-size:var(--fs-sm);color:var(--text-2)}
+.vis .vtable+.vtable{margin-top:4px}
