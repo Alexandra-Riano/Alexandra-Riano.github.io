@@ -38,7 +38,7 @@ const C={
 ["Where do you assign HR Partner (by location)?","On a location hierarchy, not on individual locations."]],
 "organization-assignments":[
 ["Should a default value normally also be allowed?","Yes."],
-["What can worker organization assignments populate downstream?","Worktags on downstream transactions."],
+["What drives the Default Organizations prompt?","The Allowed Organizations values."],
 ["Where do you see that a subordinate inherits assignments?","The Inherited from Superior check box on the Organization Assignments tab."],
 ["How do you override an inherited assignment?","Enter a value on the subordinate organization."]],
 "assignable-roles":[
