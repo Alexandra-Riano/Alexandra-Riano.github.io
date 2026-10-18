@@ -78,6 +78,8 @@ fs.mkdirSync(out, { recursive: true });
 const eps = [];
 WEEKS.forEach((w, wi) => w.sessions.forEach((s, si) => {
   const id = `w${wi + 1}d${si + 1}`, x = s[3] ? lesson(s[3]) : null;
+  // Seed per episode so editing one day does not reshuffle the answer letters in every later episode.
+  seed = [...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 2147483647, 7) || 7;
   const body = s[0] === 'learn' && x ? learnEp(x) : s[0] === 'test' ? testEp(w, s, wi) : reviewEp(w, s);
   const script = speak(`Week ${wi + 1}, day ${si + 1}. ${s[1]}.${P(1200)}` + body.join('') + `${P(800)}End of week ${wi + 1}, day ${si + 1}.`);
   const file = path.join(out, id + '.m4a');
