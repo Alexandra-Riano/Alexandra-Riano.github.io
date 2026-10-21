@@ -337,3 +337,10 @@ body.has-pod .page{padding-bottom:300px}
 .review-item{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px}
 .review-item h3{font-size:var(--fs-md);margin:4px 0 0;line-height:1.4}
 .quiz-review.only-missed .review-item.is-ok{display:none}
+.tldr{border:1px solid var(--line);border-left:4px solid var(--ok);background:var(--ok-soft);border-radius:var(--r-sm);padding:16px;margin:24px 0;max-width:760px}
+.tldr .kicker{color:var(--ok);margin:0 0 4px}
+.tldr h2{font-size:var(--fs-lg);margin:0 0 8px}
+.tldr ul{padding-left:20px;margin:0}
+.tldr li{font-size:var(--fs-md);line-height:1.6;max-width:65ch}
+.tldr li+li{margin-top:6px}
+.day-dialog .tldr{margin:20px 0}
