@@ -1,7 +1,10 @@
 (function(){
 const PKEY='hcm-core-podcast',RATES=[1,1.25,1.5,0.85];
 let ps;try{ps=JSON.parse(localStorage.getItem(PKEY))}catch(e){}
-ps=ps||{i:0,t:0,rate:1};
+if(!ps||typeof ps!=='object')ps={i:0,t:0,rate:1,v:2};
+// Saved positions from before the plan was reordered point at the old episode order.
+if(ps.v!==2){const old=Object.keys(PLAN_MOVES)[ps.i],n=old&&PLAN_MOVES[old].split('-').map(Number),j=n?EPISODES.findIndex(e=>e.w===n[0]&&e.d===n[1]):-1;ps.i=j<0?0:j;ps.v=2}
+if(!(ps.i>=0&&ps.i<EPISODES.length))ps.i=0;if(!RATES.includes(ps.rate))ps.rate=1;if(!(ps.t>=0))ps.t=0;try{localStorage.setItem(PKEY,JSON.stringify(ps))}catch(e){}
 const au=new Audio();au.preload='none';
 const fmt=s=>{s=Math.max(0,Math.round(s||0));return`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`};
 const ep=()=>EPISODES[ps.i];
