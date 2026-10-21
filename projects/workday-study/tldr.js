@@ -176,3 +176,133 @@ const TLDR={
 'Template-driven processes|Termination and Change Job need the BP policy plus domain access to each section.',
 'Exam trap|Can view data but cannot start Change Job? Check the Change Job BP policy, not the domains.']
 };
+
+/* TL;DR for review and test days in the plan, keyed "week-day" (zero-based, as in WEEKS). Each one pulls together the lessons that day works on. */
+const DAY_TLDR={
+'0-2':[
+'Catalog layers|Job family group > job family > job profile. Families and groups are optional; profiles are not.',
+'Profile vs job vs position|The profile is the reusable definition. A job (Job Management) or position (Position Management) is the staffable instance created from it.',
+'Many-to-many|One profile can be in several families and back many positions.',
+'Defaults|Profile values default at hire, but a value on the position wins.',
+'Why families matter|Eligibility rules, condition rules, hiring restrictions, and job-based security can all use them.'],
+'0-3':[
+'Required profile fields|Job Profile Name, Job Code, and effective date. Everything else is optional.',
+'Family rule trap|A new profile must join any family an eligibility rule uses, or pay will not default.',
+'Job Catalog report|Shows family groups, families, and profiles together.',
+'Every worker|Needs a job profile, whether hired or contracted.',
+'Classification only|A family classifies work. It is not an organization or a staffing model.'],
+'0-4':[
+'Say it aloud|Family group > family > profile > job or position > worker.',
+'Profile|Reusable definition with name, code, and effective date required.',
+'Families|Optional groupings for filters, reports, Recruiting, rules, restrictions, and security.',
+'Position beats profile|The more specific value wins at hire.',
+'Weak cards|Rework them before Week 2. Staffing models build directly on the catalog.'],
+'1-2':[
+'Restriction level|Job Management: the supervisory organization. Position Management: each position.',
+'Vacancies|Job Management: none, the job ends when the worker leaves. Position Management: the position stays open until filled or closed.',
+'Reporting|Job Management: current headcount. Position Management: open and filled positions, history, time to fill.',
+'Best fit|Job Management for flexible, high-volume hiring. Position Management for seat-level control.',
+'Shared|The same restriction criteria and the same Hire process in both models.'],
+'1-3':[
+'Read the scenario|"Every approved seat", "vacancies", or "position history" means Position Management.',
+'Volume and speed|"Many hires", "flexible", or "no persistent vacancy" means Job Management.',
+'Can\'t change model?|Restrictions are set or positions exist, so Edit Staffing Model is no longer available.',
+'Overrides|Edit Tenant Setup - HCM can let users override restrictions; the values still default in.',
+'Future vs current|Edit Hiring Restrictions and Edit Position Restrictions affect future hires, not the current worker.'],
+'1-4':[
+'Hybrid hierarchy|Subordinates inherit the parent\'s staffing model but can change it, so one hierarchy can mix models.',
+'When it makes sense|Mix control for some teams (Position Management) with volume hiring for others (Job Management).',
+'Moving workers|Move Workers (By Organization) needs both organizations on the same staffing model.',
+'Choose early|Pick the model before staffing begins; Edit Staffing Model disappears after that.',
+'Target|80%+ on practice before moving on.'],
+'2-1':[
+'1. Prepare|Position Management: Create Position. Job Management: set hiring restrictions.',
+'2. Hire appears|Only then does Hire show in the organization\'s Related Actions.',
+'3. Enter|Hire date, position, employee type, job profile, time type, and location.',
+'4. Defaults|Job profile values and weekly hours from the location fill in; position values beat profile values.',
+'5. Subprocesses|Propose Compensation Hire, Change Organization Assignments, Review Employee Hire, Create Workday Account.'],
+'2-2':[
+'Hire|Brings a worker into a prepared position or job.',
+'Change Job|Promotions, demotions, transfers, lateral moves, and location or data changes, all through one business process.',
+'Transfer without access|Request Transfer lets the receiving manager start it.',
+'Termination|Ends employment; clean up tasks, roles, and the Workday account.',
+'Undoing things|Correct keeps data; Cancel stops an in-progress event; Rescind reverses a completed one. Rescinding Change Job does not undo role changes.'],
+'2-3':[
+'Five Staffing objectives|Job families, job profiles, Job Management, Position Management, staffing business processes.',
+'Most tested|Choosing the staffing model from a scenario.',
+'Missing Hire|The organization has no position or no hiring restrictions yet.',
+'Defaults|Position beats profile; weekly hours come from the location.',
+'Family trap|New profiles must join families that eligibility rules use.'],
+'2-4':[
+'For each miss|Name the decision rule you broke, not just the right answer.',
+'Model questions|Look for vacancy, history, and control words.',
+'Process questions|Check what must exist before Hire.',
+'Fix events|Correct, Cancel, or Rescind depends on whether the event is in progress or complete.',
+'Confidence|Rate each objective so the next recovery day targets the weakest.'],
+'3-4':[
+'Organization types|Supervisory = who manages whom. Company = legal. Cost center = money. Region = responsibility area.',
+'Hierarchies|Roll up one organization type for reporting and role inheritance. Transactions stay on organizations.',
+'Assignments|Default fills in one value; allowed limits the choices. Subordinates inherit both unless overridden.',
+'Roles|Attached to the position, so they survive incumbent changes. Empty roles leave tasks unassigned.',
+'Connect them|Roles on a location hierarchy inherit down; assignments on the supervisory org default into staffing.'],
+'4-3':[
+'Initiation|Always first. The BP policy says who can start it.',
+'Reviews and subprocesses|Action steps, such as Review Employee Hire and Propose Compensation Hire.',
+'Approvals|Approve, send back, or deny. No editing.',
+'Automation and reminders|Service step for Create Workday Account; To Do for work Workday cannot check.',
+'Completion|One completion step commits the data. Every approval and review comes before it.'],
+'4-4':[
+'Type, definition, event|Delivered category, your configured workflow, one running transaction.',
+'Which definition runs|Rule-based match, then organization-specific (own or nearest superior), then default.',
+'Completion step rule|Only one, and all approvals and reviews come before it.',
+'Approval vs Action|Approvers cannot edit. Use an Action review when someone must edit.',
+'Version|The definition in effect on the initiation date runs.'],
+'5-2':[
+'Entry|"Only run this step if…" (threshold, country, worker type).',
+'Validation|"Stop or warn the user if the data is wrong." Warning lets them continue; Critical does not.',
+'While Running|"Does the next person in the approval chain act?"',
+'Exit|"Can this approval chain or integration step finish?" For example, stop after two approvals.',
+'Attach it|Create Condition Rule saves it; Maintain Step Conditions puts it on a step.'],
+'5-3':[
+'Conditions|Entry, validation, while running, exit. Each works only on certain step types.',
+'Notifications|Inform people but never grant access or replace a step.',
+'Proposed data|Before completion, Hire values are still "proposed" in conditions.',
+'Field security|Fields a recipient cannot see show as [not available].',
+'System vs custom|Custom notifications do not turn system ones off.'],
+'5-4':[
+'Rebuild a workflow from memory|Initiation, reviews, approvals, service steps, completion, notifications.',
+'Then add logic|An entry condition, a validation, and a routing restriction.',
+'Check yourself|Which step commits data? Who is excluded? When does each condition run?',
+'Common misses|Approval vs Action, entry vs validation, notification vs step.',
+'Write it down|Note each rule you missed for the mock exams.'],
+'6-4':[
+'Reports|Check standard reports first. Only Report Writer reports can be copied.',
+'Custom reports|The data source sets the population and primary object; pick the smallest that works.',
+'Access chain|User > security group > policy > secured item.',
+'Groups|Role-based follows the position; user-based follows the person and is always unconstrained.',
+'Target|80%+ on both domains. Reporting is 5% of the exam; Security is 25%.'],
+'7-1':[
+'Can\'t see or run something?|Find its domain with View Security for Securable Item, then check the user\'s groups.',
+'Can\'t start or approve an event?|Check the BP policy for that process type.',
+'Template-driven process?|Needs the BP policy and each section\'s domain.',
+'Saved but not working?|Activate Pending Security Policy Changes. Membership changes need no activation.',
+'Too broad?|Check the group\'s constraint. Location membership groups are always unconstrained.'],
+'7-2':[
+'Weights|Staffing 25%, Business Processes 25%, Security 25%, Organizations 20%, Reporting 5%.',
+'Pacing|50 questions in 120 minutes: about 2 minutes each. Flag and move on.',
+'Scenario keywords|Vacancy or history → Position Management. Edit while approving → Action, not Approval.',
+'Access questions|Membership plus policy, and policies need activation.',
+'Afterwards|Write the decision rule behind every miss.'],
+'7-3':[
+'Sort misses|By domain and by the rule you broke.',
+'Three weakest objectives|Reread their TL;DRs and exam traps, then retake their lesson quizzes.',
+'Recurring traps|Staffing model choice, completion step, condition types, BP vs domain policy.',
+'Explain aloud|If you can\'t explain the rule without notes, it isn\'t fixed yet.',
+'Flashcards|Rate honestly so missed cards come back sooner.'],
+'7-4':[
+'Exam conditions|One sitting, 120 minutes, no notes.',
+'Target|85%+ with time to spare.',
+'Read carefully|Watch for "default" vs "allowed", "view" vs "initiate", "in progress" vs "completed".',
+'Eliminate|Two options are usually off-domain. Choose between the remaining two by the rule.',
+'Done|If you hit the target, you are exam-ready.']
+};
