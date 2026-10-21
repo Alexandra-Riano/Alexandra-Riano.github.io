@@ -10,7 +10,6 @@ const app = src('app.js'), plan = src('plan.js');
 const grab = (s, name, end) => { const a = s.indexOf('[', s.indexOf(name)); return eval('(' + s.slice(a, s.indexOf(end, a) + end.length - 1) + ')'); };
 const L = grab(app, 'const L=', ']];'), D = grab(app, 'const D=', ']];'), WEEKS = grab(plan, 'const WEEKS=', '\n];');
 const QB = eval('(' + src('questions.js').replace(/^[\s\S]*?const QB=/, '').replace(/;\s*$/, '') + ')');
-const WEEK_DOMAIN = ['staffing', 'staffing', 'staffing', 'organizations', 'business', 'business', 'reporting', 'security'];
 const lesson = id => L.find(x => x[0] === id), dom = id => D.find(d => d[0] === id)[1];
 
 const P = ms => ` [[slnc ${ms}]] `;
@@ -65,8 +64,10 @@ function testEp(w, s, wi) {
   const mock = s[1].includes('Mock exam');
   let pool;
   if (mock) pool = D.flatMap(d => L.filter(x => x[1] === d[0]).flatMap(x => allQ(x[0]).slice(s[1].includes('#2') ? 10 : 7, s[1].includes('#2') ? 11 : 8)));
-  const doms = [...new Set([WEEK_DOMAIN[wi], ...w.sessions.filter(v => v[3]).map(v => lesson(v[3])[1])])];
-  if (!mock) pool = L.filter(x => doms.includes(x[1])).flatMap(x => allQ(x[0]).slice(5 + (wi % 2), 7 + (wi % 2)));
+  // A test day drills only lessons scheduled before it, in the domains it names (s[4]), matching the app's quiz for that day.
+  const si = w.sessions.indexOf(s), doms = (s[4] || '').split(',');
+  const studied = new Set(WEEKS.flatMap((z, i) => z.sessions.filter((v, j) => (i < wi || i === wi && j < si) && v[3]).map(v => v[3])));
+  if (!mock) pool = L.filter(x => studied.has(x[0]) && doms.includes(x[1])).flatMap(x => allQ(x[0]).slice(5 + (wi % 2), 7 + (wi % 2)));
   pool = pool.map(q => [rnd(), q]).sort((a, b) => a[0] - b[0]).map(p => p[1]).slice(0, mock ? 12 : 8);
   return [
     `This is an audio drill for ${s[1]}.${P(500)}${mock ? 'A mixed set across all five domains.' : 'All questions come from ' + listSay(doms.map(dom)) + '.'} Answer each one out loud before the reveal.${P(1200)}`,
@@ -80,9 +81,10 @@ const eps = [];
 WEEKS.forEach((w, wi) => w.sessions.forEach((s, si) => {
   const id = `w${wi + 1}d${si + 1}`, x = s[3] ? lesson(s[3]) : null;
   // Seed per episode so editing one day does not reshuffle the answer letters in every later episode.
+  // Episodes do not announce their week and day, so reordering the plan only means renaming files, not re-recording.
   seed = [...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 2147483647, 7) || 7;
   const body = s[0] === 'learn' && x ? learnEp(x) : s[0] === 'test' ? testEp(w, s, wi) : reviewEp(w, s);
-  const script = speak(`Week ${wi + 1}, day ${si + 1}. ${s[1]}.${P(1200)}` + body.join('') + `${P(800)}End of week ${wi + 1}, day ${si + 1}.`);
+  const script = speak(body.join(''));
   const file = path.join(out, id + '.m4a');
   if (!only || only === id) {
     fs.writeFileSync(path.join(out, id + '.txt'), script);
