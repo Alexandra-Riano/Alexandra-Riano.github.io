@@ -54,6 +54,8 @@ p{text-wrap:pretty}
 .hero,.intro{padding:12px 0 24px}
 .hero h1,.intro h1{font-size:var(--fs-2xl);line-height:1.05;letter-spacing:-.03em;margin:0}
 .hero p,.intro p{color:var(--text-2);font-size:var(--fs-md);max-width:60ch;margin:12px 0 0}
+.hero{padding-bottom:16px}
+.hero h1{font-size:var(--fs-xl)}
 
 .today{background:var(--strong);color:var(--on-strong);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)}
 .today h2{font-size:var(--fs-xl);line-height:1.15;letter-spacing:-.02em;margin:0;text-wrap:balance}
@@ -75,7 +77,8 @@ p{text-wrap:pretty}
 .ring small{display:block;font-size:var(--fs-xs);color:var(--text-2)}
 
 .plan-preview,.practice-domain,.mock{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left}
-.plan-preview{margin-top:12px;border:1px solid var(--line);border-radius:var(--r-md);padding:16px;background:var(--surface)}
+.home-links{display:grid;gap:8px;margin-top:12px}
+.plan-preview{border:1px solid var(--line);border-radius:var(--r-md);padding:16px;background:var(--surface)}
 .plan-preview b,.plan-preview em{display:block}
 .plan-preview b{font-size:var(--fs-md)}
 .plan-preview em{font-size:var(--fs-sm);color:var(--text-2);font-style:normal;margin-top:2px}
@@ -88,18 +91,13 @@ p{text-wrap:pretty}
 .domain-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .domain-card{border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);padding:14px;text-align:left;min-height:112px;display:flex;flex-direction:column}
 .domain-card:first-child{grid-column:1/-1}
-.domain-card div:first-child{display:flex;justify-content:space-between;align-items:baseline;font-size:var(--fs-xs);color:var(--text-2)}
+.domain-card div:first-child{display:flex;flex-direction:column;gap:2px;font-size:var(--fs-xs);color:var(--text-2)}
 .domain-card div:first-child b{font-size:var(--fs-sm);color:var(--text);font-variant-numeric:tabular-nums}
 .domain-card .dc-name{display:block;font-size:var(--fs-md);font-weight:700;margin:auto 0 8px;padding-top:16px}
 .track{height:6px;border-radius:6px;background:var(--surface-2);overflow:hidden}
 .track i{display:block;height:100%;background:var(--accent)}
 
 
-.exam{margin-top:28px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r-lg);padding:20px}
-.exam-meta{display:flex;gap:8px;flex-wrap:wrap}
-.exam-meta span{font-size:var(--fs-xs);font-weight:600;color:var(--text-2);background:var(--surface-2);border-radius:6px;padding:4px 8px}
-.exam h2{font-size:var(--fs-xl);letter-spacing:-.02em;margin:16px 0 4px;line-height:1.15}
-.exam p{font-size:var(--fs-sm);color:var(--text-2);margin:0 0 16px}
 .primary{border:0;border-radius:var(--r-sm);min-height:48px;padding:0 18px;background:var(--accent);color:var(--on-accent);font-weight:700;font-size:var(--fs-md);display:inline-flex;align-items:center;justify-content:center;gap:8px}
 
 .filters{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -326,10 +324,10 @@ body.has-pod .page{padding-bottom:300px}
 
 @media (min-width:760px){
   .page{padding:36px 32px 120px}
-  .hero h1{font-size:56px}
+  .hero h1{font-size:var(--fs-2xl)}
   .domain-grid{grid-template-columns:repeat(5,1fr)}
   .domain-card:first-child{grid-column:auto}
-  .today,.readiness,.plan-preview,.plan-overview{max-width:700px}
+  .today,.readiness,.home-links,.plan-overview{max-width:700px}
   .lesson-head{margin:-36px -32px 8px;padding:28px 32px 36px}
   .lesson-head h1{font-size:var(--fs-2xl)}
   #lesson>*:not(.lesson-head){max-width:760px}
