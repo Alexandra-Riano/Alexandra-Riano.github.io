@@ -65,7 +65,7 @@ const N={
 ['How Position Management works','B1 pp. 116–118',[
 'Open position required|You need an open, approved position to hire, promote, demote, or transfer a worker into the organization.',
 'Per-position rules|Each position has its own restrictions.',
-'Positions persist|A position stays open until it is filled or closed by hand, and it can move to another organization in a job change or reorganization.',
+'Positions stay open|A position stays open until it is filled or closed by hand, and it can move to another organization in a job change or reorganization.',
 'Reporting|Open and filled positions, position history, and time to fill.']],
 ['Create Position','B1 pp. 182, 190–192',[
 'Required fields|Job Posting Title, Number of Positions, Availability Date, and Earliest Hire Date.',
