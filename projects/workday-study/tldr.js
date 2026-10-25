@@ -4,7 +4,7 @@
 const TLDR={
 'job-families':[
 'Job catalog|Job family groups contain job families, and job families contain job profiles. Families and family groups are optional.',
-'Create Job Family|The task that creates a job family. Enter an effective date and a Job Family Name.',
+'Create Job Family|To make a new job family in Workday, you run a task called "Create Job Family" and fill in two things: a date and a name. The family starts empty; to add a job profile to it, open the profile and choose the family in its Job Family field.',
 'Assigning a job profile to a family|Pick the family in the Job Family field on the job profile (Create Job Profile or Edit Job Profile). One job profile can be in more than one family.',
 'Reporting on the job catalog|The Job Catalog report shows family groups, families, and profiles together. The Job Family report shows which profiles are in each family.',
 'Where job families are used|Compensation eligibility rules, condition rules, Job Family hiring restrictions, job-based security groups, and Recruiting career-site categories.',
@@ -15,7 +15,7 @@ const TLDR={
 'Required job profile fields|Only Job Profile Name, Job Code, and the effective date. If job codes are generated (ID Sequence Generator in Edit Tenant Setup - HCM), Job Code is no longer required.',
 'Optional job profile fields|Job title, Restrict to Country, management level, job level, job classification, job family, qualifications, job exempt, pay rate type, and compensation grade.',
 'Values that default from the job profile at hire|Management level, job classification, company insider types, and work shift.',
-'Position value vs job profile value|If the position and the job profile both have a value for the same field, Workday uses the position\'s value.'],
+'Position value vs job profile value|A job profile is the general description of a job; a position is one specific seat in an organization that uses that profile. Both can hold the same setting, like work shift. If they disagree, the position wins: hire someone into a position set to night shift and they get night shift, even if the job profile says day shift.'],
 
 'job-management':[
 'Job Management|Hiring restrictions are set once on the supervisory organization (Hiring Restrictions business process) and apply to every job in it. No open position is needed to hire.',
@@ -200,12 +200,12 @@ const DAY_TLDR={
 'Job catalog|Job family groups contain job families, and job families contain job profiles. Families and family groups are optional.',
 'Job profile vs job vs position|The job profile is the reusable description. A job (Job Management) or a position (Position Management) is the seat a worker fills, created from the profile.',
 'Job profile reuse|One job profile can belong to several job families and back many positions.',
-'Position value vs job profile value|At hire, a value on the position overrides the same value on the job profile.',
+'Position value vs job profile value|A job profile is the general description of a job; a position is one specific seat in an organization that uses that profile. Both can hold the same setting, like work shift. If they disagree, the position wins: hire someone into a position set to night shift and they get night shift, even if the job profile says day shift.',
 'Job families in rules|Compensation eligibility rules, condition rules, hiring restrictions, and job-based security groups can all use job families.'],
 '0-4':[
 'Required job profile fields|Only Job Profile Name, Job Code, and the effective date.',
 'Generated job codes|With an ID Sequence Generator set in Edit Tenant Setup - HCM, Job Code is no longer required.',
-'Create Job Family|Creates a job family. Assign a profile to it with the Job Family field on the job profile.',
+'Create Job Family|To make a new job family in Workday, you run a task called "Create Job Family" and fill in two things: a date and a name. The family starts empty; to add a job profile to it, open the profile and choose the family in its Job Family field.',
 'Job Catalog report|Shows job family groups, job families, and job profiles together.',
 'New job profile + eligibility rule|If a compensation eligibility rule uses a job family, add the new job profile to that family or pay will not default.'],
 '0-5':[
@@ -247,7 +247,7 @@ const DAY_TLDR={
 '3-2':[
 'Picking the staffing model|Seat control, vacancies, or position history → Position Management. Flexible, high-volume hiring → Job Management.',
 'Hire missing from Related Actions|The organization has no position or no hiring restrictions yet.',
-'Position value vs job profile value|At hire, the position\'s value wins.',
+'Position value vs job profile value|A job profile is the general description of a job; a position is one specific seat in an organization that uses that profile. Both can hold the same setting, like work shift. If they disagree, the position wins: hire someone into a position set to night shift and they get night shift, even if the job profile says day shift.',
 'Change Job security|Needs the business process policy to start it plus domain policies to see each section.',
 'When pay defaults|Only when the worker is eligible for exactly one package and one grade, and the plan is in that package.'],
 '3-3':[
