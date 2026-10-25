@@ -115,6 +115,7 @@ p{text-wrap:pretty}
 .badge.started{background:var(--accent-soft);color:var(--accent)}
 
 .lesson-head{margin:-24px -16px 8px;padding:16px 16px 28px;background:var(--strong);color:var(--on-strong)}
+.lesson-nav{display:flex;flex-wrap:wrap;gap:8px}
 .lesson-head button{border:0;border-radius:var(--r-sm);background:#ffffff1f;color:var(--on-strong);padding:8px 12px;font-size:var(--fs-sm);font-weight:600;display:inline-flex;align-items:center;gap:6px}
 .lesson-head .kicker{color:var(--on-strong-2);margin-top:24px}
 .lesson-head h1{font-size:var(--fs-xl);line-height:1.1;letter-spacing:-.02em;margin:0}
@@ -127,6 +128,14 @@ p{text-wrap:pretty}
 .lesson-card li+li{margin-top:4px}
 .lesson-card small{font-size:var(--fs-sm);color:var(--text-2)}
 .lesson-card .question-text{font-weight:600}
+#lesson>*{scroll-margin-top:88px}
+.fold>summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;cursor:pointer;list-style:none;min-height:44px;padding-right:32px;position:relative}
+.fold>summary::-webkit-details-marker{display:none}
+.fold>summary::after{content:'';position:absolute;right:6px;top:8px;width:9px;height:9px;border-right:2px solid var(--text-2);border-bottom:2px solid var(--text-2);transform:rotate(45deg);transition:transform var(--ease)}
+.fold[open]>summary::after{transform:translateY(4px) rotate(-135deg)}
+.fold>summary h2{margin:0}
+.fold>summary span{font-size:var(--fs-sm);color:var(--text-2)}
+.fold>summary:focus-visible{outline-offset:4px}
 .decision-grid{display:grid;gap:8px}
 .decision{background:var(--surface-2);border-radius:var(--r-sm);padding:12px}
 .decision b,.decision span{display:block}
@@ -313,7 +322,7 @@ body.has-pod .page{padding-bottom:300px}
   .today,.readiness,.plan-preview,.plan-overview{max-width:700px}
   .lesson-head{margin:-36px -32px 8px;padding:28px 32px 36px}
   .lesson-head h1{font-size:var(--fs-2xl)}
-  .lesson-card,.trap{max-width:760px}
+  #lesson>*:not(.lesson-head){max-width:760px}
   #quiz{max-width:760px;margin:auto}
   .decision-grid{grid-template-columns:1fr 1fr}
   #lessonList{columns:2;column-gap:32px}
