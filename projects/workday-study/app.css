@@ -26,7 +26,7 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-h1[tabindex="-1"]:focus{outline:none}
+:is(h1,h2)[tabindex="-1"]:focus{outline:none}
 html{background:var(--bg);-webkit-tap-highlight-color:transparent}
 button,a,summary,label,select,input{touch-action:manipulation}
 .skip{position:absolute;left:8px;top:-60px;z-index:100;background:var(--accent);color:var(--on-accent);padding:10px 14px;border-radius:var(--r-sm);font-weight:700}
@@ -133,7 +133,12 @@ p{text-wrap:pretty}
 .lesson-card li+li{margin-top:4px}
 .lesson-card small{font-size:var(--fs-sm);color:var(--text-2)}
 .lesson-card .question-text{font-weight:600}
-#lesson>*{scroll-margin-top:88px}
+#lesson>*{scroll-margin-top:calc(140px + env(safe-area-inset-top))}
+.lesson-head button{min-height:44px}
+.lesson-toc{position:sticky;top:calc(64px + env(safe-area-inset-top));z-index:10;margin:0 -16px;padding:8px 16px;background:var(--header-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain}
+.lesson-toc::-webkit-scrollbar{display:none}
+.lesson-toc button{flex:none;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--text-2);font-size:var(--fs-sm);font-weight:600}
+.lesson-toc button.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
 .fold>summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;cursor:pointer;list-style:none;min-height:44px;padding-right:32px;position:relative}
 .fold>summary::-webkit-details-marker{display:none}
 .fold>summary::after{content:'';position:absolute;right:6px;top:8px;width:9px;height:9px;border-right:2px solid var(--text-2);border-bottom:2px solid var(--text-2);transform:rotate(45deg);transition:transform var(--ease)}
@@ -328,6 +333,7 @@ body.has-pod .page{padding-bottom:300px}
   .lesson-head{margin:-36px -32px 8px;padding:28px 32px 36px}
   .lesson-head h1{font-size:var(--fs-2xl)}
   #lesson>*:not(.lesson-head){max-width:760px}
+  .lesson-toc{margin:0;border:1px solid var(--line);border-radius:var(--r-md);top:72px}
   #quiz{max-width:760px;margin:auto}
   .decision-grid{grid-template-columns:1fr 1fr}
   #lessonList{columns:2;column-gap:32px}
@@ -365,3 +371,12 @@ body.has-pod .page{padding-bottom:300px}
 .tldr li{font-size:var(--fs-md);line-height:1.6;max-width:65ch}
 .tldr li+li{margin-top:6px}
 .day-dialog .tldr{margin:20px 0}
+
+@media (min-width:1160px){
+  #lesson.active{display:grid;grid-template-columns:minmax(0,760px) 200px;column-gap:48px;align-items:start}
+  #lesson>*{grid-column:1;scroll-margin-top:88px}
+  #lesson>.lesson-head{grid-column:1/-1}
+  #lesson>.lesson-toc{grid-column:2;grid-row:2/span 40;top:88px;margin:24px 0 0;padding:0;flex-direction:column;gap:2px;overflow:visible;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;border-radius:0}
+  .lesson-toc button{min-height:36px;border:0;border-radius:var(--r-sm);background:none;text-align:left;padding:0 12px}
+  .lesson-toc button.active{background:var(--accent-soft)}
+}
