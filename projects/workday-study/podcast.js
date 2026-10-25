@@ -38,7 +38,7 @@ function prev(){if(au.currentTime>5)au.currentTime=0;else if(ps.i>0)play(ps.i-1,
 
 au.addEventListener('loadedmetadata',()=>{const t=+au.dataset.start||0;if(t&&t<au.duration-3)au.currentTime=t;au.dataset.start=0;$p('podSeek').max=Math.round(au.duration);$p('podDur').textContent=fmt(au.duration)});
 let lastSave=0;
-au.addEventListener('timeupdate',()=>{$p('podCur').textContent=fmt(au.currentTime);$p('podSeek').value=Math.round(au.currentTime);ps.t=au.currentTime;if(Date.now()-lastSave>4000){lastSave=Date.now();keep()}});
+au.addEventListener('timeupdate',()=>{$p('podCur').textContent=fmt(au.currentTime);$p('podSeek').value=Math.round(au.currentTime);$p('podSeek').setAttribute('aria-valuetext',`${fmt(au.currentTime)} of ${fmt(au.duration||ep().dur)}`);ps.t=au.currentTime;if(Date.now()-lastSave>4000){lastSave=Date.now();keep()}});
 const sync=()=>{const on=!au.paused;$p('podPlay').innerHTML=`<i class="ph ph-${on?'pause':'play'}" aria-hidden="true"></i>`;$p('podPlay').setAttribute('aria-label',on?'Pause':'Play');if('mediaSession' in navigator)navigator.mediaSession.playbackState=on?'playing':'paused';renderCard();keep()};
 au.addEventListener('play',sync);au.addEventListener('pause',sync);
 au.addEventListener('ended',()=>{if(ps.i<EPISODES.length-1)play(ps.i+1,0);else{ps.t=0;keep();sync()}});
