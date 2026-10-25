@@ -210,9 +210,9 @@ p{text-wrap:pretty}
 .empty{color:var(--text-2);font-size:var(--fs-sm);padding:16px 4px}
 
 nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,1120px);height:calc(72px + env(safe-area-inset-bottom));padding:8px 6px env(safe-area-inset-bottom);display:grid;grid-template-columns:repeat(6,1fr);gap:2px;background:var(--nav-bg);backdrop-filter:blur(20px);border-top:1px solid var(--line)}
-nav button{border:0;background:transparent;border-radius:var(--r-sm);color:var(--text-2);font-size:var(--fs-xs);font-weight:600;display:grid;place-items:center;align-content:center;gap:2px}
-nav button .ph{font-size:22px}
-nav button.active{background:var(--accent-soft);color:var(--accent)}
+nav a{text-decoration:none;border:0;background:transparent;border-radius:var(--r-sm);color:var(--text-2);font-size:var(--fs-xs);font-weight:600;display:grid;place-items:center;align-content:center;gap:2px}
+nav a .ph{font-size:22px}
+nav a.active{background:var(--accent-soft);color:var(--accent)}
 
 dialog{overscroll-behavior:contain;border:0;padding:0;margin:0;width:100%;max-width:none;height:100%;max-height:none;background:var(--bg);color:var(--text)}
 dialog::backdrop{background:#0a1d3166}
@@ -314,8 +314,8 @@ body.has-pod .page{padding-bottom:300px}
   .objective:hover,.term:hover,.practice-domain:hover,.result:hover,.session:hover,.week summary:hover{background:var(--surface-2)}
   .primary:hover,.day-actions .day-start:hover{filter:brightness(1.08)}
   .mock:hover{filter:brightness(1.15)}
-  nav button:hover:not(.active),.section-title button:hover,.dialog-head>button:hover,.source-note button:hover{color:var(--accent);text-decoration:underline}
-  nav button:hover:not(.active){text-decoration:none}
+  nav a:hover:not(.active),.section-title button:hover,.dialog-head>button:hover,.source-note button:hover{color:var(--accent);text-decoration:underline}
+  nav a:hover:not(.active){text-decoration:none}
   .lesson-head button:hover{background:#ffffff33}
 }
 
