@@ -58,13 +58,17 @@
 .note li b{display:block;font-weight:700;margin-bottom:2px}
 .note .book-cite{margin-top:10px}
 .src-h{margin:10px 0 6px;font-size:var(--fs-sm);color:var(--text-2);font-weight:700}
-.exam-guide{border:2px solid var(--accent);border-radius:var(--r-lg);padding:16px;display:grid;gap:8px;background:var(--surface)}
+.exam-guide{display:grid;gap:8px}
+.eg-topic{margin:0;font-weight:600}
 .exam-guide h2{margin:0}
-.eg-meta,.eg-sup,.eg-note{margin:0;font-size:var(--fs-sm);color:var(--text-2)}
+.lesson-card .eg-meta,.lesson-card .eg-sup,.lesson-card .eg-note{margin:0;font-size:var(--fs-sm);color:var(--text-2)}
 .eg-meta a{color:var(--accent);font-weight:600}
 .eg-list{margin:4px 0 0;padding-left:20px;display:grid;gap:14px}
-.eg-req{margin:0;font-weight:600;line-height:1.45}
-.eg-req span,.eg-ans>span{display:block;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--text-2);font-weight:700;margin-bottom:2px}
+.eg-req{display:block;cursor:pointer;list-style:none;font-weight:600;line-height:1.45;padding:4px 0;border-radius:var(--r-sm)}
+.eg-req::-webkit-details-marker{display:none}
+.eg-show{display:block;margin-top:6px;font-size:var(--fs-sm);color:var(--accent)}
+.eg-opened,.eg-item[open] .eg-closed{display:none}
+.eg-item[open] .eg-opened{display:inline}
 .eg-ans{margin-top:6px;padding:10px 12px;border-radius:var(--r-sm);background:var(--surface-2)}
 .eg-ans p{margin:0;line-height:1.5}
 .eg-ans .book-cite{margin-top:6px}
