@@ -18,12 +18,12 @@
   <header><button class="brand" data-page="home"><b>W</b><span>HCM Core<small>Certification study lab</small></span></button><div class="header-actions"><button id="searchBtn" class="icon" aria-label="Search"><i class="ph ph-magnifying-glass" aria-hidden="true"></i></button><button id="themeBtn" class="icon theme-toggle" aria-label="Turn on dark mode" aria-pressed="false"><i class="ph ph-moon" aria-hidden="true"></i></button></div></header>
   <main>
     <section id="home" class="page active">
-      <div class="hero"><h1>Pass the HCM Core exam.</h1><p>All 19 objectives from the official exam guide, plus supporting lessons from the course books, grouped by exam domain.</p></div>
+      <div class="hero"><h1>Pass the HCM Core exam.</h1><p id="heroCopy">Lessons covering the 19 objectives in the official exam guide, grouped by exam domain.</p></div>
+      <article class="today" aria-labelledby="todayTitle"><h2 id="todayTitle">Next session</h2><p class="today-meta" id="todayMeta"></p><p class="today-copy" id="todayCopy"></p><div class="today-actions"><button id="todayStart" class="primary">Start session</button><div class="today-extras" id="todayExtras"></div></div></article>
       <article class="readiness"><div class="ring" id="ring"><strong id="ready">0%</strong><small>ready</small></div><div><p class="kicker">Overall readiness</p><h2 id="readyLabel">Start your first objective</h2><p id="readyCopy"></p></div></article>
-      <button class="plan-preview" data-page="plan"><span><b>Nine weeks to exam-ready</b><em>Daily sessions · weekly checkpoints · 2 mock exams</em></span><i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+      <button class="plan-preview" data-page="plan"><span><b>Full study plan</b><em id="planPreviewCopy">Nine weeks · daily sessions · 2 mock exams</em></span><i class="ph ph-arrow-right" aria-hidden="true"></i></button>
       <div class="section-title"><h2>Five knowledge domains</h2><button data-page="learn">View all</button></div><div id="domains" class="domain-grid"></div>
-      <div class="section-title"><h2>Continue learning</h2></div><button id="continue" class="continue"></button>
-      <article class="exam"><div class="exam-meta"><span>50 questions</span><span>120 minutes</span></div><h2>Mock exam</h2><p>Original questions weighted to the official blueprint.</p><button id="examHome" class="primary">Start mock exam</button></article>
+      <article class="exam"><div class="exam-meta"><span>50 questions</span><span>120 minutes</span></div><h2>Mock exam</h2><p>Original questions weighted to the official blueprint.</p><button id="examHome" class="secondary">Start mock exam</button></article>
     </section>
     <section id="plan" class="page">
       <div class="intro"><h1>Your study plan</h1><p>Four to six study days each week, with at least one rest day. Progress saves on this device.</p></div>
