@@ -119,6 +119,7 @@ p{text-wrap:pretty}
 
 .lesson-head{margin:-24px -16px 8px;padding:16px 16px 28px;background:var(--strong);color:var(--on-strong)}
 .lesson-nav{display:flex;flex-wrap:wrap;gap:8px}
+.lesson-nav .lesson-step{margin-left:auto}.lesson-nav .lesson-step+.lesson-step{margin-left:0}
 .lesson-head button{border:0;border-radius:var(--r-sm);background:#ffffff1f;color:var(--on-strong);padding:8px 12px;font-size:var(--fs-sm);font-weight:600;display:inline-flex;align-items:center;gap:6px}
 .lesson-head .kicker{color:var(--on-strong-2);margin-top:24px}
 .lesson-head h1{font-size:var(--fs-xl);line-height:1.1;letter-spacing:-.02em;margin:0}
